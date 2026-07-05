@@ -1,6 +1,5 @@
-# tinygrad from the pinned submodule (clone with --recursive)
--e ./tinygrad
-
+# tinygrad is not on here: clone it into ./tinygrad (gitignored) and run
+#   uv pip install -e ./tinygrad
 torch
 torchvision
 numpy

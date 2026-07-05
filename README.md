@@ -1,7 +1,7 @@
 # ml-experiments
 
-Small ML experiments, mostly written against [tinygrad](https://github.com/tinygrad/tinygrad)
-(pinned as a submodule), with PyTorch ports where training speed on NVIDIA mattered.
+Small ML experiments, mostly written against [tinygrad](https://github.com/tinygrad/tinygrad),
+with PyTorch ports where training speed on NVIDIA mattered.
 
 ## Projects
 
@@ -16,11 +16,13 @@ Small ML experiments, mostly written against [tinygrad](https://github.com/tinyg
 ## Setup
 
 ```sh
-git clone --recursive git@github.com:boopdotpng/ml-experiments.git
+git clone git@github.com:boopdotpng/ml-experiments.git
 cd ml-experiments
+git clone https://github.com/tinygrad/tinygrad.git   # local clone, gitignored
 uv venv && source .venv/bin/activate
-uv pip install -r requirements.txt   # installs the tinygrad submodule editable
-./download.sh                     # fetches Llama 3.2 1B weights + tokenizer (~2.4 GB)
+uv pip install -r requirements.txt
+uv pip install -e ./tinygrad
+./download.sh   # fetches Llama 3.2 1B weights + tokenizer (~2.4 GB)
 ```
 
 `download.sh` only fetches the Llama checkpoint (shared between `llama3-tinygrad`
