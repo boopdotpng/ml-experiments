@@ -2,7 +2,6 @@ __pycache__/
 *.pyc
 .venv/
 .cache/
-.vscode/
 *.bak
 
 # trained / exported weights (fast to retrain, or fetched by download.sh)
