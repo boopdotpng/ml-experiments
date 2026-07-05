@@ -13,6 +13,9 @@ Small ML experiments, mostly written against [tinygrad](https://github.com/tinyg
 | [llama3-tinygrad](llama3-tinygrad/) | Llama 3.2 1B Instruct inference in tinygrad, loading HF safetensors directly. |
 | [hip-llama3](hip-llama3/) | Readable HIP/C++ inference runner for Llama 3.2 1B (bf16 weights, hand-written kernels). |
 
+Authorship: `add-transformer`, `sort-transformer`, and `llama3-tinygrad` are
+written by hand; `rectified-flow` and `hip-llama3` are AI-written.
+
 ## Setup
 
 ```sh
