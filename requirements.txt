@@ -2,7 +2,9 @@
 -e ./tinygrad
 
 torch
+torchvision
 numpy
 matplotlib
+pillow
 safetensors
 transformers

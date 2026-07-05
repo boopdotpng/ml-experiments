@@ -9,6 +9,7 @@ Small ML experiments, mostly written against [tinygrad](https://github.com/tinyg
 |---|---|
 | [add-transformer](add-transformer/) | Tiny decoder-only transformer that does 4-digit addition with a CoT scratchpad. tinygrad + pytorch versions. |
 | [sort-transformer](sort-transformer/) | Llama3-style decoder-only transformer that sorts variable-length integer lists. tinygrad version. |
+| [rectified-flow](rectified-flow/) | Rectified flow image generation on CIFAR-10 (UNet + FiLM, CFG in the class-conditional version). tinygrad + pytorch versions. |
 | [llama3-tinygrad](llama3-tinygrad/) | Llama 3.2 1B Instruct inference in tinygrad, loading HF safetensors directly. |
 | [hip-llama3](hip-llama3/) | Readable HIP/C++ inference runner for Llama 3.2 1B (bf16 weights, hand-written kernels). |
 
