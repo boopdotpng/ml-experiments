@@ -17,8 +17,8 @@ Small ML experiments, mostly written against [tinygrad](https://github.com/tinyg
 ```sh
 git clone --recursive git@github.com:boopdotpng/ml-experiments.git
 cd ml-experiments
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt   # installs the tinygrad submodule editable
+uv venv && source .venv/bin/activate
+uv pip install -r requirements.txt   # installs the tinygrad submodule editable
 ./download.sh                     # fetches Llama 3.2 1B weights + tokenizer (~2.4 GB)
 ```
 
