@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HIP Llama 3.2 — FlashAttention &amp; KV Cache, on the GPU</title>
+<style>
+  :root {
+    --bg: #0b0e14;
+    --panel: #131924;
+    --panel2: #0f141d;
+    --ink: #e6edf3;
+    --muted: #8b98a9;
+    --line: #223049;
+    --accent: #58c4ff;
+    --q: #ffb454;      /* query        */
+    --k: #58c4ff;      /* key          */
+    --v: #7ee787;      /* value        */
+    --hot: #ff6b6b;    /* max / current*/
+    --kv0: #c792ea;    /* kv-head tint */
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); font-family: var(--sans); }
+  #app { display: grid; grid-template-columns: 340px 1fr; grid-template-rows: auto 1fr; height: 100vh; }
+  header {
+    grid-column: 1 / 3; display: flex; align-items: center; gap: 18px;
+    padding: 10px 18px; border-bottom: 1px solid var(--line); background: var(--panel2);
+  }
+  header h1 { font-size: 15px; margin: 0; font-weight: 650; letter-spacing: .2px; }
+  header .sub { color: var(--muted); font-size: 12px; }
+  nav { display: flex; gap: 6px; margin-left: auto; flex-wrap: wrap; }
+  nav button {
+    background: var(--panel); color: var(--muted); border: 1px solid var(--line);
+    padding: 6px 12px; border-radius: 7px; cursor: pointer; font-size: 12.5px; font-family: var(--sans);
+  }
+  nav button:hover { color: var(--ink); border-color: #35507a; }
+  nav button.active { background: #1c2a40; color: var(--accent); border-color: var(--accent); }
+
+  aside {
+    grid-row: 2; grid-column: 1; overflow-y: auto; padding: 16px 16px 40px;
+    border-right: 1px solid var(--line); background: var(--panel);
+  }
+  aside h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .9px; color: var(--accent); margin: 4px 0 8px; }
+  aside p { font-size: 13px; line-height: 1.55; color: #c6d2e0; margin: 8px 0; }
+  aside .muted { color: var(--muted); }
+  aside code, aside .k { font-family: var(--mono); font-size: 12px; background: #0b1220; border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; color: #b9e6ff; }
+  aside pre {
+    font-family: var(--mono); font-size: 11.5px; line-height: 1.5; background: #0b1220;
+    border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; overflow-x: auto; color: #cfe6ff;
+  }
+  aside pre .cm { color: #6b7c93; }
+  aside pre .hl { color: var(--q); }
+  aside .legend { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
+  aside .legend div { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #c6d2e0; }
+  aside .sw { width: 13px; height: 13px; border-radius: 3px; flex: none; }
+  .divider { height: 1px; background: var(--line); margin: 14px 0; }
+
+  main { grid-row: 2; grid-column: 2; position: relative; overflow: hidden; }
+  canvas { display: block; }
+  #hud {
+    position: absolute; left: 14px; bottom: 14px; right: 14px; display: flex; gap: 12px;
+    align-items: center; flex-wrap: wrap; pointer-events: none;
+  }
+  #hud .card {
+    pointer-events: auto; background: rgba(15,20,29,.86); backdrop-filter: blur(6px);
+    border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; font-size: 12.5px;
+  }
+  #hud .card b { color: var(--accent); }
+  .controls { display: flex; gap: 10px; align-items: center; }
+  .controls button {
+    background: #1c2a40; color: var(--ink); border: 1px solid var(--accent); border-radius: 7px;
+    padding: 7px 14px; cursor: pointer; font-size: 12.5px; font-family: var(--sans);
+  }
+  .controls button:hover { background: #274063; }
+  .controls button.ghost { background: var(--panel); color: var(--muted); border-color: var(--line); }
+  .controls input[type=range] { width: 160px; accent-color: var(--accent); }
+  .controls label { font-size: 12px; color: var(--muted); }
+  .stat { font-family: var(--mono); font-size: 12px; color: #cfe6ff; }
+  .pill { font-family: var(--mono); font-size: 11px; padding: 2px 7px; border-radius: 20px; border: 1px solid var(--line); color: var(--muted); }
+  .tag-q { color: var(--q); border-color: var(--q); }
+  .tag-k { color: var(--k); border-color: var(--k); }
+  .tag-v { color: var(--v); border-color: var(--v); }
+  #tooltip {
+    position: absolute; pointer-events: none; background: rgba(8,11,17,.95); border: 1px solid var(--accent);
+    border-radius: 6px; padding: 6px 9px; font-family: var(--mono); font-size: 11.5px; color: #d6ecff;
+    transform: translate(-50%, -130%); opacity: 0; transition: opacity .1s; white-space: nowrap; z-index: 5;
+  }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>HIP&nbsp;Llama&nbsp;3.2&nbsp;1B</h1>
+    <span class="sub">FlashAttention &amp; KV&nbsp;cache — how the decode kernels run on the GPU &nbsp;·&nbsp; AMD&nbsp;HIP ≈ CUDA</span>
+    <nav id="nav"></nav>
+  </header>
+  <aside id="aside"></aside>
+  <main id="main">
+    <div id="tooltip"></div>
+    <div id="hud">
+      <div class="card controls" id="controls"></div>
+      <div class="card" id="readout"></div>
+    </div>
+  </main>
+</div>
+
+<script src="./three.min.js"></script>
+<script>
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Model facts (Llama 3.2 1B Instruct — from config.json / header)
+// ─────────────────────────────────────────────────────────────────────────────
+const M = {
+  dim: 2048, hidden: 8192, layers: 16,
+  nHeads: 32, nKVHeads: 8, headDim: 64,
+  vocab: 128256, block: 256,     // kBlock threads per block
+};
+M.group  = M.nHeads / M.nKVHeads;          // 4 query heads share 1 kv head
+M.kvDim  = M.nKVHeads * M.headDim;         // 512
+M.attnEl = M.nHeads * M.headDim;           // 2048 output elements for decode attn
+M.blocks = Math.ceil(M.attnEl / M.block);  // 8 blocks
+M.headsPerBlock = M.block / M.headDim;     // 4 heads per block
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Three.js scaffold
+// ─────────────────────────────────────────────────────────────────────────────
+const main = document.getElementById('main');
+const tooltip = document.getElementById('tooltip');
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+main.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0b0e14);
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 2000);
+scene.add(new THREE.AmbientLight(0xffffff, 0.85));
+const dir = new THREE.DirectionalLight(0xffffff, 0.7); dir.position.set(30, 50, 40); scene.add(dir);
+
+const root = new THREE.Group(); scene.add(root);
+
+function resize() {
+  const w = main.clientWidth, h = main.clientHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(main);
+
+// Minimal orbit-ish control (drag to rotate root, wheel to zoom)
+let drag = false, px = 0, py = 0, rotX = -0.35, rotY = 0.5, dist = 60;
+renderer.domElement.addEventListener('pointerdown', e => { drag = true; px = e.clientX; py = e.clientY; });
+addEventListener('pointerup', () => drag = false);
+addEventListener('pointermove', e => {
+  handleHover(e);
+  if (!drag) return;
+  rotY += (e.clientX - px) * 0.005; rotX += (e.clientY - py) * 0.005;
+  rotX = Math.max(-1.4, Math.min(1.4, rotX)); px = e.clientX; py = e.clientY;
+});
+renderer.domElement.addEventListener('wheel', e => { e.preventDefault(); dist = Math.max(18, Math.min(160, dist + e.deltaY * 0.05)); }, { passive: false });
+
+// Picking
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let pickables = [];
+function handleHover(e) {
+  const r = renderer.domElement.getBoundingClientRect();
+  mouse.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+  mouse.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(pickables, false);
+  if (hits.length && hits[0].object.userData.tip) {
+    tooltip.style.opacity = 1;
+    tooltip.style.left = e.clientX - r.left + 'px';
+    tooltip.style.top = e.clientY - r.top + 'px';
+    tooltip.textContent = hits[0].object.userData.tip;
+  } else tooltip.style.opacity = 0;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Shared helpers
+// ─────────────────────────────────────────────────────────────────────────────
+const COL = {
+  q: 0xffb454, k: 0x58c4ff, v: 0x7ee787, hot: 0xff6b6b, kv0: 0xc792ea,
+  dim: 0x223049, panel: 0x1a2333, ink: 0xe6edf3, muted: 0x54637a,
+};
+const font = { family: 'ui-sans-serif, system-ui, sans-serif' };
+
+function makeLabel(text, color = '#e6edf3', size = 44, bg = null) {
+  const cv = document.createElement('canvas');
+  const ctx = cv.getContext('2d');
+  ctx.font = `600 ${size}px ${font.family}`;
+  const w = Math.ceil(ctx.measureText(text).width) + 24;
+  const h = size + 20;
+  cv.width = w; cv.height = h;
+  ctx.font = `600 ${size}px ${font.family}`;
+  if (bg) { ctx.fillStyle = bg; roundRect(ctx, 0, 0, w, h, 12); ctx.fill(); }
+  ctx.fillStyle = color; ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+  ctx.fillText(text, w / 2, h / 2);
+  const tex = new THREE.CanvasTexture(cv); tex.anisotropy = 4;
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true }));
+  sp.scale.set(w / h * (size / 44) * 2.0, (size / 44) * 2.0, 1);
+  sp.userData.isLabel = true;
+  return sp;
+}
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+function box(w, h, d, color, opacity = 1) {
+  const m = new THREE.Mesh(
+    new THREE.BoxGeometry(w, h, d),
+    new THREE.MeshLambertMaterial({ color, transparent: opacity < 1, opacity })
+  );
+  return m;
+}
+function edges(mesh, color = 0x000000, opacity = 0.25) {
+  const e = new THREE.LineSegments(
+    new THREE.EdgesGeometry(mesh.geometry),
+    new THREE.LineBasicMaterial({ color, transparent: true, opacity })
+  );
+  mesh.add(e); return e;
+}
+function clearRoot() {
+  pickables = [];
+  while (root.children.length) {
+    const c = root.children.pop();
+    c.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) o.material.dispose && o.material.dispose(); });
+  }
+}
+function lerp(a, b, t) { return a + (b - a) * t; }
+function easeInOut(t) { return t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Views registry
+// ─────────────────────────────────────────────────────────────────────────────
+const views = {};
+let active = null;
+let animState = {};
+
+function setView(name) {
+  if (active && views[active].dispose) views[active].dispose();
+  clearRoot();
+  document.getElementById('controls').innerHTML = '';
+  document.getElementById('readout').innerHTML = '';
+  active = name;
+  animState = {};
+  views[name].build();
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('active', b.dataset.v === name));
+  document.getElementById('aside').innerHTML = views[name].side;
+  if (location.hash.slice(1) !== name) history.replaceState(null, '', '#' + name);
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// VIEW 1 — GPU EXECUTION MODEL: how one decode-attention launch maps to hardware
+// ═════════════════════════════════════════════════════════════════════════════
+views.gpu = {
+  side: `
+    <h2>GPU execution model</h2>
+    <p>One decode step calls <code>flash_decode_attention_kernel</code> (or <code>kv_attention_kernel</code>).
+       The host launches a 1‑D grid where <b>one thread computes one output element</b> of the attention result.</p>
+    <pre><span class="cm">// host launch, decode_one()</span>
+flash_decode_attention_kernel
+  &lt;&lt;&lt; <span class="hl">div_up(h.dim, kBlock)</span>, <span class="hl">kBlock</span> &gt;&gt;&gt;(...)
+<span class="cm">// = div_up(2048,256)=8 blocks · 256 threads</span></pre>
+    <p>Inside the kernel each thread recovers <span class="k">which output element it owns</span> from its global id:</p>
+    <pre>int idx = blockIdx.x*blockDim.x + threadIdx.x;
+int d   = idx % head_dim;   <span class="cm">// channel 0..63</span>
+int h   = idx / head_dim;   <span class="cm">// query head 0..31</span>
+int kvh = h / group;        <span class="cm">// group=4 → kv head</span></pre>
+    <p>Because <code>head_dim = 64</code> and a block has <code>256</code> threads, <b>exactly 4 query heads live in each block</b>,
+       and since <code>group = 4</code> those 4 heads all map to the <b>same KV head = blockIdx.x</b>. The launch geometry lines up with grouped‑query attention for free.</p>
+    <div class="legend">
+      <div><span class="sw" style="background:var(--q)"></span> query head</div>
+      <div><span class="sw" style="background:var(--kv0)"></span> shared KV head (= block)</div>
+      <div><span class="sw" style="background:var(--hot)"></span> hovered thread</div>
+    </div>
+    <div class="divider"></div>
+    <p class="muted">Drag to orbit · scroll to zoom · hover any thread cube.</p>
+  `,
+  build() {
+    dist = 78; rotX = -0.62; rotY = -0.62;
+    // Layout: 8 blocks stacked along Z (receding). Each block is a flat 4×64 panel:
+    //   x = channel (0..63), y = head-local (0..3). One cube = one thread.
+    const grp = new THREE.Group(); root.add(grp);
+    const cube = 0.42, gapCh = 0.055, gapHead = 0.55, gapBlock = 3.4;
+    const chW = cube + gapCh, hStep = cube + gapHead;
+    const blockW = 64 * chW;
+    const totalZ = M.blocks * gapBlock;
+    const z0 = -totalZ / 2;
+
+    // build palette of 8 distinct hues, one per KV head / block
+    const pal = [];
+    for (let i = 0; i < 8; i++) { const c = new THREE.Color().setHSL(i / 8, 0.55, 0.62); pal.push(c.getHex()); }
+
+    for (let b = 0; b < M.blocks; b++) {
+      const bz = z0 + b * gapBlock;
+      // block backplate
+      const plate = box(blockW + 0.7, 4 * hStep + 0.5, 0.2, 0x0f1420, 0.85);
+      plate.position.set(0, 0, bz - 0.35);
+      plate.rotation.x = Math.PI / 2 * 0; // panel faces +Z
+      grp.add(plate);
+      // labels sit to the left of each panel
+      const bl = makeLabel(`block ${b}`, '#58c4ff', 40, '#0f1420');
+      bl.position.set(-blockW / 2 - 3.0, 0.7, bz); bl.scale.multiplyScalar(1.5); grp.add(bl);
+      const kl = makeLabel(`kv head ${b}`, '#c792ea', 32, '#0f1420');
+      kl.position.set(-blockW / 2 - 3.0, -0.9, bz); kl.scale.multiplyScalar(1.3); grp.add(kl);
+
+      for (let hl = 0; hl < 4; hl++) {              // head-local index within block
+        const globalHead = b * 4 + hl;
+        const hy = (hl - 1.5) * hStep;
+        for (let d = 0; d < 64; d++) {
+          const c = cube;
+          const m = box(c, c, c, pal[b]);
+          m.position.set(-blockW / 2 + d * chW + c / 2, hy, bz);
+          m.userData.tip = `block ${b} · thread ${hl * 64 + d}  →  idx=${globalHead * 64 + d}  (head ${globalHead}, ch ${d}, kv ${b})`;
+          m.userData.base = m.position.clone();
+          m.userData.baseColor = pal[b];
+          m.userData.sweep = d;   // sweep by channel index
+          grp.add(m); pickables.push(m);
+        }
+      }
+    }
+    // axis hints
+    const cx = makeLabel('channel d  (idx % 64)  →', '#8b98a9', 30); cx.position.set(0, 2.1, z0 - 1.2); grp.add(cx);
+    const hy = makeLabel('4 query heads  (idx / 64)', '#8b98a9', 28); hy.position.set(-blockW / 2 - 3.0, 2.4, z0 - 1.2); grp.add(hy);
+    animState.grp = grp;
+
+    document.getElementById('readout').innerHTML =
+      `<div class="stat">grid = <b>${M.blocks}</b> blocks × <b>${M.block}</b> threads = <b>${M.blocks * M.block}</b> threads`
+      + ` = n_heads·head_dim = <b>${M.attnEl}</b></div>`
+      + `<div class="stat" style="margin-top:4px">${M.headsPerBlock} query heads / block · group=${M.group} · so 1 KV head / block</div>`;
+
+    document.getElementById('controls').innerHTML =
+      `<button id="pulse">▶ pulse warps</button><label>threads fire in lock‑step within a block</label>`;
+    document.getElementById('pulse').onclick = () => { animState.t = 0; animState.play = true; };
+  },
+  frame(dt) {
+    const g = animState.grp; if (!g) return;
+    if (animState.play) {
+      animState.t += dt * 0.6;
+      const p = animState.t;
+      g.children.forEach(ch => {
+        if (ch.userData.sweep === undefined) return;
+        // wave sweeps across channel index; brief lift + brighten (all blocks in lock-step)
+        const phase = p * 26 - ch.userData.sweep * 0.35;
+        const a = Math.max(0, Math.cos(phase)) ** 8;
+        ch.position.z = ch.userData.base.z + a * 1.1;
+        ch.material.emissive = new THREE.Color(COL.hot);
+        ch.material.emissiveIntensity = a * 0.9;
+      });
+      if (animState.t > 1.6) { animState.play = false; g.children.forEach(ch => { if (ch.userData.base) { ch.position.copy(ch.userData.base); ch.material.emissiveIntensity = 0; } }); }
+    }
+  }
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+// VIEW 2 — KV CACHE: the 4-D tensor and grouped-query attention
+// ═════════════════════════════════════════════════════════════════════════════
+views.cache = {
+  side: `
+    <h2>KV cache layout</h2>
+    <p>The cache is one flat <code>float32</code> array per K and V, indexed as a 4‑D tensor:</p>
+    <pre>cache[layer, position, kv_head, channel]
+
+int kv_dim = n_kv_heads*head_dim; <span class="cm">// 512</span>
+int off = (layer*max_seq + pos)*kv_dim + i;</pre>
+    <p><code>store_kv_cache_kernel</code> writes <b>only K and V</b> for the current position — Q is needed just for this token and is thrown away.</p>
+    <p>Each decode step appends <b>one new slice</b> at <code>pos</code> (highlighted). Attention then reads back positions <code>0..pos</code>.</p>
+    <div class="divider"></div>
+    <h2>Grouped-query attention</h2>
+    <p>Llama&nbsp;3.2&nbsp;1B has <b>32 query heads</b> but only <b>8 KV heads</b>. Four query heads share one cached KV head:</p>
+    <pre>int group = n_heads/n_kv_heads; <span class="cm">// 4</span>
+int kvh   = h / group;</pre>
+    <p>That is why the cache stores <code>8·64=512</code> numbers per position, not <code>32·64</code>. It is the memory win that makes long‑context decode affordable.</p>
+    <div class="legend">
+      <div><span class="sw" style="background:var(--k)"></span> K cache slice</div>
+      <div><span class="sw" style="background:var(--v)"></span> V cache slice</div>
+      <div><span class="sw" style="background:var(--hot)"></span> current position (just written)</div>
+    </div>
+    <div class="divider"></div>
+    <p class="muted">Slider advances the decode position. Hover a cell.</p>
+  `,
+  build() {
+    dist = 66; rotX = -0.42; rotY = 0.62;
+    const grp = new THREE.Group(); root.add(grp);
+    animState.grp = grp;
+    // Show ONE layer's cache: positions (X) × kv_head (Z) × [K row | V row].
+    // Each (pos, kv_head) is a 64-channel bar; we draw it as one thin slab to stay readable.
+    const POS = 24;             // show first 24 positions
+    const cellW = 0.9, cellD = 0.9, gap = 0.14;
+    const kvGap = 0.5;
+    const totalPos = POS * (cellW + gap);
+    const x0 = -totalPos / 2;
+    const z0 = -(M.nKVHeads * (cellD + gap) + kvGap) / 2;
+
+    function buildCache(yBase, color, tag) {
+      const cells = [];
+      for (let p = 0; p < POS; p++) {
+        for (let kv = 0; kv < M.nKVHeads; kv++) {
+          const m = box(cellW, 0.5, cellD, color, 0.35);
+          m.position.set(x0 + p * (cellW + gap) + cellW / 2, yBase, z0 + kv * (cellD + gap) + cellD / 2);
+          edges(m, 0x000000, 0.15);
+          m.userData.tip = `${tag}[pos ${p}, kv_head ${kv}] · 64 ch · off=(L*max_seq+${p})*512 + ${kv}*64`;
+          m.userData.p = p; m.userData.kv = kv; m.userData.baseColor = color; m.userData.tag = tag;
+          grp.add(m); pickables.push(m); cells.push(m);
+        }
+      }
+      return cells;
+    }
+    animState.kcells = buildCache(2.2, COL.k, 'K');
+    animState.vcells = buildCache(-2.2, COL.v, 'V');
+
+    // axis labels
+    const lp = makeLabel('position  →', '#8b98a9', 34); lp.position.set(0, 5.2, z0 - 1.4); grp.add(lp);
+    const lk = makeLabel('K cache', '#58c4ff', 40, '#0f1420'); lk.position.set(x0 - 2.4, 2.2, 0); grp.add(lk);
+    const lv = makeLabel('V cache', '#7ee787', 40, '#0f1420'); lv.position.set(x0 - 2.4, -2.2, 0); grp.add(lv);
+    const lkv = makeLabel('8 kv heads', '#c792ea', 30); lkv.position.set(x0 - 1.6, 4.6, z0 + M.nKVHeads * (cellD + gap) / 2); lkv.rotation.z = 0; grp.add(lkv);
+
+    // Query heads fanning into kv head (GQA) — small column on the left
+    const qgrp = new THREE.Group(); grp.add(qgrp);
+
+    animState.pos = 0;
+    const setPos = (pos) => {
+      animState.pos = pos;
+      [...animState.kcells, ...animState.vcells].forEach(m => {
+        const filled = m.userData.p <= pos;
+        const cur = m.userData.p === pos;
+        m.material.color.setHex(cur ? COL.hot : m.userData.baseColor);
+        m.material.opacity = cur ? 0.95 : (filled ? 0.6 : 0.12);
+        m.scale.y = cur ? 1.8 : 1;
+        m.material.emissive = new THREE.Color(cur ? COL.hot : 0x000000);
+        m.material.emissiveIntensity = cur ? 0.5 : 0;
+      });
+      document.getElementById('readout').innerHTML =
+        `<div class="stat">decode position <b>${pos}</b> · cache holds <b>${pos + 1}</b> slices`
+        + ` × <b>${M.kvDim}</b> floats × <b>${M.layers}</b> layers × 2 (K,V)</div>`
+        + `<div class="stat" style="margin-top:4px">= <b>${(((pos + 1) * M.kvDim * M.layers * 2 * 4) / 1024).toFixed(1)}</b> KB live so far</div>`;
+    };
+    animState.setPos = setPos;
+    setPos(6);
+
+    document.getElementById('controls').innerHTML =
+      `<label>pos</label><input id="pos" type="range" min="0" max="${POS - 1}" value="6">`
+      + `<button id="step" class="ghost">＋ decode one</button>`;
+    document.getElementById('pos').oninput = e => setPos(+e.target.value);
+    document.getElementById('step').onclick = () => {
+      const n = Math.min(POS - 1, animState.pos + 1);
+      document.getElementById('pos').value = n; setPos(n);
+    };
+  },
+  frame() {}
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+// VIEW 3 — ATTENTION MATH: streaming flash vs two-pass kv (animated online softmax)
+// ═════════════════════════════════════════════════════════════════════════════
+views.flash = {
+  side: `
+    <h2>Decode attention, step by step</h2>
+    <p>For the current token, one query <span class="tag-q pill">q</span> attends over cached
+       <span class="tag-k pill">k</span>/<span class="tag-v pill">v</span> at positions <code>0..pos</code>.
+       Both kernels compute the same result; they differ in <b>how many passes</b> over the cache they take.</p>
+    <div class="divider"></div>
+    <h2 style="color:var(--muted)">kv_attention_kernel — 2 passes</h2>
+    <pre>pass 1: for s in 0..pos  <span class="cm">// find max</span>
+          m = max(m, q·k_s·scale)
+pass 2: for s in 0..pos  <span class="cm">// recompute!</span>
+          p = exp(q·k_s·scale - m)
+          denom += p; acc += p·v_s
+out = acc/denom</pre>
+    <h2 style="color:var(--accent)">flash_decode — 1 streaming pass</h2>
+    <pre>for s in 0..pos:
+  score  = q·k_s·scale
+  next_m = max(m, score)
+  <span class="hl">rescale = exp(m - next_m)</span>
+  acc = acc*rescale + exp(score-next_m)*v_s
+  l   = l  *rescale + exp(score-next_m)
+  m   = next_m
+out = acc/l</pre>
+    <p>The online‑softmax trick: whenever a new score beats the running max <code>m</code>, every earlier term is
+       corrected by <code>exp(m_old − m_new)</code> — so the denominator <code>l</code> and weighted sum <code>acc</code> stay valid
+       without ever storing the full score row. That is FlashAttention's numerical heart (though a real kernel also tiles K/V through shared memory).</p>
+    <div class="legend">
+      <div><span class="sw" style="background:var(--k)"></span> score bar (q·k)</div>
+      <div><span class="sw" style="background:var(--hot)"></span> running max m — resets trigger a rescale</div>
+      <div><span class="sw" style="background:var(--v)"></span> accumulator acc / denom l</div>
+    </div>
+  `,
+  build() {
+    dist = 58; rotX = -0.2; rotY = 0.0;
+    const grp = new THREE.Group(); root.add(grp);
+    animState.grp = grp;
+
+    // Deterministic pseudo-scores over N cached positions (rises then dips so max updates a few times)
+    const N = 16;
+    const scores = [];
+    for (let s = 0; s < N; s++) {
+      const v = 1.6 * Math.sin(s * 0.55) + 0.09 * s + 0.6 * Math.sin(s * 1.9);
+      scores.push(v);
+    }
+    animState.scores = scores; animState.N = N;
+
+    const barW = 1.3, gap = 0.5, x0 = -(N * (barW + gap)) / 2;
+    animState.bars = [];
+    for (let s = 0; s < N; s++) {
+      const m = box(barW, 0.2, barW, COL.k, 0.85);
+      m.position.set(x0 + s * (barW + gap) + barW / 2, 0, 0);
+      m.userData.base = m.position.clone();
+      m.userData.tip = `pos ${s} · score=q·k·scale = ${scores[s].toFixed(2)}`;
+      grp.add(m); pickables.push(m); animState.bars.push(m);
+      const lab = makeLabel(`${s}`, '#8b98a9', 30); lab.position.set(m.position.x, -1.4, 0); lab.scale.multiplyScalar(0.8); grp.add(lab);
+    }
+    // running-max marker (a red plane)
+    const mline = box(N * (barW + gap), 0.06, barW + 0.4, COL.hot, 0.55);
+    mline.position.set(0, 0, 0); grp.add(mline); animState.mline = mline;
+
+    // accumulator / denom pillars on the right
+    const accBar = box(2.4, 0.2, 2.4, COL.v, 0.9); accBar.position.set(x0 + N * (barW + gap) + 4, 0, 0); grp.add(accBar); animState.accBar = accBar;
+    const accLab = makeLabel('acc / l', '#7ee787', 34, '#0f1420'); accLab.position.set(accBar.position.x, -1.6, 0); grp.add(accLab);
+
+    animState.mode = 'flash';
+    animState.playing = false; animState.i = -1; animState.tacc = 0;
+
+    const rebuildControls = () => {
+      document.getElementById('controls').innerHTML =
+        `<button id="mode">mode: <b>${animState.mode === 'flash' ? 'flash (1‑pass)' : 'kv (2‑pass)'}</b></button>`
+        + `<button id="play">▶ run</button>`
+        + `<button id="step" class="ghost">step ›</button>`
+        + `<button id="reset" class="ghost">reset</button>`;
+      document.getElementById('mode').onclick = () => { animState.mode = animState.mode === 'flash' ? 'kv' : 'flash'; resetAnim(); rebuildControls(); };
+      document.getElementById('play').onclick = () => { animState.playing = !animState.playing; };
+      document.getElementById('step').onclick = () => { animState.playing = false; stepOne(); };
+      document.getElementById('reset').onclick = () => { resetAnim(); };
+    };
+
+    // online-softmax state
+    let m = -1e30, l = 0, acc = 0;
+    const V = scores.map((_, s) => 0.5 + 0.5 * Math.cos(s * 0.8)); // fake v[d] scalar per pos
+    animState.V = V;
+
+    const resetVisual = () => {
+      animState.bars.forEach(b => { b.scale.y = 1; b.position.y = 0; b.material.color.setHex(COL.k); b.material.emissiveIntensity = 0; });
+      animState.accBar.scale.set(1, 1, 1); animState.accBar.position.y = 0;
+      animState.mline.position.y = 0; animState.mline.material.opacity = 0;
+    };
+    const resetAnim = () => {
+      m = -1e30; l = 0; acc = 0; animState.i = -1; animState.pass = 1; animState.playing = false; animState.tacc = 0;
+      resetVisual();
+      readout('idle');
+    };
+    const readout = (note) => {
+      document.getElementById('readout').innerHTML =
+        `<div class="stat">mode <b>${animState.mode}</b> · pos <b>${Math.max(0, animState.i)}/${N - 1}</b>`
+        + (animState.mode === 'kv' ? ` · pass <b>${animState.pass}</b>` : '') + `</div>`
+        + `<div class="stat" style="margin-top:4px">m=<b>${m <= -1e29 ? '−∞' : m.toFixed(2)}</b> · l=<b>${l.toFixed(2)}</b> · acc=<b>${acc.toFixed(2)}</b> ${note ? '· ' + note : ''}</div>`;
+    };
+    animState.readout = readout;
+
+    const scoreScale = 0.9;
+    function stepOne() {
+      const N = animState.N;
+      if (animState.mode === 'flash') {
+        animState.i++;
+        if (animState.i >= N) { animState.playing = false; animState.i = N - 1; readout('done → out = acc/l'); return; }
+        const s = animState.i;
+        const score = scores[s] * scoreScale;
+        const next_m = Math.max(m, score);
+        const rescale = Math.exp(m - next_m);       // ≤1
+        const w = Math.exp(score - next_m);
+        const beat = score > m;                      // did we set a new max?
+        acc = acc * rescale + w * V[s];
+        l = l * rescale + w;
+        m = next_m;
+        // visuals
+        animState.bars.forEach((b, k) => {
+          b.material.color.setHex(k === s ? COL.hot : (k < s ? 0x2a3a55 : COL.k));
+          b.material.emissiveIntensity = 0;
+        });
+        const b = animState.bars[s];
+        b.scale.y = 1 + Math.max(0, score) * 2.4; b.position.y = (b.scale.y - 1) * 0.1;
+        b.material.emissive = new THREE.Color(COL.hot); b.material.emissiveIntensity = 0.5;
+        animState.mline.material.opacity = 0.55;
+        animState.mline.position.y = Math.max(0, m) * 0.24;
+        animState.accBar.scale.set(1 + l * 0.25, 1 + Math.max(0, acc) * 0.5, 1 + l * 0.25);
+        readout(beat ? '★ new max → earlier terms rescaled by exp(Δm)' : 'score ≤ m, no rescale');
+      } else {
+        // kv 2-pass
+        if (animState.pass === 1) {
+          animState.i++;
+          if (animState.i >= N) { animState.pass = 2; animState.i = -1; readout('pass 1 done: m fixed → pass 2 recomputes q·k'); return; }
+          const s = animState.i;
+          const score = scores[s] * scoreScale;
+          m = Math.max(m, score);
+          animState.bars.forEach((b, k) => b.material.color.setHex(k === s ? COL.hot : (k < s ? 0x2a3a55 : COL.k)));
+          const b = animState.bars[s]; b.scale.y = 1 + Math.max(0, score) * 2.4; b.position.y = (b.scale.y - 1) * 0.1;
+          animState.mline.material.opacity = 0.55; animState.mline.position.y = Math.max(0, m) * 0.24;
+          readout('pass 1: scanning for max m');
+        } else {
+          animState.i++;
+          if (animState.i >= N) { animState.playing = false; animState.i = N - 1; readout('done → out = acc/denom'); return; }
+          const s = animState.i;
+          const score = scores[s] * scoreScale;       // recomputed q·k — the wasteful part
+          const w = Math.exp(score - m);
+          l += w; acc += w * V[s];
+          animState.bars.forEach((b, k) => { b.material.color.setHex(k === s ? COL.v : (k <= animState.i ? 0x2f4d3a : 0x2a3a55)); });
+          animState.accBar.scale.set(1 + l * 0.25, 1 + Math.max(0, acc) * 0.5, 1 + l * 0.25);
+          readout('pass 2: recompute q·k, exp, accumulate');
+        }
+      }
+    }
+    animState.stepOne = stepOne;
+    animState.resetAnim = resetAnim;
+    resetAnim(); rebuildControls();
+  },
+  frame(dt) {
+    if (!animState.playing) return;
+    animState.tacc += dt;
+    if (animState.tacc > 0.45) { animState.tacc = 0; animState.stepOne(); }
+  }
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+// VIEW 4 — PIPELINE: the whole decode step, kernel by kernel
+// ═════════════════════════════════════════════════════════════════════════════
+views.pipeline = {
+  side: `
+    <h2>One decode step</h2>
+    <p><code>decode_one(token, pos, flash)</code> runs <b>16 <code>__global__</code> launches per layer</b> (each box below), ×16 layers, plus embedding once and a final norm + logits matvec. Each box is one launch.</p>
+    <p><b>= 16·16 + 3 = 259 kernel launches per generated token.</b> All small and latency-bound — every launch pays fixed dispatch overhead, which is a big reason this is slow.</p>
+    <p>The most-launched kernel by far is <code>matvec_bf16_kernel</code> (orange): the 7 projections per layer + logits = <b>113 matvec launches / token</b>. It is also the heaviest work — the MLP (dim↔8192) and the 128256‑row logits projection dominate runtime. <b>Attention is just 1 launch / layer</b>; it is not where the time goes at this size.</p>
+    <div class="legend">
+      <div><span class="sw" style="background:var(--k)"></span> reads / writes KV cache</div>
+      <div><span class="sw" style="background:var(--q)"></span> matvec (bf16 weights → f32) — 113×/token</div>
+      <div><span class="sw" style="background:#6f7cff"></span> elementwise / norm</div>
+    </div>
+    <div class="divider"></div>
+    <p class="muted">A fused kernel would collapse many of these into one launch. Here each stays separate so it stays readable. Weights stream as bf16, widened to f32 in‑kernel via <code>bf16_to_float</code>.</p>
+  `,
+  build() {
+    dist = 62; rotX = -0.15; rotY = 0.0;
+    const grp = new THREE.Group(); root.add(grp);
+    const O = '#ffb454', E = '#6f7cff', C = '#58c4ff';
+    // 1 embedding (per token) + 16 per-layer launches shown for one layer
+    const steps = [
+      ['embedding', E, 'embedding_kernel <<<1,256>>> · gather row (per token, once)'],
+      ['rmsnorm', E, 'rmsnorm_kernel <<<1,256>>> · input_layernorm'],
+      ['q_proj', O, 'matvec <<<(2048,1),256>>> · dim→dim'],
+      ['k_proj', O, 'matvec <<<(512,1),256>>> · dim→kv_dim'],
+      ['v_proj', O, 'matvec <<<(512,1),256>>> · dim→kv_dim'],
+      ['RoPE q', E, 'rope_kernel · rotate q channel pairs @ pos'],
+      ['RoPE k', E, 'rope_kernel · rotate k channel pairs @ pos'],
+      ['store KV', C, 'store_kv_cache_kernel · write k,v → cache[layer,pos]'],
+      ['attention', C, 'kv_attention (2-pass) OR flash_decode (1-pass) <<<8,256>>> · 1 launch'],
+      ['o_proj', O, 'matvec <<<(2048,1),256>>> · dim→dim'],
+      ['+ residual', E, 'add_kernel · x += attn_out'],
+      ['rmsnorm', E, 'rmsnorm_kernel · post_attention_layernorm'],
+      ['gate_proj', O, 'matvec <<<(8192,1),256>>> · dim→hidden'],
+      ['up_proj', O, 'matvec <<<(8192,1),256>>> · dim→hidden'],
+      ['SiLU·mul', E, 'silu_mul_kernel · gate = silu(gate)*up'],
+      ['down_proj', O, 'matvec <<<(2048,1),256>>> · hidden→dim'],
+      ['+ residual', E, 'add_kernel · x += mlp_out'],
+    ];
+
+    const w = 3.3, h = 1.5, gap = 0.7, perRow = 6;
+    const x0 = -(perRow * (w + gap)) / 2;
+    steps.forEach((s, i) => {
+      const row = Math.floor(i / perRow), col = i % perRow;
+      const m = box(w, h, 0.8, parseInt(s[1].slice(1), 16), 0.92);
+      edges(m, 0x000000, 0.3);
+      m.position.set(x0 + col * (w + gap) + w / 2, -row * (h + 1.5) + 3, 0);
+      m.userData.tip = `${s[0]} — ${s[2]}`;
+      m.userData.base = m.position.clone(); m.userData.i = i;
+      grp.add(m); pickables.push(m);
+      const lab = makeLabel(s[0], '#0b0e14', 28); lab.position.copy(m.position); lab.position.z = 0.5; lab.scale.multiplyScalar(0.68); grp.add(lab);
+      if (i > 0 && col !== 0) {
+        const a = box(gap, 0.08, 0.08, 0x54637a, 0.8);
+        a.position.set(m.position.x - w / 2 - gap / 2, m.position.y, 0); grp.add(a);
+      }
+    });
+    animState.grp = grp; animState.n = steps.length;
+    animState.i = 0; animState.tacc = 0;
+    document.getElementById('controls').innerHTML =
+      `<button id="run">▶ trace launches</button><label>1 embedding + (16 / layer × 16 layers) + norm + logits</label>`;
+    document.getElementById('run').onclick = () => { animState.run = true; animState.i = 0; animState.tacc = 0; };
+    document.getElementById('readout').innerHTML =
+      `<div class="stat"><b>16</b> launches / layer · <b>${16 * M.layers + 3}</b> launches / token</div>`
+      + `<div class="stat" style="margin-top:4px">of which <b>113</b> are matvec_bf16 — the most frequent &amp; heaviest kernel</div>`;
+  },
+  frame(dt) {
+    const g = animState.grp; if (!g || !animState.run) return;
+    animState.tacc += dt;
+    if (animState.tacc > 0.24) {
+      animState.tacc = 0;
+      g.children.forEach(c => { if (c.userData.base) { c.material.emissiveIntensity = 0; } });
+      const target = g.children.find(c => c.userData.i === animState.i);
+      if (target) { target.material.emissive = new THREE.Color(0xffffff); target.material.emissiveIntensity = 0.6; target.position.z = 0.6; setTimeout(() => target.position.z = 0, 110); }
+      animState.i++;
+      if (animState.i >= animState.n) { animState.run = false; }
+    }
+  }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Nav
+// ─────────────────────────────────────────────────────────────────────────────
+const navItems = [
+  ['gpu', 'GPU threads'],
+  ['cache', 'KV cache'],
+  ['flash', 'Flash vs KV'],
+  ['pipeline', 'Decode pipeline'],
+];
+const nav = document.getElementById('nav');
+navItems.forEach(([k, label]) => {
+  const b = document.createElement('button'); b.textContent = label; b.dataset.v = k;
+  b.onclick = () => setView(k); nav.appendChild(b);
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Loop
+// ─────────────────────────────────────────────────────────────────────────────
+let last = performance.now();
+function tick(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  root.rotation.x = lerp(root.rotation.x, rotX, 0.12);
+  root.rotation.y = lerp(root.rotation.y, rotY, 0.12);
+  camera.position.set(0, 6, dist); camera.lookAt(0, 0, 0);
+  if (views[active] && views[active].frame) views[active].frame(dt);
+  renderer.render(scene, camera);
+  requestAnimationFrame(tick);
+}
+resize();
+const initial = views[location.hash.slice(1)] ? location.hash.slice(1) : 'gpu';
+setView(initial);
+addEventListener('hashchange', () => { const v = location.hash.slice(1); if (views[v] && v !== active) setView(v); });
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>

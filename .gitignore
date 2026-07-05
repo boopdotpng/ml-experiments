@@ -1,0 +1,24 @@
+__pycache__/
+*.pyc
+.venv/
+.cache/
+.vscode/
+*.bak
+
+# trained / exported weights (fast to retrain, or fetched by download.sh)
+model.safetensors
+*.pt
+*.hllm
+
+# llama3 tokenizer + config files fetched by download.sh
+llama3-tinygrad/config.json
+llama3-tinygrad/generation_config.json
+llama3-tinygrad/tokenizer.json
+llama3-tinygrad/tokenizer_config.json
+llama3-tinygrad/special_tokens_map.json
+llama3-tinygrad/chat_template.jinja
+
+# hip-llama3 build artifacts and checkpoints
+hip-llama3/build/
+hip-llama3/checkpoints/
+hip-llama3/models/

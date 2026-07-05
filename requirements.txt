@@ -1,0 +1,8 @@
+# tinygrad from the pinned submodule (clone with --recursive)
+-e ./tinygrad
+
+torch
+numpy
+matplotlib
+safetensors
+transformers
