@@ -17,13 +17,21 @@ with PyTorch ports where training speed on NVIDIA mattered.
 
 Roughly in order, each building on the last:
 
-- [ ] KV cache + attention optimizations (paged/flash attention, GQA tricks)
+- [ ] Evals + benchmark harness (perplexity, small MMLU-style eval, tokens/sec +
+      memory tracking) — the scoreboard for everything below
+- [ ] Finish llama3-tinygrad generation, then KV cache + attention optimizations
+      (paged/flash attention, GQA tricks)
 - [ ] Inference optimizations (quantization, speculative decoding, batching)
+- [ ] Pretrain a small GPT from scratch on real text (TinyStories / FineWeb-edu
+      slice), plus a BPE tokenizer trained from scratch and a mini scaling-law study
+- [ ] Interpretability on the small pretrained GPT (induction heads, logit lens,
+      activation patching — continuing the `inspect_*` scripts)
 - [ ] Training optimizations (mixed precision, fused kernels, distributed data/tensor parallel)
 - [ ] Mixture-of-experts inference (routing, expert parallelism)
-- [ ] RL fine-tuning (PPO, GRPO, and friends)
+- [ ] SFT + LoRA/QLoRA on Llama 3.2 1B
+- [ ] Preference tuning: DPO first, then PPO, GRPO, and friends
 - [ ] End goal: train a "frontier" LLM from start to finish as a series of experiments —
-      data pipeline, pretraining, SFT, RL, eval
+      data pipeline, tokenizer, pretraining, SFT, RL, eval
 
 ## Setup
 
