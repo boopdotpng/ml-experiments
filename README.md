@@ -13,6 +13,18 @@ with PyTorch ports where training speed on NVIDIA mattered.
 | [llama3-tinygrad](llama3-tinygrad/) | Llama 3.2 1B Instruct inference in tinygrad, loading HF safetensors directly. | human |
 | [hip-llama3](hip-llama3/) | Readable HIP/C++ inference runner for Llama 3.2 1B (bf16 weights, hand-written kernels). | AI |
 
+## Next
+
+Roughly in order, each building on the last:
+
+- [ ] KV cache + attention optimizations (paged/flash attention, GQA tricks)
+- [ ] Inference optimizations (quantization, speculative decoding, batching)
+- [ ] Training optimizations (mixed precision, fused kernels, distributed data/tensor parallel)
+- [ ] Mixture-of-experts inference (routing, expert parallelism)
+- [ ] RL fine-tuning (PPO, GRPO, and friends)
+- [ ] End goal: train a "frontier" LLM from start to finish as a series of experiments —
+      data pipeline, pretraining, SFT, RL, eval
+
 ## Setup
 
 ```sh
