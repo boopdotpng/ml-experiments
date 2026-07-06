@@ -1,0 +1,5 @@
+# Optional PyTorch CUDA build for NVIDIA GPUs.
+--index-url https://download.pytorch.org/whl/cu132
+
+torch
+torchvision

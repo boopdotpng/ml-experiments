@@ -1,7 +1,8 @@
 # tinygrad is not on here: clone it into ./tinygrad (gitignored) and run
 #   uv pip install -e ./tinygrad
-torch
-torchvision
+# PyTorch is optional and hardware-specific. Install one of:
+#   uv pip install -r requirements-torch-amd.txt
+#   uv pip install -r requirements-torch-nvidia.txt
 numpy
 matplotlib
 pillow
