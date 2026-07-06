@@ -1,4 +1,4 @@
-from tinygrad import Tensor,  nn, dtypes, TinyJit, Variable
+from tinygrad import Tensor,  nn, dtypes, TinyJit, Variable, GlobalCounters
 from tinygrad.nn.state import safe_load, load_state_dict
 from tokenizers import Tokenizer
 import argparse, json, time
@@ -88,8 +88,9 @@ class Attention:
 
     # kv cache
     # BS=1 inference for now
-    self.k_cache = None
-    self.v_cache = None
+    # single tensor: (2, B, n_kv_heads, max_seq_len, head_dim), [0]=k [1]=v
+    # bf16: cache is storage only, nothing accumulates in it. scores matmul still accumulates in fp32
+    self.kv_cache = None
   def __call__(self, x:Tensor, start_pos:int=0) -> Tensor:
     # batch, seq_len, ...
     B, S, _ = x.shape
@@ -103,16 +104,15 @@ class Attention:
     q = apply_rope(q, start_pos) # (B, n_heads, S, head_dim)
     k = apply_rope(k, start_pos) # (B, n_kv_heads, S, head_dim)
 
-    if self.k_cache is None:
-      self.k_cache = Tensor.zeros(1, n_kv_heads, max_seq_len, head_dim, dtype=k.dtype, device=k.device).realize()
-      self.v_cache = Tensor.zeros(1, n_kv_heads, max_seq_len, head_dim, dtype=v.dtype, device=v.device).realize()
+    if self.kv_cache is None:
+      self.kv_cache = Tensor.zeros(2, 1, n_kv_heads, max_seq_len, head_dim, dtype=dtypes.bfloat16, device=k.device).realize()
 
-    # store k and v 
-    k_cache = Tensor(self.k_cache.uop.after(self.k_cache[:B, :, start_pos:start_pos+S, :].uop.store(k.uop)))
-    v_cache = Tensor(self.v_cache.uop.after(self.v_cache[:B, :, start_pos:start_pos+S, :].uop.store(v.uop)))
+    # store k and v in one kernel
+    kv = Tensor.stack(k.cast(dtypes.bfloat16), v.cast(dtypes.bfloat16)) # (2, B, n_kv_heads, S, head_dim)
+    kv_cache = Tensor(self.kv_cache.uop.after(self.kv_cache[:, :B, :, start_pos:start_pos+S, :].uop.store(kv.uop)))
 
-    k = k_cache[:B, :, :start_pos+S, :] # (B, n_kv_heads, T, head_dim), T = start_pos + S
-    v = v_cache[:B, :, :start_pos+S, :] # (B, n_kv_heads, T, head_dim)
+    k = kv_cache[0, :B, :, :start_pos+S, :] # (B, n_kv_heads, T, head_dim), T = start_pos + S
+    v = kv_cache[1, :B, :, :start_pos+S, :] # (B, n_kv_heads, T, head_dim)
 
     # gqa 
     k = k.repeat_interleave(n_heads // n_kv_heads, 1) # (B, n_heads, T, head_dim)
@@ -164,12 +164,15 @@ class Model:
   def forward(self, x: Tensor, start_pos:int):
     x = self.embed_tokens(x)
     for layer in self.layers: x = layer(x, start_pos)
-    x = self.norm(x) 
-    return x @ self.embed_tokens.weight.T
+    x = self.norm(x)
+    logits = x @ self.embed_tokens.weight.T
+    # greedy sample on device, inside the JIT. avoids re-scheduling an argmax graph every token
+    return logits[:, -1, :].flatten().argmax()
 
   def __call__(self, x:Tensor, start_pos:int=0) -> Tensor:
     if x.shape[1] == 1 and start_pos != 0:
-      return self.decode_jit(x.contiguous(), start_pos)
+      sp = Variable("start_pos", 1, max_seq_len-1).bind(start_pos)
+      return self.decode_jit(x.contiguous(), sp)
     return self.forward(x, start_pos)
 
 def convert_from_huggingface_for_this_model(weights:dict[str, Tensor]) -> dict[str, Tensor]:
@@ -185,10 +188,6 @@ def load_eos_ids(path="./generation_config.json") -> set[int]:
     eos = json.load(f)["eos_token_id"]
   return set(eos if isinstance(eos, list) else [eos])
 
-def sample_next_token(logits:Tensor) -> int:
-  # Greedy for now. This keeps the loop deterministic while the model is being built.
-  return int(logits.argmax().numpy())
-
 def generate(model:Model, tokenizer:Tokenizer, prompt:str, max_new_tokens:int|None, add_bos:bool=True):
   prompt_ids = tokenizer.encode(prompt, add_special_tokens=add_bos).ids
   if max_new_tokens is None:
@@ -198,16 +197,18 @@ def generate(model:Model, tokenizer:Tokenizer, prompt:str, max_new_tokens:int|No
 
   eos_ids = load_eos_ids()
   print(f"prompt: {prompt!r}")
-  print(f"prompt ids: {prompt_ids}")
   print("generated: ", end="", flush=True)
 
-  prefill_start = time.perf_counter()
-  logits = model(Tensor([prompt_ids]), start_pos=0).realize()
-  next_id = sample_next_token(logits[0, -1])
-  prefill_time = time.perf_counter() - prefill_start
+  GlobalCounters.reset()
+  st = time.perf_counter()
+  next_id = model(Tensor([prompt_ids]), start_pos=0).item()
+  pt = time.perf_counter()
+  prefill_mem = GlobalCounters.global_mem
 
   generated_ids = []
   decode_times = []
+  GlobalCounters.reset()
+  gt = time.perf_counter()
   for i in range(max_new_tokens):
     generated_ids.append(next_id)
     print(tokenizer.decode([next_id], skip_special_tokens=True), end="", flush=True)
@@ -215,20 +216,19 @@ def generate(model:Model, tokenizer:Tokenizer, prompt:str, max_new_tokens:int|No
       break
 
     start_pos = len(prompt_ids) + i
-    sp = Variable("start_pos", 1, max_seq_len-1).bind(start_pos)
-    decode_start = time.perf_counter()
-    logits = model(Tensor([[next_id]]), start_pos=sp).realize()
-    next_id = sample_next_token(logits[0, -1])
-    decode_times.append(time.perf_counter() - decode_start)
+    ds = time.perf_counter()
+    next_id = model(Tensor([[next_id]]), start_pos=start_pos).item()
+    decode_times.append(time.perf_counter() - ds)
 
+  et = time.perf_counter()
+  gen_time = et - gt
   print()
-  print(f"prefill: {len(prompt_ids)} tok in {prefill_time*1e3:.2f} ms, {len(prompt_ids)/prefill_time:.2f} tok/s")
-  if decode_times:
-    decode_time = sum(decode_times)
-    print(f"decode: {len(decode_times)} tok in {decode_time*1e3:.2f} ms, {len(decode_times)/decode_time:.2f} tok/s")
-    if len(decode_times) > 2:
-      steady_decode_time = sum(decode_times[2:])
-      print(f"decode steady-state: {len(decode_times)-2} tok in {steady_decode_time*1e3:.2f} ms, {(len(decode_times)-2)/steady_decode_time:.2f} tok/s")
+  print(f"prefill:{len(prompt_ids)/(pt-st):4.0f} tok/s, {prefill_mem/(pt-st)/1e9:7.2f} GB/s")
+  print(f"gen:{len(generated_ids)/gen_time if generated_ids else 0:8.2f} tok/s, {GlobalCounters.global_mem/gen_time/1e9:7.2f} GB/s, "
+        f"{GlobalCounters.global_mem//1000000}/{GlobalCounters.mem_used//1000000} MB")
+  if len(decode_times) > 2:
+    steady = sum(decode_times[2:])
+    print(f"gen steady-state: {len(decode_times)-2} tok in {steady*1e3:.2f} ms, {(len(decode_times)-2)/steady:.2f} tok/s")
   return generated_ids
 
 def main():
