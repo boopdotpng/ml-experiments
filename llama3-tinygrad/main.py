@@ -1,7 +1,7 @@
 from tinygrad import Tensor,  nn, dtypes, TinyJit, Variable
 from tinygrad.nn.state import safe_load, load_state_dict
 from tokenizers import Tokenizer
-import argparse, json
+import argparse, json, time
 import math
 
 # Llama 3.2 1B config
@@ -201,10 +201,13 @@ def generate(model:Model, tokenizer:Tokenizer, prompt:str, max_new_tokens:int|No
   print(f"prompt ids: {prompt_ids}")
   print("generated: ", end="", flush=True)
 
-  logits = model(Tensor([prompt_ids]), start_pos=0)
+  prefill_start = time.perf_counter()
+  logits = model(Tensor([prompt_ids]), start_pos=0).realize()
   next_id = sample_next_token(logits[0, -1])
+  prefill_time = time.perf_counter() - prefill_start
 
   generated_ids = []
+  decode_times = []
   for i in range(max_new_tokens):
     generated_ids.append(next_id)
     print(tokenizer.decode([next_id], skip_special_tokens=True), end="", flush=True)
@@ -213,10 +216,19 @@ def generate(model:Model, tokenizer:Tokenizer, prompt:str, max_new_tokens:int|No
 
     start_pos = len(prompt_ids) + i
     sp = Variable("start_pos", 1, max_seq_len-1).bind(start_pos)
-    logits = model(Tensor([[next_id]]), start_pos=sp)
+    decode_start = time.perf_counter()
+    logits = model(Tensor([[next_id]]), start_pos=sp).realize()
     next_id = sample_next_token(logits[0, -1])
+    decode_times.append(time.perf_counter() - decode_start)
 
   print()
+  print(f"prefill: {len(prompt_ids)} tok in {prefill_time*1e3:.2f} ms, {len(prompt_ids)/prefill_time:.2f} tok/s")
+  if decode_times:
+    decode_time = sum(decode_times)
+    print(f"decode: {len(decode_times)} tok in {decode_time*1e3:.2f} ms, {len(decode_times)/decode_time:.2f} tok/s")
+    if len(decode_times) > 2:
+      steady_decode_time = sum(decode_times[2:])
+      print(f"decode steady-state: {len(decode_times)-2} tok in {steady_decode_time*1e3:.2f} ms, {(len(decode_times)-2)/steady_decode_time:.2f} tok/s")
   return generated_ids
 
 def main():
