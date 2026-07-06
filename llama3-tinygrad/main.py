@@ -47,8 +47,8 @@ COS, SIN = rope_table() # both (8192, 64)
 
 def apply_rope(x: Tensor, pos: int):
   S = x.shape[2]
-  cos = COS[pos:pos+S].reshape(1, 1, S, head_dim)
-  sin = SIN[pos:pos+S].reshape(1, 1, S, head_dim)
+  cos = COS[pos:pos+S].cast(x.dtype).reshape(1, 1, S, head_dim)
+  sin = SIN[pos:pos+S].cast(x.dtype).reshape(1, 1, S, head_dim)
 
   x1 = x[..., :head_dim//2]
   x2 = x[..., head_dim//2:]
@@ -65,7 +65,9 @@ class RMSNorm:
     # square, avg across last dim, add eps
     # div by sqrt above ^
     # multiply eltwise by weights
-    x = x / ((x**2).mean(axis=-1, keepdim=True)+self.eps).sqrt()
+    dtype = x.dtype
+    xf = x.float()
+    x = (xf * (xf.square().mean(axis=-1, keepdim=True)+self.eps).rsqrt()).cast(dtype)
     return x * self.weight
 
 class MLP:
@@ -128,7 +130,7 @@ class Attention:
       causal_mask = Tensor.full((1,1,S,T), float("-inf"), buffer=False).triu(start_pos+1)
       scores = scores + causal_mask
     
-    attn = scores.softmax(-1)
+    attn = scores.cast(q.dtype).softmax(-1)
 
     out = attn @ v # (B, n_heads, S, head_dim)
     out = out.transpose(1,2).reshape(B, S, n_heads * head_dim) # (B, S, emb_dim)
