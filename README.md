@@ -38,13 +38,13 @@ Roughly in order, each building on the last:
 ```sh
 git clone git@github.com:boopdotpng/ml-experiments.git
 cd ml-experiments
-git clone https://github.com/tinygrad/tinygrad.git   # local clone, gitignored
+git clone https://github.com/tinygrad/tinygrad.git tiny   # local clone, gitignored
 uv venv && source .venv/bin/activate
 uv pip install -r requirements.txt
 # Optional PyTorch installs:
 # uv pip install -r requirements-torch-amd.txt    # AMD/ROCm
 # uv pip install -r requirements-torch-nvidia.txt # NVIDIA/CUDA
-uv pip install -e ./tinygrad
+uv pip install -e ./tiny
 ./download.sh   # fetches Llama 3.2 1B weights + tokenizer (~2.4 GB)
 ```
 

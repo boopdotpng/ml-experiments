@@ -1,5 +1,5 @@
-# tinygrad is not on here: clone it into ./tinygrad (gitignored) and run
-#   uv pip install -e ./tinygrad
+# tinygrad is not on here: clone it into ./tiny (gitignored) and run
+#   uv pip install -e ./tiny
 # PyTorch is optional and hardware-specific. Install one of:
 #   uv pip install -r requirements-torch-amd.txt
 #   uv pip install -r requirements-torch-nvidia.txt

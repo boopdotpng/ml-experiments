@@ -5,7 +5,7 @@ __pycache__/
 *.bak
 
 # local clones (root-level only; add-transformer/pytorch etc. stay tracked)
-/tinygrad/
+/tiny/
 /pytorch/
 
 # trained / exported weights (fast to retrain, or fetched by download.sh)
