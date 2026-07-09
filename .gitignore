@@ -6,6 +6,7 @@ __pycache__/
 
 # local clones (root-level only; add-transformer/pytorch etc. stay tracked)
 /tiny/
+/tinygrad/
 /pytorch/
 
 # trained / exported weights (fast to retrain, or fetched by download.sh)
