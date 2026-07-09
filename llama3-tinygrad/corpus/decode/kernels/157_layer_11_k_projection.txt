@@ -1,0 +1,120 @@
+K157 — k_projection
+===================
+tinygrad_commit: 9512dc30f4577060c08fcada23cacb22202b644a
+model: Llama-3.2-1B-Instruct decode, B=1 S=1 start_pos=Variable[1,8191] bound to 4
+capture: lazy Tensor UOps; CPU is a storage tag only; no backend lowering; no hardware device opened; no Tensor realized
+layer: 11
+depends_on: K156
+intent: RMS-normalized hidden @ K weight; FP32 accumulation, BF16 store
+semantic_anchors: A158/g2368
+
+LAUNCH-BOUNDARY WITNESS (summary only; already rangeified, not lowering input)
+scheduled_sink_nodes: 32
+output_buffers: 512xbfloat16
+range_reductions: ADD[2048]
+applied_optimizations: none (KernelInfo.applied_opts == ())
+
+PRISTINE SEMANTIC SLICE
+This slice is from raw_graph.txt before transform_to_call. It stops at earlier
+REDUCE/STORE anchors. Fused/split launches may share or aggregate anchors; the
+intent line above is the authoritative annotation for the launch boundary.
+slice_nodes: 82
+earlier_semantic_anchors: A001,A011,A015,A025,A029,A039,A043,A053,A057,A067,A071,A081,A085,A095,A099,A109,A113,A123,A127,A137,A141,A151,A155,A156
+
+OP HISTOGRAM
+     25  CAST
+     23  ADD
+      8  RESHAPE
+      6  CONST
+      6  STACK
+      4  MUL
+      2  RECIPROCAL
+      2  EXPAND
+      2  BUFFER
+      2  PERMUTE
+      1  SQRT
+      1  REDUCE
+
+TOPOLOGICAL SLICE
+n0000  g0002  CONST          shape=()                           dtype=weakint        arg=1
+n0001  g0039  STACK          shape=(3,)                         dtype=weakint        <- n0000, n0000, n0000
+n0002  g0049  CONST          shape=()                           dtype=weakint        arg=2048
+n0003  g0067  CONST          shape=()                           dtype=float          arg=ConstFloat(2048.0)
+n0004  g0068  RESHAPE        shape=(1, 1, 1)                    dtype=float          <- n0003, n0001
+n0005  g0069  RECIPROCAL     shape=(1, 1, 1)                    dtype=float          <- n0004
+n0006  g0071  CONST          shape=()                           dtype=float          arg=ConstFloat(1e-05)
+n0007  g0072  RESHAPE        shape=(1, 1, 1)                    dtype=float          <- n0006, n0001
+n0008  g0076  STACK          shape=(3,)                         dtype=weakint        <- n0000, n0000, n0002
+n0009  g0083  STACK          shape=(4,)                         dtype=weakint        <- n0000, n0000, n0000, n0002
+n0010  g0158  CONST          shape=()                           dtype=weakint        arg=512
+n0011  g0159  STACK          shape=(4,)                         dtype=weakint        <- n0000, n0000, n0010, n0002
+n0012  g0161  CONST          shape=()                           dtype=weakint        arg=1048576
+n0013  g0163  STACK          shape=(2,)                         dtype=weakint        <- n0010, n0002
+n0014  g0166  STACK          shape=(3,)                         dtype=weakint        <- n0000, n0002, n0010
+n0015  g0285  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:011
+n0016  g0286  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:001, n0015
+n0017  g0355  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:015
+n0018  g0356  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0016, n0017
+n0019  g0496  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:025
+n0020  g0497  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0018, n0019
+n0021  g0551  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:029
+n0022  g0552  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0020, n0021
+n0023  g0692  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:039
+n0024  g0693  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0022, n0023
+n0025  g0747  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:043
+n0026  g0748  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0024, n0025
+n0027  g0888  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:053
+n0028  g0889  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0026, n0027
+n0029  g0943  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:057
+n0030  g0944  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0028, n0029
+n0031  g1084  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:067
+n0032  g1085  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0030, n0031
+n0033  g1139  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:071
+n0034  g1140  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0032, n0033
+n0035  g1280  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:081
+n0036  g1281  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0034, n0035
+n0037  g1335  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:085
+n0038  g1336  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0036, n0037
+n0039  g1476  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:095
+n0040  g1477  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0038, n0039
+n0041  g1531  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:099
+n0042  g1532  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0040, n0041
+n0043  g1672  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:109
+n0044  g1673  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0042, n0043
+n0045  g1727  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:113
+n0046  g1728  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0044, n0045
+n0047  g1868  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:123
+n0048  g1869  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0046, n0047
+n0049  g1923  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:127
+n0050  g1924  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0048, n0049
+n0051  g2064  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:137
+n0052  g2065  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0050, n0051
+n0053  g2119  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:141
+n0054  g2120  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0052, n0053
+n0055  g2260  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:151
+n0056  g2261  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0054, n0055
+n0057  g2315  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:155
+n0058  g2316  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0056, n0057
+n0059  g2317  CAST           shape=(1, 1, 2048)                 dtype=float          <- n0058
+n0060  g2320  RESHAPE        shape=(1, 1, 1)                    dtype=float          <- anchor:156, n0001
+n0061  g2321  MUL            shape=(1, 1, 1)                    dtype=float          <- n0060, n0005
+n0062  g2322  ADD            shape=(1, 1, 1)                    dtype=float          <- n0061, n0007
+n0063  g2323  SQRT           shape=(1, 1, 1)                    dtype=float          <- n0062
+n0064  g2324  RECIPROCAL     shape=(1, 1, 1)                    dtype=float          <- n0063
+n0065  g2325  EXPAND         shape=(1, 1, 2048)                 dtype=float          <- n0064, n0008
+n0066  g2326  MUL            shape=(1, 1, 2048)                 dtype=float          <- n0059, n0065
+n0067  g2327  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- n0066
+n0068  g2328  BUFFER         shape=(2048,)                      dtype=bfloat16       arg=ParamArg(141, device='CPU') <- n0002
+n0069  g2329  RESHAPE        shape=(1, 1, 2048)                 dtype=bfloat16       <- n0068, n0008
+n0070  g2330  MUL            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0067, n0069
+n0071  g2331  RESHAPE        shape=(1, 1, 1, 2048)              dtype=bfloat16       <- n0070, n0009
+n0072  g2359  EXPAND         shape=(1, 1, 512, 2048)            dtype=bfloat16       <- n0071, n0011
+n0073  g2360  BUFFER         shape=(1048576,)                   dtype=bfloat16       arg=ParamArg(143, device='CPU') <- n0012
+n0074  g2361  RESHAPE        shape=(512, 2048)                  dtype=bfloat16       <- n0073, n0013
+n0075  g2362  PERMUTE        shape=(2048, 512)                  dtype=bfloat16       arg=(1, 0) <- n0074
+n0076  g2363  RESHAPE        shape=(1, 2048, 512)               dtype=bfloat16       <- n0075, n0014
+n0077  g2364  PERMUTE        shape=(1, 512, 2048)               dtype=bfloat16       arg=(0, 2, 1) <- n0076
+n0078  g2365  RESHAPE        shape=(1, 1, 512, 2048)            dtype=bfloat16       <- n0077, n0011
+n0079  g2366  MUL            shape=(1, 1, 512, 2048)            dtype=bfloat16       <- n0072, n0078
+n0080  g2367  CAST           shape=(1, 1, 512, 2048)            dtype=float          <- n0079
+n0081  g2368  REDUCE         shape=(1, 1, 512)                  dtype=float          arg=combine=ADD axes=(3,) <- n0080

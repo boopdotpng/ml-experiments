@@ -1,5 +1,11 @@
 ## kernels required to run llama3-tinygrad fast
 
+> **Version note:** the 216-kernel METAL count below is a historical runtime
+> observation from a different tinygrad checkout. The hardware-free corpus in
+> `corpus/decode/` is pinned to tinygrad `9512dc30` and schedules 231 compute
+> launches. Use `corpus/decode/manifest.txt` for the current graph; do not mix
+> launch counts across tinygrad revisions.
+
 Model in `main.py` is Llama 3.2 1B:
 
 - `emb_dim=2048`, `n_layers=16`, `n_heads=32`, `n_kv_heads=8`, `head_dim=64`, `mlp_size=8192`

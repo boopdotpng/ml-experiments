@@ -1,0 +1,38 @@
+K228 — argmax_partial_max
+=========================
+tinygrad_commit: 9512dc30f4577060c08fcada23cacb22202b644a
+model: Llama-3.2-1B-Instruct decode, B=1 S=1 start_pos=Variable[1,8191] bound to 4
+capture: lazy Tensor UOps; CPU is a storage tag only; no backend lowering; no hardware device opened; no Tensor realized
+layer: --
+depends_on: K227
+intent: first 501-way chunked max over vocabulary
+semantic_anchors: A228/g3325
+
+LAUNCH-BOUNDARY WITNESS (summary only; already rangeified, not lowering input)
+scheduled_sink_nodes: 14
+output_buffers: 256xbfloat16
+range_reductions: MAX[501]
+applied_optimizations: none (KernelInfo.applied_opts == ())
+
+PRISTINE SEMANTIC SLICE
+This slice is from raw_graph.txt before transform_to_call. It stops at earlier
+REDUCE/STORE anchors. Fused/split launches may share or aggregate anchors; the
+intent line above is the authoritative annotation for the launch boundary.
+slice_nodes: 7
+earlier_semantic_anchors: A227
+
+OP HISTOGRAM
+      2  CONST
+      2  RESHAPE
+      1  CAST
+      1  STACK
+      1  REDUCE
+
+TOPOLOGICAL SLICE
+n0000  g0002  CONST          shape=()                           dtype=weakint        arg=1
+n0001  g0004  CONST          shape=()                           dtype=weakint        arg=128256
+n0002  g3321  CAST           shape=(1, 1, 128256)               dtype=bfloat16       <- anchor:227
+n0003  g3322  STACK          shape=(2,)                         dtype=weakint        <- n0000, n0001
+n0004  g3323  RESHAPE        shape=(1, 128256)                  dtype=bfloat16       <- n0002, n0003
+n0005  g3324  RESHAPE        shape=(128256,)                    dtype=bfloat16       <- n0004, n0001
+n0006  g3325  REDUCE         shape=()                           dtype=bfloat16       arg=combine=MAX axes=(0,) <- n0005

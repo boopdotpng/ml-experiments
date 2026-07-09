@@ -1,0 +1,55 @@
+K230 — argmax_finish
+====================
+tinygrad_commit: 9512dc30f4577060c08fcada23cacb22202b644a
+model: Llama-3.2-1B-Instruct decode, B=1 S=1 start_pos=Variable[1,8191] bound to 4
+capture: lazy Tensor UOps; CPU is a storage tag only; no backend lowering; no hardware device opened; no Tensor realized
+layer: --
+depends_on: K229
+intent: final max over 256 candidate indices
+semantic_anchors: A230/g3349
+
+LAUNCH-BOUNDARY WITNESS (summary only; already rangeified, not lowering input)
+scheduled_sink_nodes: 14
+output_buffers: 1xint
+range_reductions: MAX[256]
+applied_optimizations: none (KernelInfo.applied_opts == ())
+
+PRISTINE SEMANTIC SLICE
+This slice is from raw_graph.txt before transform_to_call. It stops at earlier
+REDUCE/STORE anchors. Fused/split launches may share or aggregate anchors; the
+intent line above is the authoritative annotation for the launch boundary.
+slice_nodes: 20
+earlier_semantic_anchors: A227,A228,A229
+
+OP HISTOGRAM
+      5  RESHAPE
+      4  CONST
+      3  EXPAND
+      2  CAST
+      2  CMPNE
+      1  STACK
+      1  ADD
+      1  MUL
+      1  REDUCE
+
+TOPOLOGICAL SLICE
+n0000  g0002  CONST          shape=()                           dtype=weakint        arg=1
+n0001  g0004  CONST          shape=()                           dtype=weakint        arg=128256
+n0002  g0043  CONST          shape=()                           dtype=bool           arg=True
+n0003  g3321  CAST           shape=(1, 1, 128256)               dtype=bfloat16       <- anchor:227
+n0004  g3322  STACK          shape=(2,)                         dtype=weakint        <- n0000, n0001
+n0005  g3323  RESHAPE        shape=(1, 128256)                  dtype=bfloat16       <- n0003, n0004
+n0006  g3324  RESHAPE        shape=(128256,)                    dtype=bfloat16       <- n0005, n0001
+n0007  g3326  RESHAPE        shape=(1,)                         dtype=bfloat16       <- anchor:228, n0000
+n0008  g3327  EXPAND         shape=(128256,)                    dtype=bfloat16       <- n0007, n0001
+n0009  g3328  CMPNE          shape=(128256,)                    dtype=bool           <- n0006, n0008
+n0010  g3329  RESHAPE        shape=(1,)                         dtype=bool           <- n0002, n0000
+n0011  g3330  EXPAND         shape=(128256,)                    dtype=bool           <- n0010, n0001
+n0012  g3331  CMPNE          shape=(128256,)                    dtype=bool           <- n0009, n0011
+n0013  g3332  CAST           shape=(128256,)                    dtype=int            <- n0012
+n0014  g3344  CONST          shape=()                           dtype=int            arg=128257
+n0015  g3345  RESHAPE        shape=(1,)                         dtype=int            <- n0014, n0000
+n0016  g3346  EXPAND         shape=(128256,)                    dtype=int            <- n0015, n0001
+n0017  g3347  ADD            shape=(128256,)                    dtype=int            <- anchor:229, n0016
+n0018  g3348  MUL            shape=(128256,)                    dtype=int            <- n0013, n0017
+n0019  g3349  REDUCE         shape=()                           dtype=int            arg=combine=MAX axes=(0,) <- n0018

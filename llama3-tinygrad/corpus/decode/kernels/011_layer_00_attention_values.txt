@@ -1,0 +1,109 @@
+K011 — attention_values
+=======================
+tinygrad_commit: 9512dc30f4577060c08fcada23cacb22202b644a
+model: Llama-3.2-1B-Instruct decode, B=1 S=1 start_pos=Variable[1,8191] bound to 4
+capture: lazy Tensor UOps; CPU is a storage tag only; no backend lowering; no hardware device opened; no Tensor realized
+layer: 00
+depends_on: K005,K010
+intent: softmax probabilities @ V-history
+semantic_anchors: A010/g0270
+
+LAUNCH-BOUNDARY WITNESS (summary only; already rangeified, not lowering input)
+scheduled_sink_nodes: 36
+output_buffers: 2048xbfloat16
+range_reductions: ADD[(start_pos+1)]
+applied_optimizations: none (KernelInfo.applied_opts == ())
+
+PRISTINE SEMANTIC SLICE
+This slice is from raw_graph.txt before transform_to_call. It stops at earlier
+REDUCE/STORE anchors. Fused/split launches may share or aggregate anchors; the
+intent line above is the authoritative annotation for the launch boundary.
+slice_nodes: 66
+earlier_semantic_anchors: A006,A007,A008,A009
+
+OP HISTOGRAM
+     14  STACK
+     12  CONST
+     11  RESHAPE
+      7  EXPAND
+      5  MUL
+      5  CAST
+      2  ADD
+      1  PARAM
+      1  BIND
+      1  BUFFER
+      1  AFTER
+      1  DETACH
+      1  EXP2
+      1  RECIPROCAL
+      1  SHRINK
+      1  PERMUTE
+      1  REDUCE
+
+TOPOLOGICAL SLICE
+n0000  g0002  CONST          shape=()                           dtype=weakint        arg=1
+n0001  g0016  CONST          shape=()                           dtype=weakint        arg=0
+n0002  g0100  CONST          shape=()                           dtype=weakint        arg=32
+n0003  g0101  CONST          shape=()                           dtype=weakint        arg=64
+n0004  g0107  CONST          shape=()                           dtype=weakint        arg=8192
+n0005  g0110  STACK          shape=()                           dtype=void          
+n0006  g0111  PARAM          shape=()                           dtype=weakint        arg=ParamArg(-1, vmin_vmax=(1, 8191), name='start_pos', addrspace=AddrSpace.ALU) <- n0005
+n0007  g0112  CONST          shape=()                           dtype=weakint        arg=4
+n0008  g0113  BIND           shape=()                           dtype=weakint        <- n0006, n0007
+n0009  g0126  CONST          shape=()                           dtype=bfloat16       arg=ConstFloat(-1.0)
+n0010  g0127  STACK          shape=(4,)                         dtype=weakint        <- n0000, n0000, n0000, n0000
+n0011  g0128  RESHAPE        shape=(1, 1, 1, 1)                 dtype=bfloat16       <- n0009, n0010
+n0012  g0146  ADD            shape=()                           dtype=weakint        <- n0008, n0000
+n0013  g0147  STACK          shape=(5,)                         dtype=weakint        <- n0000, n0002, n0000, n0012, n0003
+n0014  g0149  CONST          shape=()                           dtype=weakint        arg=8388608
+n0015  g0150  BUFFER         shape=(8388608,)                   dtype=bfloat16       arg=ParamArg(183, device='CPU') <- n0014
+n0016  g0151  CONST          shape=()                           dtype=weakint        arg=2
+n0017  g0152  CONST          shape=()                           dtype=weakint        arg=8
+n0018  g0153  STACK          shape=(5,)                         dtype=weakint        <- n0016, n0000, n0017, n0004, n0003
+n0019  g0154  RESHAPE        shape=(2, 1, 8, 8192, 64)          dtype=bfloat16       <- n0015, n0018
+n0020  g0208  STACK          shape=(5,)                         dtype=weakint        <- n0000, n0001, n0001, n0001, n0001
+n0021  g0212  AFTER          shape=(2, 1, 8, 8192, 64)          dtype=bfloat16       <- n0019, anchor:006
+n0022  g0213  STACK          shape=(5,)                         dtype=weakint        <- n0000, n0000, n0017, n0012, n0003
+n0023  g0215  STACK          shape=(4,)                         dtype=weakint        <- n0000, n0017, n0012, n0003
+n0024  g0217  STACK          shape=(5,)                         dtype=weakint        <- n0000, n0017, n0000, n0012, n0003
+n0025  g0219  STACK          shape=(5,)                         dtype=weakint        <- n0000, n0017, n0007, n0012, n0003
+n0026  g0221  STACK          shape=(4,)                         dtype=weakint        <- n0000, n0002, n0012, n0003
+n0027  g0224  STACK          shape=(5,)                         dtype=weakint        <- n0000, n0002, n0000, n0003, n0012
+n0028  g0230  CONST          shape=()                           dtype=float          arg=ConstFloat(0.125)
+n0029  g0231  RESHAPE        shape=(1, 1, 1, 1)                 dtype=float          <- n0028, n0010
+n0030  g0232  STACK          shape=(4,)                         dtype=weakint        <- n0000, n0002, n0000, n0012
+n0031  g0233  EXPAND         shape=(1, 32, 1, (start_pos+1))    dtype=float          <- n0029, n0030
+n0032  g0234  MUL            shape=(1, 32, 1, (start_pos+1))    dtype=float          <- anchor:007, n0031
+n0033  g0235  CAST           shape=(1, 32, 1, (start_pos+1))    dtype=bfloat16       <- n0032
+n0034  g0237  STACK          shape=(4,)                         dtype=weakint        <- n0000, n0002, n0000, n0000
+n0035  g0238  RESHAPE        shape=(1, 32, 1, 1)                dtype=bfloat16       <- anchor:008, n0034
+n0036  g0239  DETACH         shape=(1, 32, 1, 1)                dtype=bfloat16       <- n0035
+n0037  g0240  EXPAND         shape=(1, 32, 1, (start_pos+1))    dtype=bfloat16       <- n0036, n0030
+n0038  g0241  EXPAND         shape=(1, 32, 1, (start_pos+1))    dtype=bfloat16       <- n0011, n0030
+n0039  g0242  MUL            shape=(1, 32, 1, (start_pos+1))    dtype=bfloat16       <- n0037, n0038
+n0040  g0243  ADD            shape=(1, 32, 1, (start_pos+1))    dtype=bfloat16       <- n0033, n0039
+n0041  g0244  CAST           shape=(1, 32, 1, (start_pos+1))    dtype=float          <- n0040
+n0042  g0245  CONST          shape=()                           dtype=float          arg=ConstFloat(1.4426950408889634)
+n0043  g0246  RESHAPE        shape=(1, 1, 1, 1)                 dtype=float          <- n0042, n0010
+n0044  g0247  EXPAND         shape=(1, 32, 1, (start_pos+1))    dtype=float          <- n0043, n0030
+n0045  g0248  MUL            shape=(1, 32, 1, (start_pos+1))    dtype=float          <- n0041, n0044
+n0046  g0249  EXP2           shape=(1, 32, 1, (start_pos+1))    dtype=float          <- n0045
+n0047  g0250  CAST           shape=(1, 32, 1, (start_pos+1))    dtype=bfloat16       <- n0046
+n0048  g0253  RESHAPE        shape=(1, 32, 1, 1)                dtype=float          <- anchor:009, n0034
+n0049  g0254  CAST           shape=(1, 32, 1, 1)                dtype=bfloat16       <- n0048
+n0050  g0255  RECIPROCAL     shape=(1, 32, 1, 1)                dtype=bfloat16       <- n0049
+n0051  g0256  EXPAND         shape=(1, 32, 1, (start_pos+1))    dtype=bfloat16       <- n0050, n0030
+n0052  g0257  MUL            shape=(1, 32, 1, (start_pos+1))    dtype=bfloat16       <- n0047, n0051
+n0053  g0258  STACK          shape=(5,)                         dtype=weakint        <- n0000, n0002, n0000, n0000, n0012
+n0054  g0259  RESHAPE        shape=(1, 32, 1, 1, (start_pos+1)) dtype=bfloat16       <- n0052, n0053
+n0055  g0260  EXPAND         shape=(1, 32, 1, 64, (start_pos+1)) dtype=bfloat16       <- n0054, n0027
+n0056  g0261  SHRINK         shape=(1, 1, 8, (start_pos+1), 64) dtype=bfloat16       <- n0021, n0020, n0022
+n0057  g0262  RESHAPE        shape=(1, 8, (start_pos+1), 64)    dtype=bfloat16       <- n0056, n0023
+n0058  g0263  RESHAPE        shape=(1, 8, 1, (start_pos+1), 64) dtype=bfloat16       <- n0057, n0024
+n0059  g0264  EXPAND         shape=(1, 8, 4, (start_pos+1), 64) dtype=bfloat16       <- n0058, n0025
+n0060  g0265  RESHAPE        shape=(1, 32, (start_pos+1), 64)   dtype=bfloat16       <- n0059, n0026
+n0061  g0266  RESHAPE        shape=(1, 32, 1, (start_pos+1), 64) dtype=bfloat16       <- n0060, n0013
+n0062  g0267  PERMUTE        shape=(1, 32, 1, 64, (start_pos+1)) dtype=bfloat16       arg=(0, 1, 2, 4, 3) <- n0061
+n0063  g0268  MUL            shape=(1, 32, 1, 64, (start_pos+1)) dtype=bfloat16       <- n0055, n0062
+n0064  g0269  CAST           shape=(1, 32, 1, 64, (start_pos+1)) dtype=float          <- n0063
+n0065  g0270  REDUCE         shape=(1, 32, 1, 64)               dtype=float          arg=combine=ADD axes=(4,) <- n0064
