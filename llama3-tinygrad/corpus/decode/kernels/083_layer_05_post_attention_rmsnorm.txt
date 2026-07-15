@@ -1,0 +1,55 @@
+K083 — post_attention_rmsnorm
+=============================
+tinygrad_commit: 9512dc30f4577060c08fcada23cacb22202b644a
+model: Llama-3.2-1B-Instruct decode, B=1 S=1 start_pos=Variable[1,8191] bound to 4
+capture: lazy Tensor UOps; CPU is a storage tag only; no backend lowering; no hardware device opened; no Tensor realized
+layer: 05
+depends_on: K082
+intent: FP32 mean-square, epsilon, sqrt, reciprocal
+semantic_anchors: A082/g1284
+
+LAUNCH-BOUNDARY WITNESS (summary only; already rangeified, not lowering input)
+scheduled_sink_nodes: 18
+output_buffers: 1xfloat
+range_reductions: ADD[2048]
+applied_optimizations: none (KernelInfo.applied_opts == ())
+
+PRISTINE SEMANTIC SLICE
+This slice is from raw_graph.txt before transform_to_call. It stops at earlier
+REDUCE/STORE anchors. Fused/split launches may share or aggregate anchors; the
+intent line above is the authoritative annotation for the launch boundary.
+slice_nodes: 25
+earlier_semantic_anchors: A001,A011,A015,A025,A029,A039,A043,A053,A057,A067,A071,A081
+
+OP HISTOGRAM
+     12  CAST
+     11  ADD
+      1  MUL
+      1  REDUCE
+
+TOPOLOGICAL SLICE
+n0000  g0285  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:011
+n0001  g0286  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:001, n0000
+n0002  g0355  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:015
+n0003  g0356  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0001, n0002
+n0004  g0496  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:025
+n0005  g0497  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0003, n0004
+n0006  g0551  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:029
+n0007  g0552  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0005, n0006
+n0008  g0692  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:039
+n0009  g0693  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0007, n0008
+n0010  g0747  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:043
+n0011  g0748  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0009, n0010
+n0012  g0888  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:053
+n0013  g0889  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0011, n0012
+n0014  g0943  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:057
+n0015  g0944  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0013, n0014
+n0016  g1084  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:067
+n0017  g1085  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0015, n0016
+n0018  g1139  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:071
+n0019  g1140  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0017, n0018
+n0020  g1280  CAST           shape=(1, 1, 2048)                 dtype=bfloat16       <- anchor:081
+n0021  g1281  ADD            shape=(1, 1, 2048)                 dtype=bfloat16       <- n0019, n0020
+n0022  g1282  CAST           shape=(1, 1, 2048)                 dtype=float          <- n0021
+n0023  g1283  MUL            shape=(1, 1, 2048)                 dtype=float          <- n0022, n0022
+n0024  g1284  REDUCE         shape=(1, 1)                       dtype=float          arg=combine=ADD axes=(2,) <- n0023

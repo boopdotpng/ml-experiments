@@ -1,0 +1,100 @@
+K000 — embedding_partial
+========================
+tinygrad_commit: 9512dc30f4577060c08fcada23cacb22202b644a
+model: Llama-3.2-1B-Instruct decode, B=1 S=1 start_pos=Variable[1,8191] bound to 4
+capture: lazy Tensor UOps; CPU is a storage tag only; no backend lowering; no hardware device opened; no Tensor realized
+layer: --
+depends_on: --
+intent: split embedding lookup: 501 vocabulary rows per partial
+semantic_anchors: A000/g0029,A001/g0062
+
+LAUNCH-BOUNDARY WITNESS (summary only; already rangeified, not lowering input)
+scheduled_sink_nodes: 27
+output_buffers: 524288xbfloat16
+range_reductions: ADD[501]
+applied_optimizations: none (KernelInfo.applied_opts == ())
+
+PRISTINE SEMANTIC SLICE
+This slice is from raw_graph.txt before transform_to_call. It stops at earlier
+REDUCE/STORE anchors. Fused/split launches may share or aggregate anchors; the
+intent line above is the authoritative annotation for the launch boundary.
+slice_nodes: 62
+earlier_semantic_anchors: --
+
+OP HISTOGRAM
+     16  RESHAPE
+     15  CONST
+     12  STACK
+      7  EXPAND
+      2  SHRINK
+      2  REDUCE
+      2  BUFFER
+      2  CMPNE
+      1  PAD
+      1  PERMUTE
+      1  ADD
+      1  WHERE
+
+TOPOLOGICAL SLICE
+n0000  g0001  CONST          shape=()                           dtype=int            arg=1
+n0001  g0002  CONST          shape=()                           dtype=weakint        arg=1
+n0002  g0003  RESHAPE        shape=(1,)                         dtype=int            <- n0000, n0001
+n0003  g0004  CONST          shape=()                           dtype=weakint        arg=128256
+n0004  g0005  EXPAND         shape=(128256,)                    dtype=int            <- n0002, n0003
+n0005  g0006  CONST          shape=()                           dtype=weakint        arg=128255
+n0006  g0007  CONST          shape=()                           dtype=weakint        arg=256511
+n0007  g0008  PAD            shape=(256511,)                    dtype=int            <- n0004, n0005, n0006
+n0008  g0009  STACK          shape=(2,)                         dtype=weakint        <- n0001, n0006
+n0009  g0010  RESHAPE        shape=(1, 256511)                  dtype=int            <- n0007, n0008
+n0010  g0011  CONST          shape=()                           dtype=weakint        arg=128257
+n0011  g0012  STACK          shape=(2,)                         dtype=weakint        <- n0010, n0006
+n0012  g0013  EXPAND         shape=(128257, 256511)             dtype=int            <- n0009, n0011
+n0013  g0014  CONST          shape=()                           dtype=weakint        arg=32899331327
+n0014  g0015  RESHAPE        shape=(32899331327,)               dtype=int            <- n0012, n0013
+n0015  g0016  CONST          shape=()                           dtype=weakint        arg=0
+n0016  g0017  CONST          shape=()                           dtype=weakint        arg=32899203072
+n0017  g0018  SHRINK         shape=(32899203072,)               dtype=int            <- n0014, n0015, n0016
+n0018  g0019  CONST          shape=()                           dtype=weakint        arg=256512
+n0019  g0020  STACK          shape=(2,)                         dtype=weakint        <- n0003, n0018
+n0020  g0021  RESHAPE        shape=(128256, 256512)             dtype=int            <- n0017, n0019
+n0021  g0022  STACK          shape=(2,)                         dtype=weakint        <- n0015, n0015
+n0022  g0023  STACK          shape=(2,)                         dtype=weakint        <- n0003, n0003
+n0023  g0024  SHRINK         shape=(128256, 128256)             dtype=int            <- n0020, n0021, n0022
+n0024  g0025  STACK          shape=(3,)                         dtype=weakint        <- n0003, n0003, n0001
+n0025  g0026  RESHAPE        shape=(128256, 128256, 1)          dtype=int            <- n0023, n0024
+n0026  g0027  RESHAPE        shape=(128256, 128256)             dtype=int            <- n0025, n0022
+n0027  g0028  PERMUTE        shape=(128256, 128256)             dtype=int            arg=(1, 0) <- n0026
+n0028  g0029  REDUCE         shape=(128256,)                    dtype=int            arg=combine=ADD axes=(1,) <- n0027
+n0029  g0030  CONST          shape=()                           dtype=int            arg=-1
+n0030  g0031  RESHAPE        shape=(1,)                         dtype=int            <- n0029, n0001
+n0031  g0032  EXPAND         shape=(128256,)                    dtype=int            <- n0030, n0003
+n0032  g0033  ADD            shape=(128256,)                    dtype=int            <- n0028, n0031
+n0033  g0034  STACK          shape=(3,)                         dtype=weakint        <- n0001, n0001, n0003
+n0034  g0035  RESHAPE        shape=(1, 1, 128256)               dtype=int            <- n0032, n0033
+n0035  g0036  BUFFER         shape=(1,)                         dtype=int            arg=ParamArg(199, device='CPU') <- n0001
+n0036  g0037  STACK          shape=(2,)                         dtype=weakint        <- n0001, n0001
+n0037  g0038  RESHAPE        shape=(1, 1)                       dtype=int            <- n0035, n0036
+n0038  g0039  STACK          shape=(3,)                         dtype=weakint        <- n0001, n0001, n0001
+n0039  g0040  RESHAPE        shape=(1, 1, 1)                    dtype=int            <- n0037, n0038
+n0040  g0041  EXPAND         shape=(1, 1, 128256)               dtype=int            <- n0039, n0033
+n0041  g0042  CMPNE          shape=(1, 1, 128256)               dtype=bool           <- n0034, n0040
+n0042  g0043  CONST          shape=()                           dtype=bool           arg=True
+n0043  g0044  RESHAPE        shape=(1, 1, 1)                    dtype=bool           <- n0042, n0038
+n0044  g0045  EXPAND         shape=(1, 1, 128256)               dtype=bool           <- n0043, n0033
+n0045  g0046  CMPNE          shape=(1, 1, 128256)               dtype=bool           <- n0041, n0044
+n0046  g0047  STACK          shape=(4,)                         dtype=weakint        <- n0001, n0001, n0003, n0001
+n0047  g0048  RESHAPE        shape=(1, 1, 128256, 1)            dtype=bool           <- n0045, n0046
+n0048  g0049  CONST          shape=()                           dtype=weakint        arg=2048
+n0049  g0050  STACK          shape=(4,)                         dtype=weakint        <- n0001, n0001, n0003, n0048
+n0050  g0051  EXPAND         shape=(1, 1, 128256, 2048)         dtype=bool           <- n0047, n0049
+n0051  g0052  CONST          shape=()                           dtype=weakint        arg=262668288
+n0052  g0053  BUFFER         shape=(262668288,)                 dtype=bfloat16       arg=ParamArg(37, device='CPU') <- n0051
+n0053  g0054  STACK          shape=(2,)                         dtype=weakint        <- n0003, n0048
+n0054  g0055  RESHAPE        shape=(128256, 2048)               dtype=bfloat16       <- n0052, n0053
+n0055  g0056  RESHAPE        shape=(1, 1, 128256, 2048)         dtype=bfloat16       <- n0054, n0049
+n0056  g0057  CONST          shape=()                           dtype=bfloat16       arg=ConstFloat(0.0)
+n0057  g0058  RESHAPE        shape=(1, 1)                       dtype=bfloat16       <- n0056, n0036
+n0058  g0059  EXPAND         shape=(128256, 2048)               dtype=bfloat16       <- n0057, n0053
+n0059  g0060  RESHAPE        shape=(1, 1, 128256, 2048)         dtype=bfloat16       <- n0058, n0049
+n0060  g0061  WHERE          shape=(1, 1, 128256, 2048)         dtype=bfloat16       <- n0050, n0055, n0059
+n0061  g0062  REDUCE         shape=(1, 1, 2048)                 dtype=bfloat16       arg=combine=ADD axes=(2,) <- n0060

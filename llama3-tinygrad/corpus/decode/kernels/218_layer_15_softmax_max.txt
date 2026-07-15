@@ -1,0 +1,51 @@
+K218 — softmax_max
+==================
+tinygrad_commit: 9512dc30f4577060c08fcada23cacb22202b644a
+model: Llama-3.2-1B-Instruct decode, B=1 S=1 start_pos=Variable[1,8191] bound to 4
+capture: lazy Tensor UOps; CPU is a storage tag only; no backend lowering; no hardware device opened; no Tensor realized
+layer: 15
+depends_on: K217
+intent: maximum attention score over history
+semantic_anchors: A218/g3197
+
+LAUNCH-BOUNDARY WITNESS (summary only; already rangeified, not lowering input)
+scheduled_sink_nodes: 18
+output_buffers: 32xbfloat16
+range_reductions: MAX[(start_pos+1)]
+applied_optimizations: none (KernelInfo.applied_opts == ())
+
+PRISTINE SEMANTIC SLICE
+This slice is from raw_graph.txt before transform_to_call. It stops at earlier
+REDUCE/STORE anchors. Fused/split launches may share or aggregate anchors; the
+intent line above is the authoritative annotation for the launch boundary.
+slice_nodes: 15
+earlier_semantic_anchors: A217
+
+OP HISTOGRAM
+      4  CONST
+      3  STACK
+      1  PARAM
+      1  BIND
+      1  ADD
+      1  RESHAPE
+      1  EXPAND
+      1  MUL
+      1  CAST
+      1  REDUCE
+
+TOPOLOGICAL SLICE
+n0000  g0002  CONST          shape=()                           dtype=weakint        arg=1
+n0001  g0100  CONST          shape=()                           dtype=weakint        arg=32
+n0002  g0110  STACK          shape=()                           dtype=void          
+n0003  g0111  PARAM          shape=()                           dtype=weakint        arg=ParamArg(-1, vmin_vmax=(1, 8191), name='start_pos', addrspace=AddrSpace.ALU) <- n0002
+n0004  g0112  CONST          shape=()                           dtype=weakint        arg=4
+n0005  g0113  BIND           shape=()                           dtype=weakint        <- n0003, n0004
+n0006  g0127  STACK          shape=(4,)                         dtype=weakint        <- n0000, n0000, n0000, n0000
+n0007  g0146  ADD            shape=()                           dtype=weakint        <- n0005, n0000
+n0008  g0230  CONST          shape=()                           dtype=float          arg=ConstFloat(0.125)
+n0009  g0231  RESHAPE        shape=(1, 1, 1, 1)                 dtype=float          <- n0008, n0006
+n0010  g0232  STACK          shape=(4,)                         dtype=weakint        <- n0000, n0001, n0000, n0007
+n0011  g0233  EXPAND         shape=(1, 32, 1, (start_pos+1))    dtype=float          <- n0009, n0010
+n0012  g3195  MUL            shape=(1, 32, 1, (start_pos+1))    dtype=float          <- anchor:217, n0011
+n0013  g3196  CAST           shape=(1, 32, 1, (start_pos+1))    dtype=bfloat16       <- n0012
+n0014  g3197  REDUCE         shape=(1, 32, 1)                   dtype=bfloat16       arg=combine=MAX axes=(3,) <- n0013

@@ -8,6 +8,7 @@ __pycache__/
 /tiny/
 /tinygrad/
 /pytorch/
+/asteroids/runs/
 
 # trained / exported weights (fast to retrain, or fetched by download.sh)
 model.safetensors
@@ -26,3 +27,7 @@ llama3-tinygrad/chat_template.jinja
 hip-llama3/build/
 hip-llama3/checkpoints/
 hip-llama3/models/
+
+# cuda-llama3 local build/profiling output
+cuda-llama3/build/
+cuda-llama3/benchmark-*.txt

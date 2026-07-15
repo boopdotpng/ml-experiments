@@ -1,0 +1,57 @@
+K110 — output_projection_residual
+=================================
+tinygrad_commit: 9512dc30f4577060c08fcada23cacb22202b644a
+model: Llama-3.2-1B-Instruct decode, B=1 S=1 start_pos=Variable[1,8191] bound to 4
+capture: lazy Tensor UOps; CPU is a storage tag only; no backend lowering; no hardware device opened; no Tensor realized
+layer: 07
+depends_on: K099,K109
+intent: attention output projection plus residual
+semantic_anchors: A109/g1671
+
+LAUNCH-BOUNDARY WITNESS (summary only; already rangeified, not lowering input)
+scheduled_sink_nodes: 21
+output_buffers: 2048xbfloat16
+range_reductions: ADD[2048]
+applied_optimizations: none (KernelInfo.applied_opts == ())
+
+PRISTINE SEMANTIC SLICE
+This slice is from raw_graph.txt before transform_to_call. It stops at earlier
+REDUCE/STORE anchors. Fused/split launches may share or aggregate anchors; the
+intent line above is the authoritative annotation for the launch boundary.
+slice_nodes: 22
+earlier_semantic_anchors: A108
+
+OP HISTOGRAM
+      5  STACK
+      5  RESHAPE
+      3  CONST
+      3  PERMUTE
+      2  CAST
+      1  EXPAND
+      1  BUFFER
+      1  MUL
+      1  REDUCE
+
+TOPOLOGICAL SLICE
+n0000  g0002  CONST          shape=()                           dtype=weakint        arg=1
+n0001  g0049  CONST          shape=()                           dtype=weakint        arg=2048
+n0002  g0076  STACK          shape=(3,)                         dtype=weakint        <- n0000, n0000, n0001
+n0003  g0083  STACK          shape=(4,)                         dtype=weakint        <- n0000, n0000, n0000, n0001
+n0004  g0085  STACK          shape=(4,)                         dtype=weakint        <- n0000, n0000, n0001, n0001
+n0005  g0087  CONST          shape=()                           dtype=weakint        arg=4194304
+n0006  g0089  STACK          shape=(2,)                         dtype=weakint        <- n0001, n0001
+n0007  g0092  STACK          shape=(3,)                         dtype=weakint        <- n0000, n0001, n0001
+n0008  g1658  CAST           shape=(1, 32, 1, 64)               dtype=bfloat16       <- anchor:108
+n0009  g1659  PERMUTE        shape=(1, 1, 32, 64)               dtype=bfloat16       arg=(0, 2, 1, 3) <- n0008
+n0010  g1660  RESHAPE        shape=(1, 1, 2048)                 dtype=bfloat16       <- n0009, n0002
+n0011  g1661  RESHAPE        shape=(1, 1, 1, 2048)              dtype=bfloat16       <- n0010, n0003
+n0012  g1662  EXPAND         shape=(1, 1, 2048, 2048)           dtype=bfloat16       <- n0011, n0004
+n0013  g1663  BUFFER         shape=(4194304,)                   dtype=bfloat16       arg=ParamArg(109, device='CPU') <- n0005
+n0014  g1664  RESHAPE        shape=(2048, 2048)                 dtype=bfloat16       <- n0013, n0006
+n0015  g1665  PERMUTE        shape=(2048, 2048)                 dtype=bfloat16       arg=(1, 0) <- n0014
+n0016  g1666  RESHAPE        shape=(1, 2048, 2048)              dtype=bfloat16       <- n0015, n0007
+n0017  g1667  PERMUTE        shape=(1, 2048, 2048)              dtype=bfloat16       arg=(0, 2, 1) <- n0016
+n0018  g1668  RESHAPE        shape=(1, 1, 2048, 2048)           dtype=bfloat16       <- n0017, n0004
+n0019  g1669  MUL            shape=(1, 1, 2048, 2048)           dtype=bfloat16       <- n0012, n0018
+n0020  g1670  CAST           shape=(1, 1, 2048, 2048)           dtype=float          <- n0019
+n0021  g1671  REDUCE         shape=(1, 1, 2048)                 dtype=float          arg=combine=ADD axes=(3,) <- n0020
