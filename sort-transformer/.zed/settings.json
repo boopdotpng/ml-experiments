@@ -1,0 +1,14 @@
+{
+  "lsp": {
+    "basedpyright": {
+      "settings": {
+        "python": {
+          "pythonPath": "/Users/boop/code/ml/.venv/bin/python"
+        },
+        "basedpyright.analysis": {
+          "extraPaths": ["/Users/boop/code/ml/tinygrad"]
+        }
+      }
+    }
+  }
+}
