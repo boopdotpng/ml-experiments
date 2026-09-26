@@ -3,10 +3,10 @@
     "basedpyright": {
       "settings": {
         "python": {
-          "pythonPath": "/Users/boop/code/ml/.venv/bin/python"
+          "pythonPath": ".venv/bin/python"
         },
         "basedpyright.analysis": {
-          "extraPaths": ["/Users/boop/code/ml/tinygrad"]
+          "extraPaths": ["tinygrad"]
         }
       }
     }
