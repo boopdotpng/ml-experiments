@@ -1,0 +1,16 @@
+[project]
+name = "self-play-chess"
+version = "0.1.0"
+description = "A from-scratch tinygrad chess policy/value transformer"
+requires-python = ">=3.11"
+dependencies = ["tinygrad==0.14.0", "chess==1.11.2", "numpy>=2,<3"]
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["self_play_chess*"]
+
+[tool.setuptools.package-data]
+self_play_chess = ["static/*.html"]
