@@ -1,0 +1,381 @@
+// Readable FP32 training kernels. Each forward is adjacent to its backward.
+// Function bodies used by the Python emitter. Read src/kernels.hip for fixed 1B values.
+#include <hip/hip_runtime.h>
+#include <cmath>
+#include <cstddef>
+
+constexpr int BLOCK = 256;
+
+// Reduce across all 256 threads using shared memory and block-wide barriers.
+__device__ float block_sum(float v, float* scratch) {
+  int lane = threadIdx.x;
+  scratch[lane] = v;
+  __syncthreads();
+  for (int stride = BLOCK / 2; stride; stride /= 2) {
+    if (lane < stride) scratch[lane] += scratch[lane + stride];
+    __syncthreads();
+  }
+  float result = scratch[0];
+  __syncthreads(); // All readers finish before scratch is reused.
+  return result;
+}
+__device__ float block_max(float v, float* scratch) {
+  int lane = threadIdx.x;
+  scratch[lane] = v;
+  __syncthreads();
+  for (int stride = BLOCK / 2; stride; stride /= 2) {
+    if (lane < stride) scratch[lane] = fmaxf(scratch[lane], scratch[lane + stride]);
+    __syncthreads();
+  }
+  float result = scratch[0];
+  __syncthreads();
+  return result;
+}
+
+constexpr int HEAD_DIM = @HEAD_DIM@;
+constexpr int POSITION_OFFSET = @POSITION_OFFSET@;
+
+__device__ double rope_frequency(int pair) {
+  // Scalar angle math uses FP64: tiny frequency errors grow with position.
+  // Activations and stored gradients remain FP32.
+  double f = pow(500000.0, -2.0 * pair / HEAD_DIM);
+  double wavelength = 6.2831853071795864769 / f;
+  if (wavelength > 8192.0) return f / 32.0;
+  if (wavelength < 2048.0) return f;
+  double smooth = (8192.0 / wavelength - 1.0) / 3.0;
+  return (1.0 - smooth) * f / 32.0 + smooth * f;
+}
+
+// BEGIN KERNEL BODIES
+// 1. Embedding gather / scatter-add. Token IDs are integers: no ID gradient.
+__global__ void embedding_forward(const float* table, const int* ids, float* x) {
+  int i = blockIdx.x * BLOCK + threadIdx.x;
+  if (i < tokens * dim) x[i] = table[ids[i / dim] * dim + i % dim];
+}
+__global__ void embedding_backward(const float* dx, const int* ids, float* dtable) {
+  int i = blockIdx.x * BLOCK + threadIdx.x;
+  // Repeated IDs collide. Also ACCUMULATE onto the output-head gradient.
+  if (i < tokens * dim) atomicAdd(dtable + ids[i / dim] * dim + i % dim, dx[i]);
+}
+
+// 2. Linear layer. One GPU thread computes one output element.
+// Forward: y[token, out] = sum_in x[token, in] * w[out, in].
+__global__ void linear_forward(const float* x, const float* w, float* y) {
+  int token = blockIdx.y * blockDim.y + threadIdx.y;
+  int out = blockIdx.x * blockDim.x + threadIdx.x;
+  if (token >= tokens || out >= output_dim) return;
+
+  float sum = 0.0f;
+  for (int in = 0; in < input_dim; ++in) {
+    sum += x[token * input_dim + in] * w[out * input_dim + in];
+  }
+  y[token * output_dim + out] = sum;
+}
+
+// Backward to the input: each output feature contributes to this input feature.
+// dx[token, in] += sum_out dy[token, out] * w[out, in].
+__global__ void linear_backward_input(const float* dy, const float* w, float* dx) {
+  int token = blockIdx.y * blockDim.y + threadIdx.y;
+  int in = blockIdx.x * blockDim.x + threadIdx.x;
+  if (token >= tokens || in >= input_dim) return;
+
+  float sum = 0.0f;
+  for (int out = 0; out < output_dim; ++out) {
+    sum += dy[token * output_dim + out] * w[out * input_dim + in];
+  }
+  dx[token * input_dim + in] += sum;
+}
+
+// Backward to the weights: every token contributes to this shared weight.
+// dw[out, in] += sum_token dy[token, out] * x[token, in].
+__global__ void linear_backward_weight(const float* dy, const float* x, float* dw) {
+  int out = blockIdx.y * blockDim.y + threadIdx.y;
+  int in = blockIdx.x * blockDim.x + threadIdx.x;
+  if (out >= output_dim || in >= input_dim) return;
+
+  float sum = 0.0f;
+  for (int token = 0; token < tokens; ++token) {
+    sum += dy[token * output_dim + out] * x[token * input_dim + in];
+  }
+  dw[out * input_dim + in] += sum;
+}
+
+// 3. RMSNorm. Save one reciprocal RMS r per row, not a D x D Jacobian.
+__global__ void rmsnorm_forward(const float* x, const float* w, float* y, float* r) {
+  __shared__ float scratch[BLOCK];
+  int row = blockIdx.x;
+  float sum = 0;
+  for (int d = threadIdx.x; d < dim; d += BLOCK)
+    sum += x[row * dim + d] * x[row * dim + d];
+  float inv = rsqrtf(block_sum(sum, scratch) / dim + 1e-5f);
+  if (threadIdx.x == 0) r[row] = inv;
+  for (int d = threadIdx.x; d < dim; d += BLOCK)
+    y[row * dim + d] = x[row * dim + d] * inv * w[d];
+}
+__global__ void rmsnorm_backward_input(const float* x, const float* w, const float* r,
+                                       const float* dy, float* dx) {
+  __shared__ float scratch[BLOCK];
+  int row = blockIdx.x;
+  float dot = 0;
+  for (int d = threadIdx.x; d < dim; d += BLOCK)
+    dot += dy[row * dim + d] * w[d] * x[row * dim + d];
+  dot = block_sum(dot, scratch) / dim;
+  float inv = r[row];
+  for (int d = threadIdx.x; d < dim; d += BLOCK) {
+    int i = row * dim + d;
+    dx[i] += inv * w[d] * dy[i] - x[i] * inv * inv * inv * dot;
+  }
+}
+__global__ void rmsnorm_backward_weight(const float* x, const float* r, const float* dy,
+                                        float* dw) {
+  int d = blockIdx.x * BLOCK + threadIdx.x;
+  if (d >= dim) return;
+  float sum = 0;
+  for (int row = 0; row < rows; ++row)
+    sum += dy[row * dim + d] * x[row * dim + d] * r[row];
+  dw[d] += sum;
+}
+
+// 4. RoPE forward rotates a pair; backward applies the transposed rotation.
+__global__ void rope_forward(const float* x, float* y) {
+  int i = blockIdx.x * BLOCK + threadIdx.x;
+  if (i >= batch * seq_len * heads * (head_dim / 2)) return;
+
+  int pair = i % (head_dim / 2);
+  int head = i / (head_dim / 2);
+  int position = (head / heads) % seq_len;
+  int left = head * head_dim + pair;
+  int right = left + head_dim / 2;
+  double angle = (position + POSITION_OFFSET) * rope_frequency(pair);
+  float c = float(cos(angle));
+  float s = float(sin(angle));
+
+  y[left] = c * x[left] - s * x[right];
+  y[right] = s * x[left] + c * x[right];
+}
+
+__global__ void rope_backward(const float* dy, float* dx) {
+  int i = blockIdx.x * BLOCK + threadIdx.x;
+  if (i >= batch * seq_len * heads * (head_dim / 2)) return;
+
+  int pair = i % (head_dim / 2);
+  int head = i / (head_dim / 2);
+  int position = (head / heads) % seq_len;
+  int left = head * head_dim + pair;
+  int right = left + head_dim / 2;
+  double angle = (position + POSITION_OFFSET) * rope_frequency(pair);
+  float c = float(cos(angle));
+  float s = float(sin(angle));
+
+  // Same rotation with the sine signs reversed: R(theta)^T = R(-theta).
+  dx[left] += c * dy[left] + s * dy[right];
+  dx[right] += -s * dy[left] + c * dy[right];
+}
+
+// 5. Causal grouped-query attention scores, S = Q K^T / sqrt(D).
+// Q [B,T,H,D], K [B,T,G,D], S [B,H,T,T]; G shared K/V heads.
+__global__ void attention_scores_forward(const float* q, const float* k, float* s) {
+  int i = blockIdx.x * BLOCK + threadIdx.x;
+  if (i >= batch * q_heads * seq_len * seq_len) return;
+  int key = i % seq_len, t = (i / seq_len) % seq_len, h = (i / (seq_len * seq_len)) % q_heads,
+      b = i / (q_heads * seq_len * seq_len);
+  if (key > t) {
+    s[i] = -INFINITY;
+    return;
+  }
+  int qi = ((b * seq_len + t) * q_heads + h) * head_dim,
+      ki = ((b * seq_len + key) * kv_heads + h / (q_heads / kv_heads)) * head_dim;
+  float sum = 0;
+  for (int d = 0; d < head_dim; ++d)
+    sum += q[qi + d] * k[ki + d];
+  s[i] = sum / sqrtf(float(head_dim));
+}
+__global__ void attention_scores_backward_q(const float* ds, const float* k, float* dq) {
+  int i = blockIdx.x * BLOCK + threadIdx.x;
+  if (i >= batch * seq_len * q_heads * head_dim) return;
+  int d = i % head_dim, h = (i / head_dim) % q_heads, t = (i / (head_dim * q_heads)) % seq_len,
+      b = i / (head_dim * q_heads * seq_len);
+  float sum = 0;
+  for (int key = 0; key <= t; ++key)
+    sum += ds[((b * q_heads + h) * seq_len + t) * seq_len + key] *
+           k[((b * seq_len + key) * kv_heads + h / (q_heads / kv_heads)) * head_dim + d];
+  dq[i] += sum / sqrtf(float(head_dim));
+}
+__global__ void attention_scores_backward_k(const float* ds, const float* q, float* dk) {
+  int i = blockIdx.x * BLOCK + threadIdx.x;
+  if (i >= batch * seq_len * kv_heads * head_dim) return;
+  int d = i % head_dim, g = (i / head_dim) % kv_heads, key = (i / (head_dim * kv_heads)) % seq_len,
+      b = i / (head_dim * kv_heads * seq_len);
+  float sum = 0;
+  // Every Q head sharing this K head contributes; SUM, do not average.
+  for (int h = g * (q_heads / kv_heads); h < (g + 1) * (q_heads / kv_heads); ++h)
+    for (int t = key; t < seq_len; ++t)
+      sum += ds[((b * q_heads + h) * seq_len + t) * seq_len + key] *
+             q[((b * seq_len + t) * q_heads + h) * head_dim + d];
+  dk[i] += sum / sqrtf(float(head_dim));
+}
+
+// 6. Row softmax. Backward is a vector-Jacobian product using a single dot.
+__global__ void softmax_forward(const float* x, float* p) {
+  __shared__ float scratch[BLOCK];
+  int row = blockIdx.x;
+  float mx = -INFINITY;
+  for (int j = threadIdx.x; j < cols; j += BLOCK)
+    mx = fmaxf(mx, x[row * cols + j]);
+  mx = block_max(mx, scratch);
+  float sum = 0;
+  for (int j = threadIdx.x; j < cols; j += BLOCK)
+    sum += expf(x[row * cols + j] - mx);
+  sum = block_sum(sum, scratch);
+  for (int j = threadIdx.x; j < cols; j += BLOCK)
+    p[row * cols + j] = expf(x[row * cols + j] - mx) / sum;
+}
+__global__ void softmax_backward(const float* p, const float* dp, float* dx) {
+  __shared__ float scratch[BLOCK];
+  int row = blockIdx.x;
+  float dot = 0;
+  for (int j = threadIdx.x; j < cols; j += BLOCK)
+    dot += dp[row * cols + j] * p[row * cols + j];
+  dot = block_sum(dot, scratch);
+  for (int j = threadIdx.x; j < cols; j += BLOCK) {
+    int i = row * cols + j;
+    dx[i] += p[i] * (dp[i] - dot); // Causal positions have p=0, hence dx=0.
+  }
+}
+
+// 7. Mix values, O = P V. The backward has a dP and a shared-head dV reduction.
+__global__ void attention_values_forward(const float* p, const float* v, float* o) {
+  int i = blockIdx.x * BLOCK + threadIdx.x;
+  if (i >= batch * seq_len * q_heads * head_dim) return;
+  int d = i % head_dim, h = (i / head_dim) % q_heads, t = (i / (head_dim * q_heads)) % seq_len,
+      b = i / (head_dim * q_heads * seq_len);
+  float sum = 0;
+  for (int key = 0; key <= t; ++key)
+    sum += p[((b * q_heads + h) * seq_len + t) * seq_len + key] *
+           v[((b * seq_len + key) * kv_heads + h / (q_heads / kv_heads)) * head_dim + d];
+  o[i] = sum;
+}
+__global__ void attention_values_backward_p(const float* dout, const float* v, float* dp) {
+  int i = blockIdx.x * BLOCK + threadIdx.x;
+  if (i >= batch * q_heads * seq_len * seq_len) return;
+  int key = i % seq_len, t = (i / seq_len) % seq_len, h = (i / (seq_len * seq_len)) % q_heads,
+      b = i / (q_heads * seq_len * seq_len);
+  if (key > t) return;
+  float sum = 0;
+  for (int d = 0; d < head_dim; ++d)
+    sum += dout[((b * seq_len + t) * q_heads + h) * head_dim + d] *
+           v[((b * seq_len + key) * kv_heads + h / (q_heads / kv_heads)) * head_dim + d];
+  dp[i] += sum;
+}
+__global__ void attention_values_backward_v(const float* dout, const float* p, float* dv) {
+  int i = blockIdx.x * BLOCK + threadIdx.x;
+  if (i >= batch * seq_len * kv_heads * head_dim) return;
+  int d = i % head_dim, g = (i / head_dim) % kv_heads, key = (i / (head_dim * kv_heads)) % seq_len,
+      b = i / (head_dim * kv_heads * seq_len);
+  float sum = 0;
+  for (int h = g * (q_heads / kv_heads); h < (g + 1) * (q_heads / kv_heads); ++h)
+    for (int t = key; t < seq_len; ++t)
+      sum += p[((b * q_heads + h) * seq_len + t) * seq_len + key] *
+             dout[((b * seq_len + t) * q_heads + h) * head_dim + d];
+  dv[i] += sum;
+}
+
+// 8. Residual add. Forward merges two paths; backward sends dY to BOTH.
+__global__ void add_forward(const float* a, const float* b, float* y) {
+  int i = blockIdx.x * BLOCK + threadIdx.x;
+  if (i < elements) y[i] = a[i] + b[i];
+}
+__global__ void add_backward(const float* dy, float* da, float* db) {
+  int i = blockIdx.x * BLOCK + threadIdx.x;
+  if (i < elements) {
+    da[i] += dy[i];
+    db[i] += dy[i];
+  }
+}
+
+// 9. SwiGLU = SiLU(gate) * up. Product rule plus SiLU's derivative.
+__global__ void swiglu_forward(const float* gate, const float* up, float* y) {
+  int i = blockIdx.x * BLOCK + threadIdx.x;
+  if (i < elements) y[i] = gate[i] / (1.0f + expf(-gate[i])) * up[i];
+}
+__global__ void swiglu_backward(const float* gate, const float* up, const float* dy, float* dg,
+                                float* du) {
+  int i = blockIdx.x * BLOCK + threadIdx.x;
+  if (i >= elements) return;
+  float s = 1.0f / (1.0f + expf(-gate[i]));
+  dg[i] += dy[i] * up[i] * (s + gate[i] * s * (1.0f - s));
+  du[i] += dy[i] * gate[i] * s;
+}
+
+// 10. Cross entropy. Labels are already shifted: inputs[t] predicts targets[t].
+__global__ void cross_entropy_forward(const float* logits, const int* targets, float* losses) {
+  __shared__ float scratch[BLOCK];
+  int row = blockIdx.x;
+  float mx = -INFINITY;
+  for (int v = threadIdx.x; v < vocab; v += BLOCK)
+    mx = fmaxf(mx, logits[row * vocab + v]);
+  mx = block_max(mx, scratch);
+  float sum = 0;
+  for (int v = threadIdx.x; v < vocab; v += BLOCK)
+    sum += expf(logits[row * vocab + v] - mx);
+  sum = block_sum(sum, scratch);
+  if (threadIdx.x == 0) losses[row] = logf(sum) + (mx - logits[row * vocab + targets[row]]);
+}
+__global__ void cross_entropy_backward(const float* logits, const int* targets,
+                                       const float* dlosses, float* dlogits) {
+  __shared__ float scratch[BLOCK];
+  int row = blockIdx.x;
+  float mx = -INFINITY;
+  for (int v = threadIdx.x; v < vocab; v += BLOCK)
+    mx = fmaxf(mx, logits[row * vocab + v]);
+  mx = block_max(mx, scratch);
+  float sum = 0;
+  for (int v = threadIdx.x; v < vocab; v += BLOCK)
+    sum += expf(logits[row * vocab + v] - mx);
+  sum = block_sum(sum, scratch);
+  for (int v = threadIdx.x; v < vocab; v += BLOCK)
+    dlogits[row * vocab + v] +=
+        dlosses[row] * (expf(logits[row * vocab + v] - mx) / sum - (v == targets[row]));
+}
+__global__ void mean_forward(const float* losses, float* loss) {
+  __shared__ float scratch[BLOCK];
+  float sum = 0;
+  for (int i = threadIdx.x; i < tokens; i += BLOCK)
+    sum += losses[i];
+  sum = block_sum(sum, scratch);
+  if (threadIdx.x == 0) loss[0] = sum / tokens;
+}
+__global__ void mean_backward(const float* dloss, float* dlosses) {
+  int i = blockIdx.x * BLOCK + threadIdx.x;
+  if (i < tokens) dlosses[i] += dloss[0] / tokens;
+}
+
+// Optimizer is AFTER backward; it isn't part of the chain rule.
+__global__ void sgd_update(float* w, const float* dw, float lr) {
+  int i = blockIdx.x * BLOCK + threadIdx.x;
+  if (i < elements) w[i] -= lr * dw[i];
+}
+
+// BEGIN RUNTIME
+// Tiny C ABI used by the dependency-light Python runner.
+extern "C" {
+int gpu_init(int device) { return hipSetDevice(device); }
+const char* gpu_error(int code) { return hipGetErrorString((hipError_t)code); }
+const char* gpu_name() {
+  static hipDeviceProp_t p;
+  int d = 0;
+  if (hipGetDevice(&d) != hipSuccess || hipGetDeviceProperties(&p, d) != hipSuccess)
+    return "unknown GPU";
+  return p.name;
+}
+int gpu_memory(size_t* available, size_t* total) { return hipMemGetInfo(available, total); }
+int gpu_alloc(void** p, size_t n) { return hipMalloc(p, n); }
+int gpu_free(void* p) { return hipFree(p); }
+int gpu_zero(void* p, size_t n) { return hipMemset(p, 0, n); }
+int gpu_upload(void* p, const void* host, size_t n) {
+  return hipMemcpy(p, host, n, hipMemcpyHostToDevice);
+}
+int gpu_download(void* host, const void* p, size_t n) {
+  return hipMemcpy(host, p, n, hipMemcpyDeviceToHost);
+}
+}

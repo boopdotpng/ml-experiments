@@ -1,0 +1,2 @@
+numpy>=1.26
+# Optional, only needed by tests/validate.py: torch (CPU is sufficient).

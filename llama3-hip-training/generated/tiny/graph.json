@@ -1,0 +1,4024 @@
+{
+  "config": {
+    "name": "tiny",
+    "batch": 2,
+    "seq": 8,
+    "dim": 64,
+    "hidden": 256,
+    "layers": 2,
+    "heads": 4,
+    "kv_heads": 1,
+    "vocab": 128,
+    "position_offset": 0
+  },
+  "parameter_count": 127296,
+  "allocated_bytes": 1424456,
+  "tensors": [
+    {
+      "id": 0,
+      "name": "embedding.weight",
+      "shape": [
+        128,
+        64
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 1,
+      "name": "embedding",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 2,
+      "name": "layer0.attention_norm.weight",
+      "shape": [
+        64
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 3,
+      "name": "layer0.attention_norm",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 4,
+      "name": "layer0.attention_norm.inv_rms",
+      "shape": [
+        16
+      ],
+      "parameter": false,
+      "grad": false
+    },
+    {
+      "id": 5,
+      "name": "layer0.q.weight",
+      "shape": [
+        64,
+        64
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 6,
+      "name": "layer0.q",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 7,
+      "name": "layer0.k.weight",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 8,
+      "name": "layer0.k",
+      "shape": [
+        16,
+        16
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 9,
+      "name": "layer0.v.weight",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 10,
+      "name": "layer0.v",
+      "shape": [
+        16,
+        16
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 11,
+      "name": "layer0.q_rope",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 12,
+      "name": "layer0.k_rope",
+      "shape": [
+        16,
+        16
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 13,
+      "name": "layer0.scores",
+      "shape": [
+        2,
+        4,
+        8,
+        8
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 14,
+      "name": "layer0.probabilities",
+      "shape": [
+        2,
+        4,
+        8,
+        8
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 15,
+      "name": "layer0.context",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 16,
+      "name": "layer0.o.weight",
+      "shape": [
+        64,
+        64
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 17,
+      "name": "layer0.o",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 18,
+      "name": "layer0.attention_residual",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 19,
+      "name": "layer0.ffn_norm.weight",
+      "shape": [
+        64
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 20,
+      "name": "layer0.ffn_norm",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 21,
+      "name": "layer0.ffn_norm.inv_rms",
+      "shape": [
+        16
+      ],
+      "parameter": false,
+      "grad": false
+    },
+    {
+      "id": 22,
+      "name": "layer0.gate.weight",
+      "shape": [
+        256,
+        64
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 23,
+      "name": "layer0.gate",
+      "shape": [
+        16,
+        256
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 24,
+      "name": "layer0.up.weight",
+      "shape": [
+        256,
+        64
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 25,
+      "name": "layer0.up",
+      "shape": [
+        16,
+        256
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 26,
+      "name": "layer0.swiglu",
+      "shape": [
+        16,
+        256
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 27,
+      "name": "layer0.down.weight",
+      "shape": [
+        64,
+        256
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 28,
+      "name": "layer0.down",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 29,
+      "name": "layer0.ffn_residual",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 30,
+      "name": "layer1.attention_norm.weight",
+      "shape": [
+        64
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 31,
+      "name": "layer1.attention_norm",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 32,
+      "name": "layer1.attention_norm.inv_rms",
+      "shape": [
+        16
+      ],
+      "parameter": false,
+      "grad": false
+    },
+    {
+      "id": 33,
+      "name": "layer1.q.weight",
+      "shape": [
+        64,
+        64
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 34,
+      "name": "layer1.q",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 35,
+      "name": "layer1.k.weight",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 36,
+      "name": "layer1.k",
+      "shape": [
+        16,
+        16
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 37,
+      "name": "layer1.v.weight",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 38,
+      "name": "layer1.v",
+      "shape": [
+        16,
+        16
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 39,
+      "name": "layer1.q_rope",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 40,
+      "name": "layer1.k_rope",
+      "shape": [
+        16,
+        16
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 41,
+      "name": "layer1.scores",
+      "shape": [
+        2,
+        4,
+        8,
+        8
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 42,
+      "name": "layer1.probabilities",
+      "shape": [
+        2,
+        4,
+        8,
+        8
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 43,
+      "name": "layer1.context",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 44,
+      "name": "layer1.o.weight",
+      "shape": [
+        64,
+        64
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 45,
+      "name": "layer1.o",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 46,
+      "name": "layer1.attention_residual",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 47,
+      "name": "layer1.ffn_norm.weight",
+      "shape": [
+        64
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 48,
+      "name": "layer1.ffn_norm",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 49,
+      "name": "layer1.ffn_norm.inv_rms",
+      "shape": [
+        16
+      ],
+      "parameter": false,
+      "grad": false
+    },
+    {
+      "id": 50,
+      "name": "layer1.gate.weight",
+      "shape": [
+        256,
+        64
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 51,
+      "name": "layer1.gate",
+      "shape": [
+        16,
+        256
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 52,
+      "name": "layer1.up.weight",
+      "shape": [
+        256,
+        64
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 53,
+      "name": "layer1.up",
+      "shape": [
+        16,
+        256
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 54,
+      "name": "layer1.swiglu",
+      "shape": [
+        16,
+        256
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 55,
+      "name": "layer1.down.weight",
+      "shape": [
+        64,
+        256
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 56,
+      "name": "layer1.down",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 57,
+      "name": "layer1.ffn_residual",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 58,
+      "name": "final_norm.weight",
+      "shape": [
+        64
+      ],
+      "parameter": true,
+      "grad": true
+    },
+    {
+      "id": 59,
+      "name": "final_norm",
+      "shape": [
+        16,
+        64
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 60,
+      "name": "final_norm.inv_rms",
+      "shape": [
+        16
+      ],
+      "parameter": false,
+      "grad": false
+    },
+    {
+      "id": 61,
+      "name": "lm_head",
+      "shape": [
+        16,
+        128
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 62,
+      "name": "token_losses",
+      "shape": [
+        16
+      ],
+      "parameter": false,
+      "grad": true
+    },
+    {
+      "id": 63,
+      "name": "loss",
+      "shape": [
+        1
+      ],
+      "parameter": false,
+      "grad": true
+    }
+  ],
+  "operations": [
+    {
+      "index": 0,
+      "name": "embedding",
+      "kind": "embedding",
+      "out": 1,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        0
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "embedding_forward",
+          "dims": [
+            16,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "dim": 64
+          },
+          "args": [
+            "v[0]",
+            "ids",
+            "v[1]"
+          ],
+          "grid": "4",
+          "block": "256",
+          "kernel": "embedding_forward",
+          "code": "  embedding_forward<<<4, 256>>>(v[0], ids, v[1]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 5
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "embedding_backward",
+          "dims": [
+            16,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "dim": 64
+          },
+          "args": [
+            "g[1]",
+            "ids",
+            "g[0]"
+          ],
+          "grid": "4",
+          "block": "256",
+          "kernel": "embedding_backward",
+          "code": "  embedding_backward<<<4, 256>>>(g[1], ids, g[0]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            0
+          ],
+          "file": "backward.hip",
+          "line": 170
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "name": "layer0.attention_norm",
+      "kind": "rmsnorm",
+      "out": 3,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        1,
+        2
+      ],
+      "saved": [
+        4
+      ],
+      "forward": [
+        {
+          "primitive": "rmsnorm_forward",
+          "dims": [
+            16,
+            64
+          ],
+          "dimensions": {
+            "rows": 16,
+            "dim": 64
+          },
+          "args": [
+            "v[1]",
+            "v[2]",
+            "v[3]",
+            "v[4]"
+          ],
+          "grid": "16",
+          "block": "256",
+          "kernel": "rmsnorm_forward",
+          "code": "  rmsnorm_forward<<<16, 256>>>(v[1], v[2], v[3], v[4]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 8
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "rmsnorm_backward_input",
+          "dims": [
+            16,
+            64
+          ],
+          "dimensions": {
+            "rows": 16,
+            "dim": 64
+          },
+          "args": [
+            "v[1]",
+            "v[2]",
+            "v[4]",
+            "g[3]",
+            "g[1]"
+          ],
+          "grid": "16",
+          "block": "256",
+          "kernel": "rmsnorm_backward_input",
+          "code": "  rmsnorm_backward_input<<<16, 256>>>(v[1], v[2], v[4], g[3], g[1]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            1
+          ],
+          "file": "backward.hip",
+          "line": 165
+        },
+        {
+          "primitive": "rmsnorm_backward_weight",
+          "dims": [
+            16,
+            64
+          ],
+          "dimensions": {
+            "rows": 16,
+            "dim": 64
+          },
+          "args": [
+            "v[1]",
+            "v[4]",
+            "g[3]",
+            "g[2]"
+          ],
+          "grid": "1",
+          "block": "256",
+          "kernel": "rmsnorm_backward_weight",
+          "code": "  rmsnorm_backward_weight<<<1, 256>>>(v[1], v[4], g[3], g[2]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            2
+          ],
+          "file": "backward.hip",
+          "line": 167
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "name": "layer0.q",
+      "kind": "linear",
+      "out": 6,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        3,
+        5
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "linear_forward",
+          "dims": [
+            16,
+            64,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 64,
+            "input_dim": 64
+          },
+          "args": [
+            "v[3]",
+            "v[5]",
+            "v[6]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_forward_hidden",
+          "code": "  linear_forward_hidden<<<dim3(4, 1), dim3(16, 16)>>>(v[3], v[5], v[6]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 11
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "linear_backward_input",
+          "dims": [
+            16,
+            64,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 64,
+            "input_dim": 64
+          },
+          "args": [
+            "g[6]",
+            "v[5]",
+            "g[3]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_input_hidden",
+          "code": "  linear_backward_input_hidden<<<dim3(4, 1), dim3(16, 16)>>>(g[6], v[5], g[3]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            3
+          ],
+          "file": "backward.hip",
+          "line": 160
+        },
+        {
+          "primitive": "linear_backward_weight",
+          "dims": [
+            16,
+            64,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 64,
+            "input_dim": 64
+          },
+          "args": [
+            "g[6]",
+            "v[3]",
+            "g[5]"
+          ],
+          "grid": "dim3(4, 4)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_weight_hidden",
+          "code": "  linear_backward_weight_hidden<<<dim3(4, 4), dim3(16, 16)>>>(g[6], v[3], g[5]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            5
+          ],
+          "file": "backward.hip",
+          "line": 162
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "name": "layer0.k",
+      "kind": "linear",
+      "out": 8,
+      "shape": [
+        16,
+        16
+      ],
+      "inputs": [
+        3,
+        7
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "linear_forward",
+          "dims": [
+            16,
+            16,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 16,
+            "input_dim": 64
+          },
+          "args": [
+            "v[3]",
+            "v[7]",
+            "v[8]"
+          ],
+          "grid": "dim3(1, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_forward_kv",
+          "code": "  linear_forward_kv<<<dim3(1, 1), dim3(16, 16)>>>(v[3], v[7], v[8]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 14
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "linear_backward_input",
+          "dims": [
+            16,
+            16,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 16,
+            "input_dim": 64
+          },
+          "args": [
+            "g[8]",
+            "v[7]",
+            "g[3]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_input_kv",
+          "code": "  linear_backward_input_kv<<<dim3(4, 1), dim3(16, 16)>>>(g[8], v[7], g[3]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            3
+          ],
+          "file": "backward.hip",
+          "line": 155
+        },
+        {
+          "primitive": "linear_backward_weight",
+          "dims": [
+            16,
+            16,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 16,
+            "input_dim": 64
+          },
+          "args": [
+            "g[8]",
+            "v[3]",
+            "g[7]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_weight_kv",
+          "code": "  linear_backward_weight_kv<<<dim3(4, 1), dim3(16, 16)>>>(g[8], v[3], g[7]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            7
+          ],
+          "file": "backward.hip",
+          "line": 157
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "name": "layer0.v",
+      "kind": "linear",
+      "out": 10,
+      "shape": [
+        16,
+        16
+      ],
+      "inputs": [
+        3,
+        9
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "linear_forward",
+          "dims": [
+            16,
+            16,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 16,
+            "input_dim": 64
+          },
+          "args": [
+            "v[3]",
+            "v[9]",
+            "v[10]"
+          ],
+          "grid": "dim3(1, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_forward_kv",
+          "code": "  linear_forward_kv<<<dim3(1, 1), dim3(16, 16)>>>(v[3], v[9], v[10]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 17
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "linear_backward_input",
+          "dims": [
+            16,
+            16,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 16,
+            "input_dim": 64
+          },
+          "args": [
+            "g[10]",
+            "v[9]",
+            "g[3]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_input_kv",
+          "code": "  linear_backward_input_kv<<<dim3(4, 1), dim3(16, 16)>>>(g[10], v[9], g[3]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            3
+          ],
+          "file": "backward.hip",
+          "line": 150
+        },
+        {
+          "primitive": "linear_backward_weight",
+          "dims": [
+            16,
+            16,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 16,
+            "input_dim": 64
+          },
+          "args": [
+            "g[10]",
+            "v[3]",
+            "g[9]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_weight_kv",
+          "code": "  linear_backward_weight_kv<<<dim3(4, 1), dim3(16, 16)>>>(g[10], v[3], g[9]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            9
+          ],
+          "file": "backward.hip",
+          "line": 152
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "name": "layer0.q_rope",
+      "kind": "rope",
+      "out": 11,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        6
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "rope_forward",
+          "dims": [
+            2,
+            8,
+            4,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "heads": 4,
+            "head_dim": 16
+          },
+          "args": [
+            "v[6]",
+            "v[11]"
+          ],
+          "grid": "2",
+          "block": "256",
+          "kernel": "rope_forward_q",
+          "code": "  rope_forward_q<<<2, 256>>>(v[6], v[11]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 20
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "rope_backward",
+          "dims": [
+            2,
+            8,
+            4,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "heads": 4,
+            "head_dim": 16
+          },
+          "args": [
+            "g[11]",
+            "g[6]"
+          ],
+          "grid": "2",
+          "block": "256",
+          "kernel": "rope_backward_q",
+          "code": "  rope_backward_q<<<2, 256>>>(g[11], g[6]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            6
+          ],
+          "file": "backward.hip",
+          "line": 147
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "name": "layer0.k_rope",
+      "kind": "rope",
+      "out": 12,
+      "shape": [
+        16,
+        16
+      ],
+      "inputs": [
+        8
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "rope_forward",
+          "dims": [
+            2,
+            8,
+            1,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "heads": 1,
+            "head_dim": 16
+          },
+          "args": [
+            "v[8]",
+            "v[12]"
+          ],
+          "grid": "1",
+          "block": "256",
+          "kernel": "rope_forward_k",
+          "code": "  rope_forward_k<<<1, 256>>>(v[8], v[12]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 23
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "rope_backward",
+          "dims": [
+            2,
+            8,
+            1,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "heads": 1,
+            "head_dim": 16
+          },
+          "args": [
+            "g[12]",
+            "g[8]"
+          ],
+          "grid": "1",
+          "block": "256",
+          "kernel": "rope_backward_k",
+          "code": "  rope_backward_k<<<1, 256>>>(g[12], g[8]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            8
+          ],
+          "file": "backward.hip",
+          "line": 144
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "name": "layer0.scores",
+      "kind": "scores",
+      "out": 13,
+      "shape": [
+        2,
+        4,
+        8,
+        8
+      ],
+      "inputs": [
+        11,
+        12
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "attention_scores_forward",
+          "dims": [
+            2,
+            8,
+            4,
+            1,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "q_heads": 4,
+            "kv_heads": 1,
+            "head_dim": 16
+          },
+          "args": [
+            "v[11]",
+            "v[12]",
+            "v[13]"
+          ],
+          "grid": "2",
+          "block": "256",
+          "kernel": "attention_scores_forward",
+          "code": "  attention_scores_forward<<<2, 256>>>(v[11], v[12], v[13]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 26
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "attention_scores_backward_q",
+          "dims": [
+            2,
+            8,
+            4,
+            1,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "q_heads": 4,
+            "kv_heads": 1,
+            "head_dim": 16
+          },
+          "args": [
+            "g[13]",
+            "v[12]",
+            "g[11]"
+          ],
+          "grid": "4",
+          "block": "256",
+          "kernel": "attention_scores_backward_q",
+          "code": "  attention_scores_backward_q<<<4, 256>>>(g[13], v[12], g[11]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            11
+          ],
+          "file": "backward.hip",
+          "line": 139
+        },
+        {
+          "primitive": "attention_scores_backward_k",
+          "dims": [
+            2,
+            8,
+            4,
+            1,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "q_heads": 4,
+            "kv_heads": 1,
+            "head_dim": 16
+          },
+          "args": [
+            "g[13]",
+            "v[11]",
+            "g[12]"
+          ],
+          "grid": "1",
+          "block": "256",
+          "kernel": "attention_scores_backward_k",
+          "code": "  attention_scores_backward_k<<<1, 256>>>(g[13], v[11], g[12]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            12
+          ],
+          "file": "backward.hip",
+          "line": 141
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "name": "layer0.probabilities",
+      "kind": "softmax",
+      "out": 14,
+      "shape": [
+        2,
+        4,
+        8,
+        8
+      ],
+      "inputs": [
+        13
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "softmax_forward",
+          "dims": [
+            64,
+            8
+          ],
+          "dimensions": {
+            "rows": 64,
+            "cols": 8
+          },
+          "args": [
+            "v[13]",
+            "v[14]"
+          ],
+          "grid": "64",
+          "block": "256",
+          "kernel": "softmax_forward",
+          "code": "  softmax_forward<<<64, 256>>>(v[13], v[14]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 29
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "softmax_backward",
+          "dims": [
+            64,
+            8
+          ],
+          "dimensions": {
+            "rows": 64,
+            "cols": 8
+          },
+          "args": [
+            "v[14]",
+            "g[14]",
+            "g[13]"
+          ],
+          "grid": "64",
+          "block": "256",
+          "kernel": "softmax_backward",
+          "code": "  softmax_backward<<<64, 256>>>(v[14], g[14], g[13]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            13
+          ],
+          "file": "backward.hip",
+          "line": 136
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "name": "layer0.context",
+      "kind": "values",
+      "out": 15,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        14,
+        10
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "attention_values_forward",
+          "dims": [
+            2,
+            8,
+            4,
+            1,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "q_heads": 4,
+            "kv_heads": 1,
+            "head_dim": 16
+          },
+          "args": [
+            "v[14]",
+            "v[10]",
+            "v[15]"
+          ],
+          "grid": "4",
+          "block": "256",
+          "kernel": "attention_values_forward",
+          "code": "  attention_values_forward<<<4, 256>>>(v[14], v[10], v[15]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 32
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "attention_values_backward_p",
+          "dims": [
+            2,
+            8,
+            4,
+            1,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "q_heads": 4,
+            "kv_heads": 1,
+            "head_dim": 16
+          },
+          "args": [
+            "g[15]",
+            "v[10]",
+            "g[14]"
+          ],
+          "grid": "2",
+          "block": "256",
+          "kernel": "attention_values_backward_p",
+          "code": "  attention_values_backward_p<<<2, 256>>>(g[15], v[10], g[14]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            14
+          ],
+          "file": "backward.hip",
+          "line": 131
+        },
+        {
+          "primitive": "attention_values_backward_v",
+          "dims": [
+            2,
+            8,
+            4,
+            1,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "q_heads": 4,
+            "kv_heads": 1,
+            "head_dim": 16
+          },
+          "args": [
+            "g[15]",
+            "v[14]",
+            "g[10]"
+          ],
+          "grid": "1",
+          "block": "256",
+          "kernel": "attention_values_backward_v",
+          "code": "  attention_values_backward_v<<<1, 256>>>(g[15], v[14], g[10]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            10
+          ],
+          "file": "backward.hip",
+          "line": 133
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "name": "layer0.o",
+      "kind": "linear",
+      "out": 17,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        15,
+        16
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "linear_forward",
+          "dims": [
+            16,
+            64,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 64,
+            "input_dim": 64
+          },
+          "args": [
+            "v[15]",
+            "v[16]",
+            "v[17]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_forward_hidden",
+          "code": "  linear_forward_hidden<<<dim3(4, 1), dim3(16, 16)>>>(v[15], v[16], v[17]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 35
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "linear_backward_input",
+          "dims": [
+            16,
+            64,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 64,
+            "input_dim": 64
+          },
+          "args": [
+            "g[17]",
+            "v[16]",
+            "g[15]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_input_hidden",
+          "code": "  linear_backward_input_hidden<<<dim3(4, 1), dim3(16, 16)>>>(g[17], v[16], g[15]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            15
+          ],
+          "file": "backward.hip",
+          "line": 126
+        },
+        {
+          "primitive": "linear_backward_weight",
+          "dims": [
+            16,
+            64,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 64,
+            "input_dim": 64
+          },
+          "args": [
+            "g[17]",
+            "v[15]",
+            "g[16]"
+          ],
+          "grid": "dim3(4, 4)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_weight_hidden",
+          "code": "  linear_backward_weight_hidden<<<dim3(4, 4), dim3(16, 16)>>>(g[17], v[15], g[16]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            16
+          ],
+          "file": "backward.hip",
+          "line": 128
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "name": "layer0.attention_residual",
+      "kind": "add",
+      "out": 18,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        1,
+        17
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "add_forward",
+          "dims": [
+            1024
+          ],
+          "dimensions": {
+            "elements": 1024
+          },
+          "args": [
+            "v[1]",
+            "v[17]",
+            "v[18]"
+          ],
+          "grid": "4",
+          "block": "256",
+          "kernel": "add_forward",
+          "code": "  add_forward<<<4, 256>>>(v[1], v[17], v[18]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 38
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "add_backward",
+          "dims": [
+            1024
+          ],
+          "dimensions": {
+            "elements": 1024
+          },
+          "args": [
+            "g[18]",
+            "g[1]",
+            "g[17]"
+          ],
+          "grid": "4",
+          "block": "256",
+          "kernel": "add_backward",
+          "code": "  add_backward<<<4, 256>>>(g[18], g[1], g[17]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            1,
+            17
+          ],
+          "file": "backward.hip",
+          "line": 123
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "name": "layer0.ffn_norm",
+      "kind": "rmsnorm",
+      "out": 20,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        18,
+        19
+      ],
+      "saved": [
+        21
+      ],
+      "forward": [
+        {
+          "primitive": "rmsnorm_forward",
+          "dims": [
+            16,
+            64
+          ],
+          "dimensions": {
+            "rows": 16,
+            "dim": 64
+          },
+          "args": [
+            "v[18]",
+            "v[19]",
+            "v[20]",
+            "v[21]"
+          ],
+          "grid": "16",
+          "block": "256",
+          "kernel": "rmsnorm_forward",
+          "code": "  rmsnorm_forward<<<16, 256>>>(v[18], v[19], v[20], v[21]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 41
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "rmsnorm_backward_input",
+          "dims": [
+            16,
+            64
+          ],
+          "dimensions": {
+            "rows": 16,
+            "dim": 64
+          },
+          "args": [
+            "v[18]",
+            "v[19]",
+            "v[21]",
+            "g[20]",
+            "g[18]"
+          ],
+          "grid": "16",
+          "block": "256",
+          "kernel": "rmsnorm_backward_input",
+          "code": "  rmsnorm_backward_input<<<16, 256>>>(v[18], v[19], v[21], g[20], g[18]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            18
+          ],
+          "file": "backward.hip",
+          "line": 118
+        },
+        {
+          "primitive": "rmsnorm_backward_weight",
+          "dims": [
+            16,
+            64
+          ],
+          "dimensions": {
+            "rows": 16,
+            "dim": 64
+          },
+          "args": [
+            "v[18]",
+            "v[21]",
+            "g[20]",
+            "g[19]"
+          ],
+          "grid": "1",
+          "block": "256",
+          "kernel": "rmsnorm_backward_weight",
+          "code": "  rmsnorm_backward_weight<<<1, 256>>>(v[18], v[21], g[20], g[19]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            19
+          ],
+          "file": "backward.hip",
+          "line": 120
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "name": "layer0.gate",
+      "kind": "linear",
+      "out": 23,
+      "shape": [
+        16,
+        256
+      ],
+      "inputs": [
+        20,
+        22
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "linear_forward",
+          "dims": [
+            16,
+            256,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 256,
+            "input_dim": 64
+          },
+          "args": [
+            "v[20]",
+            "v[22]",
+            "v[23]"
+          ],
+          "grid": "dim3(16, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_forward_mlp_up",
+          "code": "  linear_forward_mlp_up<<<dim3(16, 1), dim3(16, 16)>>>(v[20], v[22], v[23]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 44
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "linear_backward_input",
+          "dims": [
+            16,
+            256,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 256,
+            "input_dim": 64
+          },
+          "args": [
+            "g[23]",
+            "v[22]",
+            "g[20]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_input_mlp_up",
+          "code": "  linear_backward_input_mlp_up<<<dim3(4, 1), dim3(16, 16)>>>(g[23], v[22], g[20]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            20
+          ],
+          "file": "backward.hip",
+          "line": 113
+        },
+        {
+          "primitive": "linear_backward_weight",
+          "dims": [
+            16,
+            256,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 256,
+            "input_dim": 64
+          },
+          "args": [
+            "g[23]",
+            "v[20]",
+            "g[22]"
+          ],
+          "grid": "dim3(4, 16)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_weight_mlp_up",
+          "code": "  linear_backward_weight_mlp_up<<<dim3(4, 16), dim3(16, 16)>>>(g[23], v[20], g[22]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            22
+          ],
+          "file": "backward.hip",
+          "line": 115
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "name": "layer0.up",
+      "kind": "linear",
+      "out": 25,
+      "shape": [
+        16,
+        256
+      ],
+      "inputs": [
+        20,
+        24
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "linear_forward",
+          "dims": [
+            16,
+            256,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 256,
+            "input_dim": 64
+          },
+          "args": [
+            "v[20]",
+            "v[24]",
+            "v[25]"
+          ],
+          "grid": "dim3(16, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_forward_mlp_up",
+          "code": "  linear_forward_mlp_up<<<dim3(16, 1), dim3(16, 16)>>>(v[20], v[24], v[25]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 47
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "linear_backward_input",
+          "dims": [
+            16,
+            256,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 256,
+            "input_dim": 64
+          },
+          "args": [
+            "g[25]",
+            "v[24]",
+            "g[20]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_input_mlp_up",
+          "code": "  linear_backward_input_mlp_up<<<dim3(4, 1), dim3(16, 16)>>>(g[25], v[24], g[20]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            20
+          ],
+          "file": "backward.hip",
+          "line": 108
+        },
+        {
+          "primitive": "linear_backward_weight",
+          "dims": [
+            16,
+            256,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 256,
+            "input_dim": 64
+          },
+          "args": [
+            "g[25]",
+            "v[20]",
+            "g[24]"
+          ],
+          "grid": "dim3(4, 16)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_weight_mlp_up",
+          "code": "  linear_backward_weight_mlp_up<<<dim3(4, 16), dim3(16, 16)>>>(g[25], v[20], g[24]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            24
+          ],
+          "file": "backward.hip",
+          "line": 110
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "name": "layer0.swiglu",
+      "kind": "swiglu",
+      "out": 26,
+      "shape": [
+        16,
+        256
+      ],
+      "inputs": [
+        23,
+        25
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "swiglu_forward",
+          "dims": [
+            4096
+          ],
+          "dimensions": {
+            "elements": 4096
+          },
+          "args": [
+            "v[23]",
+            "v[25]",
+            "v[26]"
+          ],
+          "grid": "16",
+          "block": "256",
+          "kernel": "swiglu_forward",
+          "code": "  swiglu_forward<<<16, 256>>>(v[23], v[25], v[26]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 50
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "swiglu_backward",
+          "dims": [
+            4096
+          ],
+          "dimensions": {
+            "elements": 4096
+          },
+          "args": [
+            "v[23]",
+            "v[25]",
+            "g[26]",
+            "g[23]",
+            "g[25]"
+          ],
+          "grid": "16",
+          "block": "256",
+          "kernel": "swiglu_backward",
+          "code": "  swiglu_backward<<<16, 256>>>(v[23], v[25], g[26], g[23], g[25]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            23,
+            25
+          ],
+          "file": "backward.hip",
+          "line": 105
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "name": "layer0.down",
+      "kind": "linear",
+      "out": 28,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        26,
+        27
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "linear_forward",
+          "dims": [
+            16,
+            64,
+            256
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 64,
+            "input_dim": 256
+          },
+          "args": [
+            "v[26]",
+            "v[27]",
+            "v[28]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_forward_mlp_down",
+          "code": "  linear_forward_mlp_down<<<dim3(4, 1), dim3(16, 16)>>>(v[26], v[27], v[28]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 53
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "linear_backward_input",
+          "dims": [
+            16,
+            64,
+            256
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 64,
+            "input_dim": 256
+          },
+          "args": [
+            "g[28]",
+            "v[27]",
+            "g[26]"
+          ],
+          "grid": "dim3(16, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_input_mlp_down",
+          "code": "  linear_backward_input_mlp_down<<<dim3(16, 1), dim3(16, 16)>>>(g[28], v[27], g[26]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            26
+          ],
+          "file": "backward.hip",
+          "line": 100
+        },
+        {
+          "primitive": "linear_backward_weight",
+          "dims": [
+            16,
+            64,
+            256
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 64,
+            "input_dim": 256
+          },
+          "args": [
+            "g[28]",
+            "v[26]",
+            "g[27]"
+          ],
+          "grid": "dim3(16, 4)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_weight_mlp_down",
+          "code": "  linear_backward_weight_mlp_down<<<dim3(16, 4), dim3(16, 16)>>>(g[28], v[26], g[27]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            27
+          ],
+          "file": "backward.hip",
+          "line": 102
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "name": "layer0.ffn_residual",
+      "kind": "add",
+      "out": 29,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        18,
+        28
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "add_forward",
+          "dims": [
+            1024
+          ],
+          "dimensions": {
+            "elements": 1024
+          },
+          "args": [
+            "v[18]",
+            "v[28]",
+            "v[29]"
+          ],
+          "grid": "4",
+          "block": "256",
+          "kernel": "add_forward",
+          "code": "  add_forward<<<4, 256>>>(v[18], v[28], v[29]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 56
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "add_backward",
+          "dims": [
+            1024
+          ],
+          "dimensions": {
+            "elements": 1024
+          },
+          "args": [
+            "g[29]",
+            "g[18]",
+            "g[28]"
+          ],
+          "grid": "4",
+          "block": "256",
+          "kernel": "add_backward",
+          "code": "  add_backward<<<4, 256>>>(g[29], g[18], g[28]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            18,
+            28
+          ],
+          "file": "backward.hip",
+          "line": 97
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "name": "layer1.attention_norm",
+      "kind": "rmsnorm",
+      "out": 31,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        29,
+        30
+      ],
+      "saved": [
+        32
+      ],
+      "forward": [
+        {
+          "primitive": "rmsnorm_forward",
+          "dims": [
+            16,
+            64
+          ],
+          "dimensions": {
+            "rows": 16,
+            "dim": 64
+          },
+          "args": [
+            "v[29]",
+            "v[30]",
+            "v[31]",
+            "v[32]"
+          ],
+          "grid": "16",
+          "block": "256",
+          "kernel": "rmsnorm_forward",
+          "code": "  rmsnorm_forward<<<16, 256>>>(v[29], v[30], v[31], v[32]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 59
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "rmsnorm_backward_input",
+          "dims": [
+            16,
+            64
+          ],
+          "dimensions": {
+            "rows": 16,
+            "dim": 64
+          },
+          "args": [
+            "v[29]",
+            "v[30]",
+            "v[32]",
+            "g[31]",
+            "g[29]"
+          ],
+          "grid": "16",
+          "block": "256",
+          "kernel": "rmsnorm_backward_input",
+          "code": "  rmsnorm_backward_input<<<16, 256>>>(v[29], v[30], v[32], g[31], g[29]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            29
+          ],
+          "file": "backward.hip",
+          "line": 92
+        },
+        {
+          "primitive": "rmsnorm_backward_weight",
+          "dims": [
+            16,
+            64
+          ],
+          "dimensions": {
+            "rows": 16,
+            "dim": 64
+          },
+          "args": [
+            "v[29]",
+            "v[32]",
+            "g[31]",
+            "g[30]"
+          ],
+          "grid": "1",
+          "block": "256",
+          "kernel": "rmsnorm_backward_weight",
+          "code": "  rmsnorm_backward_weight<<<1, 256>>>(v[29], v[32], g[31], g[30]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            30
+          ],
+          "file": "backward.hip",
+          "line": 94
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "name": "layer1.q",
+      "kind": "linear",
+      "out": 34,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        31,
+        33
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "linear_forward",
+          "dims": [
+            16,
+            64,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 64,
+            "input_dim": 64
+          },
+          "args": [
+            "v[31]",
+            "v[33]",
+            "v[34]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_forward_hidden",
+          "code": "  linear_forward_hidden<<<dim3(4, 1), dim3(16, 16)>>>(v[31], v[33], v[34]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 62
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "linear_backward_input",
+          "dims": [
+            16,
+            64,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 64,
+            "input_dim": 64
+          },
+          "args": [
+            "g[34]",
+            "v[33]",
+            "g[31]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_input_hidden",
+          "code": "  linear_backward_input_hidden<<<dim3(4, 1), dim3(16, 16)>>>(g[34], v[33], g[31]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            31
+          ],
+          "file": "backward.hip",
+          "line": 87
+        },
+        {
+          "primitive": "linear_backward_weight",
+          "dims": [
+            16,
+            64,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 64,
+            "input_dim": 64
+          },
+          "args": [
+            "g[34]",
+            "v[31]",
+            "g[33]"
+          ],
+          "grid": "dim3(4, 4)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_weight_hidden",
+          "code": "  linear_backward_weight_hidden<<<dim3(4, 4), dim3(16, 16)>>>(g[34], v[31], g[33]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            33
+          ],
+          "file": "backward.hip",
+          "line": 89
+        }
+      ]
+    },
+    {
+      "index": 20,
+      "name": "layer1.k",
+      "kind": "linear",
+      "out": 36,
+      "shape": [
+        16,
+        16
+      ],
+      "inputs": [
+        31,
+        35
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "linear_forward",
+          "dims": [
+            16,
+            16,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 16,
+            "input_dim": 64
+          },
+          "args": [
+            "v[31]",
+            "v[35]",
+            "v[36]"
+          ],
+          "grid": "dim3(1, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_forward_kv",
+          "code": "  linear_forward_kv<<<dim3(1, 1), dim3(16, 16)>>>(v[31], v[35], v[36]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 65
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "linear_backward_input",
+          "dims": [
+            16,
+            16,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 16,
+            "input_dim": 64
+          },
+          "args": [
+            "g[36]",
+            "v[35]",
+            "g[31]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_input_kv",
+          "code": "  linear_backward_input_kv<<<dim3(4, 1), dim3(16, 16)>>>(g[36], v[35], g[31]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            31
+          ],
+          "file": "backward.hip",
+          "line": 82
+        },
+        {
+          "primitive": "linear_backward_weight",
+          "dims": [
+            16,
+            16,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 16,
+            "input_dim": 64
+          },
+          "args": [
+            "g[36]",
+            "v[31]",
+            "g[35]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_weight_kv",
+          "code": "  linear_backward_weight_kv<<<dim3(4, 1), dim3(16, 16)>>>(g[36], v[31], g[35]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            35
+          ],
+          "file": "backward.hip",
+          "line": 84
+        }
+      ]
+    },
+    {
+      "index": 21,
+      "name": "layer1.v",
+      "kind": "linear",
+      "out": 38,
+      "shape": [
+        16,
+        16
+      ],
+      "inputs": [
+        31,
+        37
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "linear_forward",
+          "dims": [
+            16,
+            16,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 16,
+            "input_dim": 64
+          },
+          "args": [
+            "v[31]",
+            "v[37]",
+            "v[38]"
+          ],
+          "grid": "dim3(1, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_forward_kv",
+          "code": "  linear_forward_kv<<<dim3(1, 1), dim3(16, 16)>>>(v[31], v[37], v[38]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 68
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "linear_backward_input",
+          "dims": [
+            16,
+            16,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 16,
+            "input_dim": 64
+          },
+          "args": [
+            "g[38]",
+            "v[37]",
+            "g[31]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_input_kv",
+          "code": "  linear_backward_input_kv<<<dim3(4, 1), dim3(16, 16)>>>(g[38], v[37], g[31]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            31
+          ],
+          "file": "backward.hip",
+          "line": 77
+        },
+        {
+          "primitive": "linear_backward_weight",
+          "dims": [
+            16,
+            16,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 16,
+            "input_dim": 64
+          },
+          "args": [
+            "g[38]",
+            "v[31]",
+            "g[37]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_weight_kv",
+          "code": "  linear_backward_weight_kv<<<dim3(4, 1), dim3(16, 16)>>>(g[38], v[31], g[37]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            37
+          ],
+          "file": "backward.hip",
+          "line": 79
+        }
+      ]
+    },
+    {
+      "index": 22,
+      "name": "layer1.q_rope",
+      "kind": "rope",
+      "out": 39,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        34
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "rope_forward",
+          "dims": [
+            2,
+            8,
+            4,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "heads": 4,
+            "head_dim": 16
+          },
+          "args": [
+            "v[34]",
+            "v[39]"
+          ],
+          "grid": "2",
+          "block": "256",
+          "kernel": "rope_forward_q",
+          "code": "  rope_forward_q<<<2, 256>>>(v[34], v[39]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 71
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "rope_backward",
+          "dims": [
+            2,
+            8,
+            4,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "heads": 4,
+            "head_dim": 16
+          },
+          "args": [
+            "g[39]",
+            "g[34]"
+          ],
+          "grid": "2",
+          "block": "256",
+          "kernel": "rope_backward_q",
+          "code": "  rope_backward_q<<<2, 256>>>(g[39], g[34]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            34
+          ],
+          "file": "backward.hip",
+          "line": 74
+        }
+      ]
+    },
+    {
+      "index": 23,
+      "name": "layer1.k_rope",
+      "kind": "rope",
+      "out": 40,
+      "shape": [
+        16,
+        16
+      ],
+      "inputs": [
+        36
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "rope_forward",
+          "dims": [
+            2,
+            8,
+            1,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "heads": 1,
+            "head_dim": 16
+          },
+          "args": [
+            "v[36]",
+            "v[40]"
+          ],
+          "grid": "1",
+          "block": "256",
+          "kernel": "rope_forward_k",
+          "code": "  rope_forward_k<<<1, 256>>>(v[36], v[40]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 74
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "rope_backward",
+          "dims": [
+            2,
+            8,
+            1,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "heads": 1,
+            "head_dim": 16
+          },
+          "args": [
+            "g[40]",
+            "g[36]"
+          ],
+          "grid": "1",
+          "block": "256",
+          "kernel": "rope_backward_k",
+          "code": "  rope_backward_k<<<1, 256>>>(g[40], g[36]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            36
+          ],
+          "file": "backward.hip",
+          "line": 71
+        }
+      ]
+    },
+    {
+      "index": 24,
+      "name": "layer1.scores",
+      "kind": "scores",
+      "out": 41,
+      "shape": [
+        2,
+        4,
+        8,
+        8
+      ],
+      "inputs": [
+        39,
+        40
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "attention_scores_forward",
+          "dims": [
+            2,
+            8,
+            4,
+            1,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "q_heads": 4,
+            "kv_heads": 1,
+            "head_dim": 16
+          },
+          "args": [
+            "v[39]",
+            "v[40]",
+            "v[41]"
+          ],
+          "grid": "2",
+          "block": "256",
+          "kernel": "attention_scores_forward",
+          "code": "  attention_scores_forward<<<2, 256>>>(v[39], v[40], v[41]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 77
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "attention_scores_backward_q",
+          "dims": [
+            2,
+            8,
+            4,
+            1,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "q_heads": 4,
+            "kv_heads": 1,
+            "head_dim": 16
+          },
+          "args": [
+            "g[41]",
+            "v[40]",
+            "g[39]"
+          ],
+          "grid": "4",
+          "block": "256",
+          "kernel": "attention_scores_backward_q",
+          "code": "  attention_scores_backward_q<<<4, 256>>>(g[41], v[40], g[39]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            39
+          ],
+          "file": "backward.hip",
+          "line": 66
+        },
+        {
+          "primitive": "attention_scores_backward_k",
+          "dims": [
+            2,
+            8,
+            4,
+            1,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "q_heads": 4,
+            "kv_heads": 1,
+            "head_dim": 16
+          },
+          "args": [
+            "g[41]",
+            "v[39]",
+            "g[40]"
+          ],
+          "grid": "1",
+          "block": "256",
+          "kernel": "attention_scores_backward_k",
+          "code": "  attention_scores_backward_k<<<1, 256>>>(g[41], v[39], g[40]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            40
+          ],
+          "file": "backward.hip",
+          "line": 68
+        }
+      ]
+    },
+    {
+      "index": 25,
+      "name": "layer1.probabilities",
+      "kind": "softmax",
+      "out": 42,
+      "shape": [
+        2,
+        4,
+        8,
+        8
+      ],
+      "inputs": [
+        41
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "softmax_forward",
+          "dims": [
+            64,
+            8
+          ],
+          "dimensions": {
+            "rows": 64,
+            "cols": 8
+          },
+          "args": [
+            "v[41]",
+            "v[42]"
+          ],
+          "grid": "64",
+          "block": "256",
+          "kernel": "softmax_forward",
+          "code": "  softmax_forward<<<64, 256>>>(v[41], v[42]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 80
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "softmax_backward",
+          "dims": [
+            64,
+            8
+          ],
+          "dimensions": {
+            "rows": 64,
+            "cols": 8
+          },
+          "args": [
+            "v[42]",
+            "g[42]",
+            "g[41]"
+          ],
+          "grid": "64",
+          "block": "256",
+          "kernel": "softmax_backward",
+          "code": "  softmax_backward<<<64, 256>>>(v[42], g[42], g[41]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            41
+          ],
+          "file": "backward.hip",
+          "line": 63
+        }
+      ]
+    },
+    {
+      "index": 26,
+      "name": "layer1.context",
+      "kind": "values",
+      "out": 43,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        42,
+        38
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "attention_values_forward",
+          "dims": [
+            2,
+            8,
+            4,
+            1,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "q_heads": 4,
+            "kv_heads": 1,
+            "head_dim": 16
+          },
+          "args": [
+            "v[42]",
+            "v[38]",
+            "v[43]"
+          ],
+          "grid": "4",
+          "block": "256",
+          "kernel": "attention_values_forward",
+          "code": "  attention_values_forward<<<4, 256>>>(v[42], v[38], v[43]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 83
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "attention_values_backward_p",
+          "dims": [
+            2,
+            8,
+            4,
+            1,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "q_heads": 4,
+            "kv_heads": 1,
+            "head_dim": 16
+          },
+          "args": [
+            "g[43]",
+            "v[38]",
+            "g[42]"
+          ],
+          "grid": "2",
+          "block": "256",
+          "kernel": "attention_values_backward_p",
+          "code": "  attention_values_backward_p<<<2, 256>>>(g[43], v[38], g[42]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            42
+          ],
+          "file": "backward.hip",
+          "line": 58
+        },
+        {
+          "primitive": "attention_values_backward_v",
+          "dims": [
+            2,
+            8,
+            4,
+            1,
+            16
+          ],
+          "dimensions": {
+            "batch": 2,
+            "seq_len": 8,
+            "q_heads": 4,
+            "kv_heads": 1,
+            "head_dim": 16
+          },
+          "args": [
+            "g[43]",
+            "v[42]",
+            "g[38]"
+          ],
+          "grid": "1",
+          "block": "256",
+          "kernel": "attention_values_backward_v",
+          "code": "  attention_values_backward_v<<<1, 256>>>(g[43], v[42], g[38]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            38
+          ],
+          "file": "backward.hip",
+          "line": 60
+        }
+      ]
+    },
+    {
+      "index": 27,
+      "name": "layer1.o",
+      "kind": "linear",
+      "out": 45,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        43,
+        44
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "linear_forward",
+          "dims": [
+            16,
+            64,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 64,
+            "input_dim": 64
+          },
+          "args": [
+            "v[43]",
+            "v[44]",
+            "v[45]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_forward_hidden",
+          "code": "  linear_forward_hidden<<<dim3(4, 1), dim3(16, 16)>>>(v[43], v[44], v[45]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 86
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "linear_backward_input",
+          "dims": [
+            16,
+            64,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 64,
+            "input_dim": 64
+          },
+          "args": [
+            "g[45]",
+            "v[44]",
+            "g[43]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_input_hidden",
+          "code": "  linear_backward_input_hidden<<<dim3(4, 1), dim3(16, 16)>>>(g[45], v[44], g[43]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            43
+          ],
+          "file": "backward.hip",
+          "line": 53
+        },
+        {
+          "primitive": "linear_backward_weight",
+          "dims": [
+            16,
+            64,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 64,
+            "input_dim": 64
+          },
+          "args": [
+            "g[45]",
+            "v[43]",
+            "g[44]"
+          ],
+          "grid": "dim3(4, 4)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_weight_hidden",
+          "code": "  linear_backward_weight_hidden<<<dim3(4, 4), dim3(16, 16)>>>(g[45], v[43], g[44]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            44
+          ],
+          "file": "backward.hip",
+          "line": 55
+        }
+      ]
+    },
+    {
+      "index": 28,
+      "name": "layer1.attention_residual",
+      "kind": "add",
+      "out": 46,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        29,
+        45
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "add_forward",
+          "dims": [
+            1024
+          ],
+          "dimensions": {
+            "elements": 1024
+          },
+          "args": [
+            "v[29]",
+            "v[45]",
+            "v[46]"
+          ],
+          "grid": "4",
+          "block": "256",
+          "kernel": "add_forward",
+          "code": "  add_forward<<<4, 256>>>(v[29], v[45], v[46]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 89
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "add_backward",
+          "dims": [
+            1024
+          ],
+          "dimensions": {
+            "elements": 1024
+          },
+          "args": [
+            "g[46]",
+            "g[29]",
+            "g[45]"
+          ],
+          "grid": "4",
+          "block": "256",
+          "kernel": "add_backward",
+          "code": "  add_backward<<<4, 256>>>(g[46], g[29], g[45]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            29,
+            45
+          ],
+          "file": "backward.hip",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "index": 29,
+      "name": "layer1.ffn_norm",
+      "kind": "rmsnorm",
+      "out": 48,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        46,
+        47
+      ],
+      "saved": [
+        49
+      ],
+      "forward": [
+        {
+          "primitive": "rmsnorm_forward",
+          "dims": [
+            16,
+            64
+          ],
+          "dimensions": {
+            "rows": 16,
+            "dim": 64
+          },
+          "args": [
+            "v[46]",
+            "v[47]",
+            "v[48]",
+            "v[49]"
+          ],
+          "grid": "16",
+          "block": "256",
+          "kernel": "rmsnorm_forward",
+          "code": "  rmsnorm_forward<<<16, 256>>>(v[46], v[47], v[48], v[49]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 92
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "rmsnorm_backward_input",
+          "dims": [
+            16,
+            64
+          ],
+          "dimensions": {
+            "rows": 16,
+            "dim": 64
+          },
+          "args": [
+            "v[46]",
+            "v[47]",
+            "v[49]",
+            "g[48]",
+            "g[46]"
+          ],
+          "grid": "16",
+          "block": "256",
+          "kernel": "rmsnorm_backward_input",
+          "code": "  rmsnorm_backward_input<<<16, 256>>>(v[46], v[47], v[49], g[48], g[46]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            46
+          ],
+          "file": "backward.hip",
+          "line": 45
+        },
+        {
+          "primitive": "rmsnorm_backward_weight",
+          "dims": [
+            16,
+            64
+          ],
+          "dimensions": {
+            "rows": 16,
+            "dim": 64
+          },
+          "args": [
+            "v[46]",
+            "v[49]",
+            "g[48]",
+            "g[47]"
+          ],
+          "grid": "1",
+          "block": "256",
+          "kernel": "rmsnorm_backward_weight",
+          "code": "  rmsnorm_backward_weight<<<1, 256>>>(v[46], v[49], g[48], g[47]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            47
+          ],
+          "file": "backward.hip",
+          "line": 47
+        }
+      ]
+    },
+    {
+      "index": 30,
+      "name": "layer1.gate",
+      "kind": "linear",
+      "out": 51,
+      "shape": [
+        16,
+        256
+      ],
+      "inputs": [
+        48,
+        50
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "linear_forward",
+          "dims": [
+            16,
+            256,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 256,
+            "input_dim": 64
+          },
+          "args": [
+            "v[48]",
+            "v[50]",
+            "v[51]"
+          ],
+          "grid": "dim3(16, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_forward_mlp_up",
+          "code": "  linear_forward_mlp_up<<<dim3(16, 1), dim3(16, 16)>>>(v[48], v[50], v[51]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 95
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "linear_backward_input",
+          "dims": [
+            16,
+            256,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 256,
+            "input_dim": 64
+          },
+          "args": [
+            "g[51]",
+            "v[50]",
+            "g[48]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_input_mlp_up",
+          "code": "  linear_backward_input_mlp_up<<<dim3(4, 1), dim3(16, 16)>>>(g[51], v[50], g[48]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            48
+          ],
+          "file": "backward.hip",
+          "line": 40
+        },
+        {
+          "primitive": "linear_backward_weight",
+          "dims": [
+            16,
+            256,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 256,
+            "input_dim": 64
+          },
+          "args": [
+            "g[51]",
+            "v[48]",
+            "g[50]"
+          ],
+          "grid": "dim3(4, 16)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_weight_mlp_up",
+          "code": "  linear_backward_weight_mlp_up<<<dim3(4, 16), dim3(16, 16)>>>(g[51], v[48], g[50]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            50
+          ],
+          "file": "backward.hip",
+          "line": 42
+        }
+      ]
+    },
+    {
+      "index": 31,
+      "name": "layer1.up",
+      "kind": "linear",
+      "out": 53,
+      "shape": [
+        16,
+        256
+      ],
+      "inputs": [
+        48,
+        52
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "linear_forward",
+          "dims": [
+            16,
+            256,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 256,
+            "input_dim": 64
+          },
+          "args": [
+            "v[48]",
+            "v[52]",
+            "v[53]"
+          ],
+          "grid": "dim3(16, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_forward_mlp_up",
+          "code": "  linear_forward_mlp_up<<<dim3(16, 1), dim3(16, 16)>>>(v[48], v[52], v[53]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 98
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "linear_backward_input",
+          "dims": [
+            16,
+            256,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 256,
+            "input_dim": 64
+          },
+          "args": [
+            "g[53]",
+            "v[52]",
+            "g[48]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_input_mlp_up",
+          "code": "  linear_backward_input_mlp_up<<<dim3(4, 1), dim3(16, 16)>>>(g[53], v[52], g[48]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            48
+          ],
+          "file": "backward.hip",
+          "line": 35
+        },
+        {
+          "primitive": "linear_backward_weight",
+          "dims": [
+            16,
+            256,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 256,
+            "input_dim": 64
+          },
+          "args": [
+            "g[53]",
+            "v[48]",
+            "g[52]"
+          ],
+          "grid": "dim3(4, 16)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_weight_mlp_up",
+          "code": "  linear_backward_weight_mlp_up<<<dim3(4, 16), dim3(16, 16)>>>(g[53], v[48], g[52]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            52
+          ],
+          "file": "backward.hip",
+          "line": 37
+        }
+      ]
+    },
+    {
+      "index": 32,
+      "name": "layer1.swiglu",
+      "kind": "swiglu",
+      "out": 54,
+      "shape": [
+        16,
+        256
+      ],
+      "inputs": [
+        51,
+        53
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "swiglu_forward",
+          "dims": [
+            4096
+          ],
+          "dimensions": {
+            "elements": 4096
+          },
+          "args": [
+            "v[51]",
+            "v[53]",
+            "v[54]"
+          ],
+          "grid": "16",
+          "block": "256",
+          "kernel": "swiglu_forward",
+          "code": "  swiglu_forward<<<16, 256>>>(v[51], v[53], v[54]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 101
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "swiglu_backward",
+          "dims": [
+            4096
+          ],
+          "dimensions": {
+            "elements": 4096
+          },
+          "args": [
+            "v[51]",
+            "v[53]",
+            "g[54]",
+            "g[51]",
+            "g[53]"
+          ],
+          "grid": "16",
+          "block": "256",
+          "kernel": "swiglu_backward",
+          "code": "  swiglu_backward<<<16, 256>>>(v[51], v[53], g[54], g[51], g[53]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            51,
+            53
+          ],
+          "file": "backward.hip",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "index": 33,
+      "name": "layer1.down",
+      "kind": "linear",
+      "out": 56,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        54,
+        55
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "linear_forward",
+          "dims": [
+            16,
+            64,
+            256
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 64,
+            "input_dim": 256
+          },
+          "args": [
+            "v[54]",
+            "v[55]",
+            "v[56]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_forward_mlp_down",
+          "code": "  linear_forward_mlp_down<<<dim3(4, 1), dim3(16, 16)>>>(v[54], v[55], v[56]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 104
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "linear_backward_input",
+          "dims": [
+            16,
+            64,
+            256
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 64,
+            "input_dim": 256
+          },
+          "args": [
+            "g[56]",
+            "v[55]",
+            "g[54]"
+          ],
+          "grid": "dim3(16, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_input_mlp_down",
+          "code": "  linear_backward_input_mlp_down<<<dim3(16, 1), dim3(16, 16)>>>(g[56], v[55], g[54]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            54
+          ],
+          "file": "backward.hip",
+          "line": 27
+        },
+        {
+          "primitive": "linear_backward_weight",
+          "dims": [
+            16,
+            64,
+            256
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 64,
+            "input_dim": 256
+          },
+          "args": [
+            "g[56]",
+            "v[54]",
+            "g[55]"
+          ],
+          "grid": "dim3(16, 4)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_weight_mlp_down",
+          "code": "  linear_backward_weight_mlp_down<<<dim3(16, 4), dim3(16, 16)>>>(g[56], v[54], g[55]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            55
+          ],
+          "file": "backward.hip",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "index": 34,
+      "name": "layer1.ffn_residual",
+      "kind": "add",
+      "out": 57,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        46,
+        56
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "add_forward",
+          "dims": [
+            1024
+          ],
+          "dimensions": {
+            "elements": 1024
+          },
+          "args": [
+            "v[46]",
+            "v[56]",
+            "v[57]"
+          ],
+          "grid": "4",
+          "block": "256",
+          "kernel": "add_forward",
+          "code": "  add_forward<<<4, 256>>>(v[46], v[56], v[57]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 107
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "add_backward",
+          "dims": [
+            1024
+          ],
+          "dimensions": {
+            "elements": 1024
+          },
+          "args": [
+            "g[57]",
+            "g[46]",
+            "g[56]"
+          ],
+          "grid": "4",
+          "block": "256",
+          "kernel": "add_backward",
+          "code": "  add_backward<<<4, 256>>>(g[57], g[46], g[56]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            46,
+            56
+          ],
+          "file": "backward.hip",
+          "line": 24
+        }
+      ]
+    },
+    {
+      "index": 35,
+      "name": "final_norm",
+      "kind": "rmsnorm",
+      "out": 59,
+      "shape": [
+        16,
+        64
+      ],
+      "inputs": [
+        57,
+        58
+      ],
+      "saved": [
+        60
+      ],
+      "forward": [
+        {
+          "primitive": "rmsnorm_forward",
+          "dims": [
+            16,
+            64
+          ],
+          "dimensions": {
+            "rows": 16,
+            "dim": 64
+          },
+          "args": [
+            "v[57]",
+            "v[58]",
+            "v[59]",
+            "v[60]"
+          ],
+          "grid": "16",
+          "block": "256",
+          "kernel": "rmsnorm_forward",
+          "code": "  rmsnorm_forward<<<16, 256>>>(v[57], v[58], v[59], v[60]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 110
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "rmsnorm_backward_input",
+          "dims": [
+            16,
+            64
+          ],
+          "dimensions": {
+            "rows": 16,
+            "dim": 64
+          },
+          "args": [
+            "v[57]",
+            "v[58]",
+            "v[60]",
+            "g[59]",
+            "g[57]"
+          ],
+          "grid": "16",
+          "block": "256",
+          "kernel": "rmsnorm_backward_input",
+          "code": "  rmsnorm_backward_input<<<16, 256>>>(v[57], v[58], v[60], g[59], g[57]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            57
+          ],
+          "file": "backward.hip",
+          "line": 19
+        },
+        {
+          "primitive": "rmsnorm_backward_weight",
+          "dims": [
+            16,
+            64
+          ],
+          "dimensions": {
+            "rows": 16,
+            "dim": 64
+          },
+          "args": [
+            "v[57]",
+            "v[60]",
+            "g[59]",
+            "g[58]"
+          ],
+          "grid": "1",
+          "block": "256",
+          "kernel": "rmsnorm_backward_weight",
+          "code": "  rmsnorm_backward_weight<<<1, 256>>>(v[57], v[60], g[59], g[58]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            58
+          ],
+          "file": "backward.hip",
+          "line": 21
+        }
+      ]
+    },
+    {
+      "index": 36,
+      "name": "lm_head",
+      "kind": "linear",
+      "out": 61,
+      "shape": [
+        16,
+        128
+      ],
+      "inputs": [
+        59,
+        0
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "linear_forward",
+          "dims": [
+            16,
+            128,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 128,
+            "input_dim": 64
+          },
+          "args": [
+            "v[59]",
+            "v[0]",
+            "v[61]"
+          ],
+          "grid": "dim3(8, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_forward_lm_head",
+          "code": "  linear_forward_lm_head<<<dim3(8, 1), dim3(16, 16)>>>(v[59], v[0], v[61]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 113
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "linear_backward_input",
+          "dims": [
+            16,
+            128,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 128,
+            "input_dim": 64
+          },
+          "args": [
+            "g[61]",
+            "v[0]",
+            "g[59]"
+          ],
+          "grid": "dim3(4, 1)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_input_lm_head",
+          "code": "  linear_backward_input_lm_head<<<dim3(4, 1), dim3(16, 16)>>>(g[61], v[0], g[59]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            59
+          ],
+          "file": "backward.hip",
+          "line": 14
+        },
+        {
+          "primitive": "linear_backward_weight",
+          "dims": [
+            16,
+            128,
+            64
+          ],
+          "dimensions": {
+            "tokens": 16,
+            "output_dim": 128,
+            "input_dim": 64
+          },
+          "args": [
+            "g[61]",
+            "v[59]",
+            "g[0]"
+          ],
+          "grid": "dim3(4, 8)",
+          "block": "dim3(16, 16)",
+          "kernel": "linear_backward_weight_lm_head",
+          "code": "  linear_backward_weight_lm_head<<<dim3(4, 8), dim3(16, 16)>>>(g[61], v[59], g[0]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            0
+          ],
+          "file": "backward.hip",
+          "line": 16
+        }
+      ]
+    },
+    {
+      "index": 37,
+      "name": "token_losses",
+      "kind": "cross_entropy",
+      "out": 62,
+      "shape": [
+        16
+      ],
+      "inputs": [
+        61
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "cross_entropy_forward",
+          "dims": [
+            16,
+            128
+          ],
+          "dimensions": {
+            "rows": 16,
+            "vocab": 128
+          },
+          "args": [
+            "v[61]",
+            "targets",
+            "v[62]"
+          ],
+          "grid": "16",
+          "block": "256",
+          "kernel": "cross_entropy_forward",
+          "code": "  cross_entropy_forward<<<16, 256>>>(v[61], targets, v[62]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 116
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "cross_entropy_backward",
+          "dims": [
+            16,
+            128
+          ],
+          "dimensions": {
+            "rows": 16,
+            "vocab": 128
+          },
+          "args": [
+            "v[61]",
+            "targets",
+            "g[62]",
+            "g[61]"
+          ],
+          "grid": "16",
+          "block": "256",
+          "kernel": "cross_entropy_backward",
+          "code": "  cross_entropy_backward<<<16, 256>>>(v[61], targets, g[62], g[61]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            61
+          ],
+          "file": "backward.hip",
+          "line": 11
+        }
+      ]
+    },
+    {
+      "index": 38,
+      "name": "loss",
+      "kind": "mean",
+      "out": 63,
+      "shape": [
+        1
+      ],
+      "inputs": [
+        62
+      ],
+      "saved": [],
+      "forward": [
+        {
+          "primitive": "mean_forward",
+          "dims": [
+            16
+          ],
+          "dimensions": {
+            "tokens": 16
+          },
+          "args": [
+            "v[62]",
+            "v[63]"
+          ],
+          "grid": "1",
+          "block": "256",
+          "kernel": "mean_forward",
+          "code": "  mean_forward<<<1, 256>>>(v[62], v[63]);\n  CHECK(hipGetLastError());",
+          "file": "forward.hip",
+          "line": 119
+        }
+      ],
+      "backward": [
+        {
+          "primitive": "mean_backward",
+          "dims": [
+            16
+          ],
+          "dimensions": {
+            "tokens": 16
+          },
+          "args": [
+            "g[63]",
+            "g[62]"
+          ],
+          "grid": "1",
+          "block": "256",
+          "kernel": "mean_backward",
+          "code": "  mean_backward<<<1, 256>>>(g[63], g[62]);\n  CHECK(hipGetLastError());",
+          "gradients": [
+            62
+          ],
+          "file": "backward.hip",
+          "line": 8
+        }
+      ]
+    }
+  ],
+  "forward_launches": 39,
+  "backward_launches": 63
+}
