@@ -11,7 +11,7 @@ __pycache__/
 /asteroids/runs/
 
 # trained / exported weights (fast to retrain, or fetched by download.sh)
-model.safetensors
+*.safetensors
 *.pt
 *.hllm
 
@@ -31,3 +31,7 @@ hip-llama3/models/
 # cuda-llama3 local build/profiling output
 cuda-llama3/build/
 cuda-llama3/benchmark-*.txt
+
+# scratch + private data
+/tmp/
+wiki-llm/data/
