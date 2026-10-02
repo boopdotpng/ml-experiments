@@ -93,7 +93,7 @@ class LanguageModel:
     self.layers = [Block(i) for i in range(n_layers)]
     self.norm = QwenRMSNorm(emb_dim)
   def __call__(self, x: Tensor, pos:int) -> Tensor:
-    # x.shape = (B, 3)
+    # x.shape = (1, 3)
     x = self.embed_tokens(x)
     for layer in self.layers: x = layer(x, pos)
     x = self.norm(x)
@@ -104,7 +104,7 @@ class Model:
     self.language_model = LanguageModel()
     self.lm_head = nn.Linear(emb_dim, vocab_size, bias=False) # not tied to embed_tokens
   def __call__(self, x: Tensor, pos:int) -> Tensor:
-    # x.shape = (B, 3)
+    # x.shape = (1, 3)
     x = self.language_model(x, pos)
     return self.lm_head(x[:, -1, :]).argmax(-1)
 
@@ -222,9 +222,15 @@ class LinearAttn:
     self.out_proj = nn.Linear(lin_value_dim, emb_dim, bias=False)
 
     self.conv_state = None
+    self.state = None # recurrent state
 
   def __call__(self, x: Tensor) -> Tensor:
     # x.shape = (1, 1, 5120)
+    # gated deltanet. overview:
+    #   project x to q, k, v (+ gates a, b, z)
+    #   short causal conv over the last 4 tokens, mixes neighbours into q, k, v
+    #   per head, a 128x128 memory matrix that gets decayed (g), corrected toward v (delta rule, beta), read with q
+    #   norm, silu(z) gate, project back
     B, S, _ = x.shape
     qkv = self.in_proj_qkv(x) # qkv from regular attention, same thing
     # on float casts: anything used in recurrence needs to be float due to accumulation
@@ -240,28 +246,74 @@ class LinearAttn:
     window = self.conv_state.cat(qkv, dim=1)
 
     # update conv state. remove the oldest token
-    self.conv_state.assign(window[:, 1:])
+    self.conv_state.assign(window[:, -(linear_conv_kernel-1):])
 
     # batch, channels, length
     out = self.conv1d(window.transpose(2,1)).transpose(1,2).silu()
 
     # split qkv
     q, k, v = out.split([lin_key_dim, lin_key_dim, lin_value_dim], dim=-1)
-    q = q.reshape(B, 1, 16, 128).float()
-    k = k.reshape(B, 1, 16, 128).float()
-    v = v.reshape(B, 1, 48, 128).float()
+    q = q.reshape(B, S, linear_n_k_heads, linear_k_head_dim).float()
+    k = k.reshape(B, S, linear_n_k_heads, linear_k_head_dim).float()
+    v = v.reshape(B, S, linear_n_v_heads, linear_v_head_dim).float()
 
-    # l2 norm q and k
-    q = q / ((q.square().sum(-1, keepdim=True) + 1e-6).sqrt())
-    k = k / ((k.square().sum(-1, keepdim=True) + 1e-6).sqrt())
+    # l2 normalize q and k per head, so every key is a unit vector.
+    # the state below is written with outer(k, ...) every token. with unit keys, reading back
+    # k @ state gives exactly what was stored at k, and writes can't grow without bound.
+    # q also gets the usual 1/sqrt(d) scaling from regular attention.
+    q = q * (q.square().sum(-1, keepdim=True) + 1e-6).rsqrt() * linear_k_head_dim ** -0.5
+    k = k * (k.square().sum(-1, keepdim=True) + 1e-6).rsqrt()
 
-    q = q / (linear_k_head_dim ** 0.5)
+    # GQA again: 16 qk heads -> 48 v heads. repeat_interleave makes qk head i serve v heads 3i, 3i+1, 3i+2.
+    # after this every v head has its own q, k, v triple and runs independently.
+    q = q.repeat_interleave(linear_n_v_heads // linear_n_k_heads, dim=2)
+    k = k.repeat_interleave(linear_n_v_heads // linear_n_k_heads, dim=2)
 
-    # repeat!
-    q = q.repeat_interleave(3, 2)
-    k = k.repeat_interleave(3, 2)
+    # one scalar per head per token, both squashed into 0..1
+    # beta: how strongly this token overwrites the memory. 0 = ignore this token, 1 = fully replace.
+    beta = b.sigmoid()
+    # g: how much of the old memory survives this token. it's exp(-rate * dt):
+    #   A_log  learned per head forgetting rate (stored as log so exp(A_log) is always positive)
+    #   softplus(a + dt_bias)  per token "time step", positive. a big step = forget more
+    # so g = exp(-positive) lands in 0..1. 1 = remember everything, 0 = wipe the memory
+    g = (-self.A_log.exp() * (a + self.dt_bias).softplus()).exp()
 
+    # this replaces the kv cache. instead of storing every past k and v, each head keeps one
+    # (k_dim, v_dim) = 128x128 matrix that maps keys to values: k @ state ~= the v stored at k.
+    # its size is fixed no matter how long the sequence gets
+    if self.state is None:
+      self.state = Tensor.zeros(B, linear_n_v_heads, linear_k_head_dim, linear_v_head_dim).contiguous().realize()
 
+    # walk the tokens in order, each one reads and writes the memory.
+    # decode has S = 1, so this runs once. prefill loops over the whole prompt
+    state = self.state
+    outs = []
+    for t in range(S):
+      q_t, k_t, v_t = q[:, t], k[:, t], v[:, t] # this token's vectors, one per head
+      # 1. forget: fade the whole memory by this token's decay
+      state = state * g[:, t].reshape(B, linear_n_v_heads, 1, 1)
+      # 2. recall: what does the memory currently return for this key? (k_t @ state, written as broadcast + sum
+      #    over the k dim so it's batched over heads)
+      kv_mem = (state * k_t.unsqueeze(-1)).sum(-2)
+      # 3. delta rule: error between the value we want stored at k_t and what's actually there, scaled by beta.
+      #    this is one gradient descent step on ||k_t @ state - v_t||^2, which is where the name comes from.
+      #    plain linear attention would add outer(k_t, v_t) blindly, so values pile up under similar keys.
+      #    writing only the error overwrites the old value instead
+      delta = (v_t - kv_mem) * beta[:, t].unsqueeze(-1)
+      # 4. write: rank 1 update, outer(k_t, delta). since k_t is unit length, after this
+      #    k_t @ state = kv_mem + delta. other directions barely change
+      state = state + k_t.unsqueeze(-1) * delta.unsqueeze(-2)
+      # 5. read: look up the query in the updated memory, q_t @ state. this is the attention output
+      outs.append((state * q_t.unsqueeze(-1)).sum(-2))
+    # save the memory for the next call, like writing the kv cache
+    self.state.assign(state)
+    o = Tensor.stack(*outs, dim=1) # back to (B, S, heads, v_dim)
+
+    # gated rmsnorm per head. this norm's weight is plain (init 1), not offset from 1 like QwenRMSNorm.
+    # then silu(z) gates it, same idea as the sigmoid gate in SelfAttn
+    o = self.norm(o) * z.silu()
+    # merge the heads and project back to the residual stream
+    return self.out_proj(o.reshape(B, S, lin_value_dim).cast(x.dtype))
 
 def main():
   # temp, print all tensors in model
