@@ -1,0 +1,6 @@
+model,test_accuracy,is_final_model
+"2 layers, 1 head each, plus MLP",41.7,False
+"2 layers, 1 head each, plus MLP (seed 1)",96.9,False
+"2 layers, 2 heads each, no MLP",20.2,False
+"2 layers, 2 heads each, plus MLP",100,True
+"3 layers, 1 head each, plus MLP",100,False

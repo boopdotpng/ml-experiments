@@ -1,0 +1,10 @@
+model,test_accuracy
+full model,100
+layer 1 attention removed,17.7
+only L1H1 removed,20.5
+only L1H2 removed,95.1
+layer 2 attention removed,11.8
+only L2H1 removed,15.4
+only L2H2 removed,23.9
+MLP removed,13.5
+position embedding removed,14.8

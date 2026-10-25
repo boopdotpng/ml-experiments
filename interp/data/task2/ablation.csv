@@ -1,0 +1,5 @@
+model,test_accuracy
+full model,100
+layer 1 head removed,36.2
+layer 2 head removed,29.8
+position embedding removed,45

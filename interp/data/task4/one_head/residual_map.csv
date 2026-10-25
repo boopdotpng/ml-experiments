@@ -1,0 +1,489 @@
+stage,position,token,source_kind,source_position,source_token,via,weight,length,stream_length
+embedding,k1,a,token,k1,a,direct,1,1.28132,1.73477
+embedding,k1,a,position,k1,a,direct,1,0.902773,1.73477
+embedding,v1,5,token,v1,5,direct,1,2.74291,2.92485
+embedding,v1,5,position,v1,5,direct,1,1.15173,2.92485
+embedding,k2,r,token,k2,r,direct,1,1.30774,1.67975
+embedding,k2,r,position,k2,r,direct,1,0.908645,1.67975
+embedding,v2,4,token,v2,4,direct,1,2.53516,3.02589
+embedding,v2,4,position,v2,4,direct,1,1.22228,3.02589
+embedding,k3,g,token,k3,g,direct,1,1.3713,1.99064
+embedding,k3,g,position,k3,g,direct,1,1.35942,1.99064
+embedding,v3,1,token,v3,1,direct,1,2.79094,3.12001
+embedding,v3,1,position,v3,1,direct,1,1.15399,3.12001
+embedding,k4,s,position,k4,s,direct,1,1.69109,2.21948
+embedding,k4,s,token,k4,s,direct,1,1.32474,2.21948
+embedding,v4,6,token,v4,6,direct,1,2.3487,2.73089
+embedding,v4,6,position,v4,6,direct,1,1.24876,2.73089
+embedding,q1,g,position,q1,g,direct,1,4.38535,4.9241
+embedding,q1,g,token,q1,g,direct,1,1.3713,4.9241
+embedding,q2,r,token,q2,r,direct,1,1.30774,2.02653
+embedding,q2,r,position,q2,r,direct,1,1.29839,2.02653
+after layer 1,k1,a,token,k1,a,L1H1,1,2.40851,3.6
+after layer 1,k1,a,token,k1,a,direct,1,1.28132,3.6
+after layer 1,k1,a,position,k1,a,L1H1,1,0.933395,3.6
+after layer 1,k1,a,position,k1,a,direct,1,0.902773,3.6
+after layer 1,v1,5,token,v1,5,direct,1,2.74291,3.79216
+after layer 1,v1,5,token,k1,a,L1H1,0.99692,2.40109,3.79216
+after layer 1,v1,5,position,v1,5,direct,1,1.15173,3.79216
+after layer 1,v1,5,position,k1,a,L1H1,0.99692,0.930521,3.79216
+after layer 1,k2,r,token,v1,5,L1H1,0.415009,3.28689,4.04629
+after layer 1,k2,r,token,k2,r,direct,1,1.30774,4.04629
+after layer 1,k2,r,position,k2,r,direct,1,0.908645,4.04629
+after layer 1,k2,r,token,k1,a,L1H1,0.333692,0.8037,4.04629
+after layer 1,k2,r,position,v1,5,L1H1,0.415009,0.708482,4.04629
+after layer 1,k2,r,token,k2,r,L1H1,0.251299,0.621647,4.04629
+after layer 1,k2,r,position,k1,a,L1H1,0.333692,0.311467,4.04629
+after layer 1,k2,r,position,k2,r,L1H1,0.251299,0.231662,4.04629
+after layer 1,v2,4,token,v2,4,direct,1,2.53516,3.84799
+after layer 1,v2,4,token,k2,r,L1H1,0.947645,2.34423,3.84799
+after layer 1,v2,4,position,v2,4,direct,1,1.22228,3.84799
+after layer 1,v2,4,position,k2,r,L1H1,0.947645,0.873597,3.84799
+after layer 1,v2,4,token,k1,a,L1H1,0.0490782,0.118205,3.84799
+after layer 1,v2,4,position,k1,a,L1H1,0.0490782,0.0458093,3.84799
+after layer 1,k3,g,token,v1,5,L1H1,0.323083,2.55883,4.33264
+after layer 1,k3,g,token,v2,4,L1H1,0.268724,2.10191,4.33264
+after layer 1,k3,g,token,k3,g,direct,1,1.3713,4.33264
+after layer 1,k3,g,position,k3,g,direct,1,1.35942,4.33264
+after layer 1,k3,g,position,v1,5,L1H1,0.323083,0.551551,4.33264
+after layer 1,k3,g,position,v2,4,L1H1,0.268724,0.490469,4.33264
+after layer 1,k3,g,token,k1,a,L1H1,0.196361,0.472938,4.33264
+after layer 1,k3,g,token,k2,r,L1H1,0.126024,0.31175,4.33264
+after layer 1,k3,g,token,k3,g,L1H1,0.0858071,0.224303,4.33264
+after layer 1,k3,g,position,k1,a,L1H1,0.196361,0.183283,4.33264
+after layer 1,k3,g,position,k2,r,L1H1,0.126024,0.116177,4.33264
+after layer 1,k3,g,position,k3,g,L1H1,0.0858071,0.0767286,4.33264
+after layer 1,v3,1,token,v3,1,direct,1,2.79094,3.9322
+after layer 1,v3,1,token,k3,g,L1H1,0.944153,2.46805,3.9322
+after layer 1,v3,1,position,v3,1,direct,1,1.15399,3.9322
+after layer 1,v3,1,position,k3,g,L1H1,0.944153,0.844261,3.9322
+after layer 1,v3,1,token,k2,r,L1H1,0.0521052,0.128895,3.9322
+after layer 1,v3,1,position,k2,r,L1H1,0.0521052,0.0480337,3.9322
+after layer 1,k4,s,token,v1,5,L1H1,0.375352,2.9728,5.30721
+after layer 1,k4,s,token,v3,1,L1H1,0.257931,2.29175,5.30721
+after layer 1,k4,s,token,v2,4,L1H1,0.273658,2.1405,5.30721
+after layer 1,k4,s,position,k4,s,direct,1,1.69109,5.30721
+after layer 1,k4,s,token,k4,s,direct,1,1.32474,5.30721
+after layer 1,k4,s,position,v1,5,L1H1,0.375352,0.640782,5.30721
+after layer 1,k4,s,position,v2,4,L1H1,0.273658,0.499475,5.30721
+after layer 1,k4,s,position,v3,1,L1H1,0.257931,0.473708,5.30721
+after layer 1,k4,s,token,k1,a,L1H1,0.0517685,0.124685,5.30721
+after layer 1,k4,s,token,k2,r,L1H1,0.0274201,0.0678303,5.30721
+after layer 1,k4,s,position,k1,a,L1H1,0.0517685,0.0483205,5.30721
+after layer 1,k4,s,position,k2,r,L1H1,0.0274201,0.0252776,5.30721
+after layer 1,v4,6,token,v4,6,direct,1,2.3487,3.22565
+after layer 1,v4,6,token,k4,s,L1H1,0.852578,2.219,3.22565
+after layer 1,v4,6,position,v4,6,direct,1,1.24876,3.22565
+after layer 1,v4,6,position,k4,s,L1H1,0.852578,1.06222,3.22565
+after layer 1,v4,6,token,k3,g,L1H1,0.110844,0.28975,3.22565
+after layer 1,v4,6,position,k3,g,L1H1,0.110844,0.0991166,3.22565
+after layer 1,v4,6,token,k2,r,L1H1,0.0285763,0.0706903,3.22565
+after layer 1,v4,6,position,k2,r,L1H1,0.0285763,0.0263434,3.22565
+after layer 1,q1,g,position,q1,g,direct,1,4.38535,7.10508
+after layer 1,q1,g,token,v1,5,L1H1,0.442413,3.50392,7.10508
+after layer 1,q1,g,token,v2,4,L1H1,0.223743,1.75007,7.10508
+after layer 1,q1,g,token,v3,1,L1H1,0.19,1.68818,7.10508
+after layer 1,q1,g,token,q1,g,direct,1,1.3713,7.10508
+after layer 1,q1,g,token,v4,6,L1H1,0.143604,1.02134,7.10508
+after layer 1,q1,g,position,v1,5,L1H1,0.442413,0.755264,7.10508
+after layer 1,q1,g,position,v2,4,L1H1,0.223743,0.408371,7.10508
+after layer 1,q1,g,position,v3,1,L1H1,0.19,0.348948,7.10508
+after layer 1,q1,g,position,v4,6,L1H1,0.143604,0.253596,7.10508
+after layer 1,q2,r,token,v1,5,L1H1,0.256244,2.02946,4.79875
+after layer 1,q2,r,token,v2,4,L1H1,0.233897,1.8295,4.79875
+after layer 1,q2,r,token,v4,6,L1H1,0.250164,1.77921,4.79875
+after layer 1,q2,r,token,v3,1,L1H1,0.194138,1.72494,4.79875
+after layer 1,q2,r,token,q2,r,direct,1,1.30774,4.79875
+after layer 1,q2,r,position,q2,r,direct,1,1.29839,4.79875
+after layer 1,q2,r,position,v4,6,L1H1,0.250164,0.441775,4.79875
+after layer 1,q2,r,position,v1,5,L1H1,0.256244,0.437447,4.79875
+after layer 1,q2,r,position,v2,4,L1H1,0.233897,0.426904,4.79875
+after layer 1,q2,r,position,v3,1,L1H1,0.194138,0.356548,4.79875
+after layer 1,q2,r,token,k1,a,L1H1,0.0187639,0.045193,4.79875
+after layer 1,q2,r,token,k2,r,L1H1,0.0153977,0.0380899,4.79875
+after layer 1,q2,r,token,q2,r,L1H1,0.01339,0.0331233,4.79875
+after layer 1,q2,r,position,q2,r,L1H1,0.01339,0.0267722,4.79875
+after layer 1,q2,r,position,k1,a,L1H1,0.0187639,0.0175142,4.79875
+after layer 1,q2,r,position,k2,r,L1H1,0.0153977,0.0141945,4.79875
+after layer 2,k1,a,token,k1,a,L1H1,1,2.40851,3.68816
+after layer 2,k1,a,token,k1,a,L2H1,1,1.41835,3.68816
+after layer 2,k1,a,token,k1,a,direct,1,1.28132,3.68816
+after layer 2,k1,a,token,k1,a,L1H1→L2H1,1,0.956691,3.68816
+after layer 2,k1,a,position,k1,a,L1H1,1,0.933395,3.68816
+after layer 2,k1,a,position,k1,a,direct,1,0.902773,3.68816
+after layer 2,k1,a,position,k1,a,L2H1,1,0.742506,3.68816
+after layer 2,k1,a,position,k1,a,L1H1→L2H1,1,0.631557,3.68816
+after layer 2,v1,5,token,v1,5,direct,1,2.74291,4.26813
+after layer 2,v1,5,token,k1,a,L1H1,0.99692,2.40109,4.26813
+after layer 2,v1,5,token,k1,a,L2H1,0.904412,1.28277,4.26813
+after layer 2,v1,5,position,v1,5,direct,1,1.15173,4.26813
+after layer 2,v1,5,position,k1,a,L1H1,0.99692,0.930521,4.26813
+after layer 2,v1,5,token,k1,a,L1H1→L2H1,0.904412,0.865242,4.26813
+after layer 2,v1,5,position,k1,a,L2H1,0.904412,0.671531,4.26813
+after layer 2,v1,5,position,k1,a,L1H1→L2H1,0.904412,0.571187,4.26813
+after layer 2,v1,5,token,v1,5,L2H1,0.0955883,0.459742,4.26813
+after layer 2,v1,5,position,v1,5,L2H1,0.0955883,0.0991789,4.26813
+after layer 2,v1,5,token,k1,a,L1H1→L2H1,0.0952939,0.0911668,4.26813
+after layer 2,v1,5,position,k1,a,L1H1→L2H1,0.0952939,0.0601835,4.26813
+after layer 2,k2,r,token,v1,5,L1H1,0.415009,3.28689,4.95785
+after layer 2,k2,r,token,v1,5,L1H1→L2H1,0.413617,1.55575,4.95785
+after layer 2,k2,r,token,k2,r,L2H1,0.996645,1.47174,4.95785
+after layer 2,k2,r,token,k2,r,direct,1,1.30774,4.95785
+after layer 2,k2,r,position,k2,r,direct,1,0.908645,4.95785
+after layer 2,k2,r,position,k2,r,L2H1,0.996645,0.849871,4.95785
+after layer 2,k2,r,token,k1,a,L1H1,0.333692,0.8037,4.95785
+after layer 2,k2,r,position,v1,5,L1H1,0.415009,0.708482,4.95785
+after layer 2,k2,r,token,k2,r,L1H1,0.251299,0.621647,4.95785
+after layer 2,k2,r,position,v1,5,L1H1→L2H1,0.413617,0.592372,4.95785
+after layer 2,k2,r,token,k1,a,L1H1→L2H1,0.332573,0.31817,4.95785
+after layer 2,k2,r,position,k1,a,L1H1,0.333692,0.311467,4.95785
+after layer 2,k2,r,token,k2,r,L1H1→L2H1,0.250456,0.277967,4.95785
+after layer 2,k2,r,position,k2,r,L1H1,0.251299,0.231662,4.95785
+after layer 2,k2,r,position,k1,a,L1H1→L2H1,0.332573,0.210039,4.95785
+after layer 2,k2,r,position,k2,r,L1H1→L2H1,0.250456,0.198265,4.95785
+after layer 2,v2,4,token,v2,4,direct,1,2.53516,4.21216
+after layer 2,v2,4,token,k2,r,L1H1,0.947645,2.34423,4.21216
+after layer 2,v2,4,position,v2,4,direct,1,1.22228,4.21216
+after layer 2,v2,4,token,k1,a,L2H1,0.813509,1.15384,4.21216
+after layer 2,v2,4,position,k2,r,L1H1,0.947645,0.873597,4.21216
+after layer 2,v2,4,token,k1,a,L1H1→L2H1,0.813509,0.778277,4.21216
+after layer 2,v2,4,position,k1,a,L2H1,0.813509,0.604036,4.21216
+after layer 2,v2,4,position,k1,a,L1H1→L2H1,0.813509,0.513777,4.21216
+after layer 2,v2,4,token,v1,5,L2H1,0.0934754,0.44958,4.21216
+after layer 2,v2,4,token,v1,5,L1H1→L2H1,0.0385522,0.145007,4.21216
+after layer 2,v2,4,token,k2,r,L2H1,0.0928948,0.137177,4.21216
+after layer 2,v2,4,token,k1,a,L1H1,0.0490782,0.118205,4.21216
+after layer 2,v2,4,position,v1,5,L2H1,0.0934754,0.0969866,4.21216
+after layer 2,v2,4,token,k1,a,L1H1→L2H1,0.0931875,0.0891517,4.21216
+after layer 2,v2,4,position,k2,r,L2H1,0.0928948,0.0792143,4.21216
+after layer 2,v2,4,position,k1,a,L1H1→L2H1,0.0931875,0.0588532,4.21216
+after layer 2,v2,4,position,v1,5,L1H1→L2H1,0.0385522,0.0552135,4.21216
+after layer 2,v2,4,position,k1,a,L1H1,0.0490782,0.0458093,4.21216
+after layer 2,v2,4,token,k1,a,L1H1→L2H1,0.0309983,0.0296558,4.21216
+after layer 2,v2,4,token,k2,r,L1H1→L2H1,0.0233443,0.0259086,4.21216
+after layer 2,v2,4,position,k1,a,L1H1→L2H1,0.0309983,0.0195772,4.21216
+after layer 2,v2,4,position,k2,r,L1H1→L2H1,0.0233443,0.0184798,4.21216
+after layer 2,k3,g,token,v1,5,L2H1,0.939432,4.5183,6.4519
+after layer 2,k3,g,token,v1,5,L1H1,0.323083,2.55883,6.4519
+after layer 2,k3,g,token,v2,4,L1H1,0.268724,2.10191,6.4519
+after layer 2,k3,g,token,k3,g,direct,1,1.3713,6.4519
+after layer 2,k3,g,position,k3,g,direct,1,1.35942,6.4519
+after layer 2,k3,g,position,v1,5,L2H1,0.939432,0.97472,6.4519
+after layer 2,k3,g,token,k1,a,L1H1→L2H1,0.936539,0.895978,6.4519
+after layer 2,k3,g,position,k1,a,L1H1→L2H1,0.936539,0.591477,6.4519
+after layer 2,k3,g,position,v1,5,L1H1,0.323083,0.551551,6.4519
+after layer 2,k3,g,position,v2,4,L1H1,0.268724,0.490469,6.4519
+after layer 2,k3,g,token,k1,a,L1H1,0.196361,0.472938,6.4519
+after layer 2,k3,g,token,k2,r,L1H1,0.126024,0.31175,6.4519
+after layer 2,k3,g,token,k3,g,L1H1,0.0858071,0.224303,6.4519
+after layer 2,k3,g,position,k1,a,L1H1,0.196361,0.183283,6.4519
+after layer 2,k3,g,position,k2,r,L1H1,0.126024,0.116177,6.4519
+after layer 2,k3,g,token,k1,a,L2H1,0.0603871,0.0856498,6.4519
+after layer 2,k3,g,position,k3,g,L1H1,0.0858071,0.0767286,6.4519
+after layer 2,k3,g,token,k1,a,L1H1→L2H1,0.0603871,0.0577718,6.4519
+after layer 2,k3,g,position,k1,a,L2H1,0.0603871,0.0448378,6.4519
+after layer 2,k3,g,position,k1,a,L1H1→L2H1,0.0603871,0.0381378,6.4519
+after layer 2,v3,1,token,v3,1,direct,1,2.79094,4.40583
+after layer 2,v3,1,token,k3,g,L1H1,0.944153,2.46805,4.40583
+after layer 2,v3,1,position,v3,1,direct,1,1.15399,4.40583
+after layer 2,v3,1,token,k1,a,L2H1,0.793083,1.12487,4.40583
+after layer 2,v3,1,position,k3,g,L1H1,0.944153,0.844261,4.40583
+after layer 2,v3,1,token,k1,a,L1H1→L2H1,0.793083,0.758735,4.40583
+after layer 2,v3,1,position,k1,a,L2H1,0.793083,0.588869,4.40583
+after layer 2,v3,1,position,k1,a,L1H1→L2H1,0.793083,0.500877,4.40583
+after layer 2,v3,1,token,k3,g,L2H1,0.169974,0.280198,4.40583
+after layer 2,v3,1,token,v1,5,L1H1→L2H1,0.0549158,0.206556,4.40583
+after layer 2,v3,1,position,k3,g,L2H1,0.169974,0.188644,4.40583
+after layer 2,v3,1,token,v2,4,L1H1→L2H1,0.0456761,0.177243,4.40583
+after layer 2,v3,1,token,k2,r,L1H1,0.0521052,0.128895,4.40583
+after layer 2,v3,1,position,v1,5,L1H1→L2H1,0.0549158,0.078649,4.40583
+after layer 2,v3,1,position,v2,4,L1H1→L2H1,0.0456761,0.0726675,4.40583
+after layer 2,v3,1,token,v1,5,L1H1→L2H1,0.0141675,0.0532886,4.40583
+after layer 2,v3,1,token,k2,r,L2H1,0.0341379,0.0504111,4.40583
+after layer 2,v3,1,position,k2,r,L1H1,0.0521052,0.0480337,4.40583
+after layer 2,v3,1,token,k1,a,L1H1→L2H1,0.0333763,0.0319308,4.40583
+after layer 2,v3,1,position,k2,r,L2H1,0.0341379,0.0291104,4.40583
+after layer 2,v3,1,token,k2,r,L1H1→L2H1,0.0214208,0.0237737,4.40583
+after layer 2,v3,1,position,k1,a,L1H1→L2H1,0.0333763,0.021079,4.40583
+after layer 2,v3,1,position,v1,5,L1H1→L2H1,0.0141675,0.0202904,4.40583
+after layer 2,v3,1,token,k3,g,L1H1→L2H1,0.014585,0.019885,4.40583
+after layer 2,v3,1,position,k2,r,L1H1→L2H1,0.0214208,0.0169571,4.40583
+after layer 2,v3,1,token,k1,a,L1H1→L2H1,0.0113915,0.0108982,4.40583
+after layer 2,v3,1,position,k3,g,L1H1→L2H1,0.014585,0.0108315,4.40583
+after layer 2,v3,1,position,k1,a,L1H1→L2H1,0.0113915,0.00719441,4.40583
+after layer 2,k4,s,token,v2,4,L2H1,0.973401,4.36892,7.20105
+after layer 2,k4,s,token,v1,5,L1H1,0.375352,2.9728,7.20105
+after layer 2,k4,s,token,v3,1,L1H1,0.257931,2.29175,7.20105
+after layer 2,k4,s,token,v2,4,L1H1,0.273658,2.1405,7.20105
+after layer 2,k4,s,position,k4,s,direct,1,1.69109,7.20105
+after layer 2,k4,s,token,k4,s,direct,1,1.32474,7.20105
+after layer 2,k4,s,position,v2,4,L2H1,0.973401,1.18183,7.20105
+after layer 2,k4,s,token,k2,r,L1H1→L2H1,0.922438,1.02376,7.20105
+after layer 2,k4,s,position,k2,r,L1H1→L2H1,0.922438,0.73022,7.20105
+after layer 2,k4,s,position,v1,5,L1H1,0.375352,0.640782,7.20105
+after layer 2,k4,s,position,v2,4,L1H1,0.273658,0.499475,7.20105
+after layer 2,k4,s,position,v3,1,L1H1,0.257931,0.473708,7.20105
+after layer 2,k4,s,token,k1,a,L1H1,0.0517685,0.124685,7.20105
+after layer 2,k4,s,token,v1,5,L2H1,0.0220892,0.10624,7.20105
+after layer 2,k4,s,token,k2,r,L1H1,0.0274201,0.0678303,7.20105
+after layer 2,k4,s,position,k1,a,L1H1,0.0517685,0.0483205,7.20105
+after layer 2,k4,s,token,k1,a,L1H1→L2H1,0.0477727,0.0457037,7.20105
+after layer 2,k4,s,position,k1,a,L1H1→L2H1,0.0477727,0.0301712,7.20105
+after layer 2,k4,s,position,k2,r,L1H1,0.0274201,0.0252776,7.20105
+after layer 2,k4,s,position,v1,5,L2H1,0.0220892,0.022919,7.20105
+after layer 2,k4,s,token,k1,a,L1H1→L2H1,0.0220212,0.0210675,7.20105
+after layer 2,k4,s,position,k1,a,L1H1→L2H1,0.0220212,0.0139076,7.20105
+after layer 2,v4,6,token,v4,6,L2H1,0.997443,4.53289,5.34114
+after layer 2,v4,6,token,v4,6,direct,1,2.3487,5.34114
+after layer 2,v4,6,token,k4,s,L1H1,0.852578,2.219,5.34114
+after layer 2,v4,6,position,v4,6,direct,1,1.24876,5.34114
+after layer 2,v4,6,position,v4,6,L2H1,0.997443,1.14392,5.34114
+after layer 2,v4,6,token,k4,s,L1H1→L2H1,0.850398,1.09454,5.34114
+after layer 2,v4,6,position,k4,s,L1H1,0.852578,1.06222,5.34114
+after layer 2,v4,6,position,k4,s,L1H1→L2H1,0.850398,0.744883,5.34114
+after layer 2,v4,6,token,k3,g,L1H1,0.110844,0.28975,5.34114
+after layer 2,v4,6,token,k3,g,L1H1→L2H1,0.110561,0.150737,5.34114
+after layer 2,v4,6,position,k3,g,L1H1,0.110844,0.0991166,5.34114
+after layer 2,v4,6,position,k3,g,L1H1→L2H1,0.110561,0.0821075,5.34114
+after layer 2,v4,6,token,k2,r,L1H1,0.0285763,0.0706903,5.34114
+after layer 2,v4,6,token,k2,r,L1H1→L2H1,0.0285032,0.0316341,5.34114
+after layer 2,v4,6,position,k2,r,L1H1,0.0285763,0.0263434,5.34114
+after layer 2,v4,6,position,k2,r,L1H1→L2H1,0.0285032,0.0225637,5.34114
+after layer 2,q1,g,position,q1,g,direct,1,4.38535,8.83339
+after layer 2,q1,g,token,v3,1,L2H1,0.774118,3.89081,8.83339
+after layer 2,q1,g,token,v1,5,L1H1,0.442413,3.50392,8.83339
+after layer 2,q1,g,token,v2,4,L1H1,0.223743,1.75007,8.83339
+after layer 2,q1,g,token,v3,1,L1H1,0.19,1.68818,8.83339
+after layer 2,q1,g,token,q1,g,direct,1,1.3713,8.83339
+after layer 2,q1,g,token,v1,5,L2H1,0.22588,1.08639,8.83339
+after layer 2,q1,g,token,v4,6,L1H1,0.143604,1.02134,8.83339
+after layer 2,q1,g,token,k3,g,L1H1→L2H1,0.730886,0.996483,8.83339
+after layer 2,q1,g,position,v3,1,L2H1,0.774118,0.806939,8.83339
+after layer 2,q1,g,position,v1,5,L1H1,0.442413,0.755264,8.83339
+after layer 2,q1,g,position,k3,g,L1H1→L2H1,0.730886,0.54279,8.83339
+after layer 2,q1,g,position,v2,4,L1H1,0.223743,0.408371,8.83339
+after layer 2,q1,g,position,v3,1,L1H1,0.19,0.348948,8.83339
+after layer 2,q1,g,position,v4,6,L1H1,0.143604,0.253596,8.83339
+after layer 2,q1,g,position,v1,5,L2H1,0.22588,0.234365,8.83339
+after layer 2,q1,g,token,k1,a,L1H1→L2H1,0.225185,0.215432,8.83339
+after layer 2,q1,g,position,k1,a,L1H1→L2H1,0.225185,0.142217,8.83339
+after layer 2,q1,g,token,k2,r,L1H1→L2H1,0.0403356,0.0447662,8.83339
+after layer 2,q1,g,position,k2,r,L1H1→L2H1,0.0403356,0.0319304,8.83339
+after layer 2,q2,r,token,v2,4,L2H1,0.999306,4.48519,7.04333
+after layer 2,q2,r,token,v1,5,L1H1,0.256244,2.02946,7.04333
+after layer 2,q2,r,token,v2,4,L1H1,0.233897,1.8295,7.04333
+after layer 2,q2,r,token,v4,6,L1H1,0.250164,1.77921,7.04333
+after layer 2,q2,r,token,v3,1,L1H1,0.194138,1.72494,7.04333
+after layer 2,q2,r,token,q2,r,direct,1,1.30774,7.04333
+after layer 2,q2,r,position,q2,r,direct,1,1.29839,7.04333
+after layer 2,q2,r,position,v2,4,L2H1,0.999306,1.21328,7.04333
+after layer 2,q2,r,token,k2,r,L1H1→L2H1,0.946987,1.05101,7.04333
+after layer 2,q2,r,position,k2,r,L1H1→L2H1,0.946987,0.749653,7.04333
+after layer 2,q2,r,position,v4,6,L1H1,0.250164,0.441775,7.04333
+after layer 2,q2,r,position,v1,5,L1H1,0.256244,0.437447,7.04333
+after layer 2,q2,r,position,v2,4,L1H1,0.233897,0.426904,7.04333
+after layer 2,q2,r,position,v3,1,L1H1,0.194138,0.356548,7.04333
+after layer 2,q2,r,token,k1,a,L1H1→L2H1,0.0490441,0.04692,7.04333
+after layer 2,q2,r,token,k1,a,L1H1,0.0187639,0.045193,7.04333
+after layer 2,q2,r,token,k2,r,L1H1,0.0153977,0.0380899,7.04333
+after layer 2,q2,r,token,q2,r,L1H1,0.01339,0.0331233,7.04333
+after layer 2,q2,r,position,k1,a,L1H1→L2H1,0.0490441,0.0309741,7.04333
+after layer 2,q2,r,position,q2,r,L1H1,0.01339,0.0267722,7.04333
+after layer 2,q2,r,position,k1,a,L1H1,0.0187639,0.0175142,7.04333
+after layer 2,q2,r,position,k2,r,L1H1,0.0153977,0.0141945,7.04333
+after MLP,k1,a,MLP,k1,a,MLP,1,17.2328,17.589
+after MLP,k1,a,token,k1,a,L1H1,1,2.40851,17.589
+after MLP,k1,a,token,k1,a,L2H1,1,1.41835,17.589
+after MLP,k1,a,token,k1,a,direct,1,1.28132,17.589
+after MLP,k1,a,token,k1,a,L1H1→L2H1,1,0.956691,17.589
+after MLP,k1,a,position,k1,a,L1H1,1,0.933395,17.589
+after MLP,k1,a,position,k1,a,direct,1,0.902773,17.589
+after MLP,k1,a,position,k1,a,L2H1,1,0.742506,17.589
+after MLP,k1,a,position,k1,a,L1H1→L2H1,1,0.631557,17.589
+after MLP,v1,5,MLP,v1,5,MLP,1,24.6996,24.5374
+after MLP,v1,5,token,v1,5,direct,1,2.74291,24.5374
+after MLP,v1,5,token,k1,a,L1H1,0.99692,2.40109,24.5374
+after MLP,v1,5,token,k1,a,L2H1,0.904412,1.28277,24.5374
+after MLP,v1,5,position,v1,5,direct,1,1.15173,24.5374
+after MLP,v1,5,position,k1,a,L1H1,0.99692,0.930521,24.5374
+after MLP,v1,5,token,k1,a,L1H1→L2H1,0.904412,0.865242,24.5374
+after MLP,v1,5,position,k1,a,L2H1,0.904412,0.671531,24.5374
+after MLP,v1,5,position,k1,a,L1H1→L2H1,0.904412,0.571187,24.5374
+after MLP,v1,5,token,v1,5,L2H1,0.0955883,0.459742,24.5374
+after MLP,v1,5,position,v1,5,L2H1,0.0955883,0.0991789,24.5374
+after MLP,v1,5,token,k1,a,L1H1→L2H1,0.0952939,0.0911668,24.5374
+after MLP,v1,5,position,k1,a,L1H1→L2H1,0.0952939,0.0601835,24.5374
+after MLP,k2,r,MLP,k2,r,MLP,1,20.4836,20.3807
+after MLP,k2,r,token,v1,5,L1H1,0.415009,3.28689,20.3807
+after MLP,k2,r,token,v1,5,L1H1→L2H1,0.413617,1.55575,20.3807
+after MLP,k2,r,token,k2,r,L2H1,0.996645,1.47174,20.3807
+after MLP,k2,r,token,k2,r,direct,1,1.30774,20.3807
+after MLP,k2,r,position,k2,r,direct,1,0.908645,20.3807
+after MLP,k2,r,position,k2,r,L2H1,0.996645,0.849871,20.3807
+after MLP,k2,r,token,k1,a,L1H1,0.333692,0.8037,20.3807
+after MLP,k2,r,position,v1,5,L1H1,0.415009,0.708482,20.3807
+after MLP,k2,r,token,k2,r,L1H1,0.251299,0.621647,20.3807
+after MLP,k2,r,position,v1,5,L1H1→L2H1,0.413617,0.592372,20.3807
+after MLP,k2,r,token,k1,a,L1H1→L2H1,0.332573,0.31817,20.3807
+after MLP,k2,r,position,k1,a,L1H1,0.333692,0.311467,20.3807
+after MLP,k2,r,token,k2,r,L1H1→L2H1,0.250456,0.277967,20.3807
+after MLP,k2,r,position,k2,r,L1H1,0.251299,0.231662,20.3807
+after MLP,k2,r,position,k1,a,L1H1→L2H1,0.332573,0.210039,20.3807
+after MLP,k2,r,position,k2,r,L1H1→L2H1,0.250456,0.198265,20.3807
+after MLP,v2,4,MLP,v2,4,MLP,1,24.2523,23.3748
+after MLP,v2,4,token,v2,4,direct,1,2.53516,23.3748
+after MLP,v2,4,token,k2,r,L1H1,0.947645,2.34423,23.3748
+after MLP,v2,4,position,v2,4,direct,1,1.22228,23.3748
+after MLP,v2,4,token,k1,a,L2H1,0.813509,1.15384,23.3748
+after MLP,v2,4,position,k2,r,L1H1,0.947645,0.873597,23.3748
+after MLP,v2,4,token,k1,a,L1H1→L2H1,0.813509,0.778277,23.3748
+after MLP,v2,4,position,k1,a,L2H1,0.813509,0.604036,23.3748
+after MLP,v2,4,position,k1,a,L1H1→L2H1,0.813509,0.513777,23.3748
+after MLP,v2,4,token,v1,5,L2H1,0.0934754,0.44958,23.3748
+after MLP,v2,4,token,v1,5,L1H1→L2H1,0.0385522,0.145007,23.3748
+after MLP,v2,4,token,k2,r,L2H1,0.0928948,0.137177,23.3748
+after MLP,v2,4,token,k1,a,L1H1,0.0490782,0.118205,23.3748
+after MLP,v2,4,position,v1,5,L2H1,0.0934754,0.0969866,23.3748
+after MLP,v2,4,token,k1,a,L1H1→L2H1,0.0931875,0.0891517,23.3748
+after MLP,v2,4,position,k2,r,L2H1,0.0928948,0.0792143,23.3748
+after MLP,v2,4,position,k1,a,L1H1→L2H1,0.0931875,0.0588532,23.3748
+after MLP,v2,4,position,v1,5,L1H1→L2H1,0.0385522,0.0552135,23.3748
+after MLP,v2,4,position,k1,a,L1H1,0.0490782,0.0458093,23.3748
+after MLP,v2,4,token,k1,a,L1H1→L2H1,0.0309983,0.0296558,23.3748
+after MLP,v2,4,token,k2,r,L1H1→L2H1,0.0233443,0.0259086,23.3748
+after MLP,v2,4,position,k1,a,L1H1→L2H1,0.0309983,0.0195772,23.3748
+after MLP,v2,4,position,k2,r,L1H1→L2H1,0.0233443,0.0184798,23.3748
+after MLP,k3,g,MLP,k3,g,MLP,1,15.7787,14.1809
+after MLP,k3,g,token,v1,5,L2H1,0.939432,4.5183,14.1809
+after MLP,k3,g,token,v1,5,L1H1,0.323083,2.55883,14.1809
+after MLP,k3,g,token,v2,4,L1H1,0.268724,2.10191,14.1809
+after MLP,k3,g,token,k3,g,direct,1,1.3713,14.1809
+after MLP,k3,g,position,k3,g,direct,1,1.35942,14.1809
+after MLP,k3,g,position,v1,5,L2H1,0.939432,0.97472,14.1809
+after MLP,k3,g,token,k1,a,L1H1→L2H1,0.936539,0.895978,14.1809
+after MLP,k3,g,position,k1,a,L1H1→L2H1,0.936539,0.591477,14.1809
+after MLP,k3,g,position,v1,5,L1H1,0.323083,0.551551,14.1809
+after MLP,k3,g,position,v2,4,L1H1,0.268724,0.490469,14.1809
+after MLP,k3,g,token,k1,a,L1H1,0.196361,0.472938,14.1809
+after MLP,k3,g,token,k2,r,L1H1,0.126024,0.31175,14.1809
+after MLP,k3,g,token,k3,g,L1H1,0.0858071,0.224303,14.1809
+after MLP,k3,g,position,k1,a,L1H1,0.196361,0.183283,14.1809
+after MLP,k3,g,position,k2,r,L1H1,0.126024,0.116177,14.1809
+after MLP,k3,g,token,k1,a,L2H1,0.0603871,0.0856498,14.1809
+after MLP,k3,g,position,k3,g,L1H1,0.0858071,0.0767286,14.1809
+after MLP,k3,g,token,k1,a,L1H1→L2H1,0.0603871,0.0577718,14.1809
+after MLP,k3,g,position,k1,a,L2H1,0.0603871,0.0448378,14.1809
+after MLP,k3,g,position,k1,a,L1H1→L2H1,0.0603871,0.0381378,14.1809
+after MLP,v3,1,MLP,v3,1,MLP,1,23.2435,23.8756
+after MLP,v3,1,token,v3,1,direct,1,2.79094,23.8756
+after MLP,v3,1,token,k3,g,L1H1,0.944153,2.46805,23.8756
+after MLP,v3,1,position,v3,1,direct,1,1.15399,23.8756
+after MLP,v3,1,token,k1,a,L2H1,0.793083,1.12487,23.8756
+after MLP,v3,1,position,k3,g,L1H1,0.944153,0.844261,23.8756
+after MLP,v3,1,token,k1,a,L1H1→L2H1,0.793083,0.758735,23.8756
+after MLP,v3,1,position,k1,a,L2H1,0.793083,0.588869,23.8756
+after MLP,v3,1,position,k1,a,L1H1→L2H1,0.793083,0.500877,23.8756
+after MLP,v3,1,token,k3,g,L2H1,0.169974,0.280198,23.8756
+after MLP,v3,1,token,v1,5,L1H1→L2H1,0.0549158,0.206556,23.8756
+after MLP,v3,1,position,k3,g,L2H1,0.169974,0.188644,23.8756
+after MLP,v3,1,token,v2,4,L1H1→L2H1,0.0456761,0.177243,23.8756
+after MLP,v3,1,token,k2,r,L1H1,0.0521052,0.128895,23.8756
+after MLP,v3,1,position,v1,5,L1H1→L2H1,0.0549158,0.078649,23.8756
+after MLP,v3,1,position,v2,4,L1H1→L2H1,0.0456761,0.0726675,23.8756
+after MLP,v3,1,token,v1,5,L1H1→L2H1,0.0141675,0.0532886,23.8756
+after MLP,v3,1,token,k2,r,L2H1,0.0341379,0.0504111,23.8756
+after MLP,v3,1,position,k2,r,L1H1,0.0521052,0.0480337,23.8756
+after MLP,v3,1,token,k1,a,L1H1→L2H1,0.0333763,0.0319308,23.8756
+after MLP,v3,1,position,k2,r,L2H1,0.0341379,0.0291104,23.8756
+after MLP,v3,1,token,k2,r,L1H1→L2H1,0.0214208,0.0237737,23.8756
+after MLP,v3,1,position,k1,a,L1H1→L2H1,0.0333763,0.021079,23.8756
+after MLP,v3,1,position,v1,5,L1H1→L2H1,0.0141675,0.0202904,23.8756
+after MLP,v3,1,token,k3,g,L1H1→L2H1,0.014585,0.019885,23.8756
+after MLP,v3,1,position,k2,r,L1H1→L2H1,0.0214208,0.0169571,23.8756
+after MLP,v3,1,token,k1,a,L1H1→L2H1,0.0113915,0.0108982,23.8756
+after MLP,v3,1,position,k3,g,L1H1→L2H1,0.014585,0.0108315,23.8756
+after MLP,v3,1,position,k1,a,L1H1→L2H1,0.0113915,0.00719441,23.8756
+after MLP,k4,s,MLP,k4,s,MLP,1,13.8522,12.4366
+after MLP,k4,s,token,v2,4,L2H1,0.973401,4.36892,12.4366
+after MLP,k4,s,token,v1,5,L1H1,0.375352,2.9728,12.4366
+after MLP,k4,s,token,v3,1,L1H1,0.257931,2.29175,12.4366
+after MLP,k4,s,token,v2,4,L1H1,0.273658,2.1405,12.4366
+after MLP,k4,s,position,k4,s,direct,1,1.69109,12.4366
+after MLP,k4,s,token,k4,s,direct,1,1.32474,12.4366
+after MLP,k4,s,position,v2,4,L2H1,0.973401,1.18183,12.4366
+after MLP,k4,s,token,k2,r,L1H1→L2H1,0.922438,1.02376,12.4366
+after MLP,k4,s,position,k2,r,L1H1→L2H1,0.922438,0.73022,12.4366
+after MLP,k4,s,position,v1,5,L1H1,0.375352,0.640782,12.4366
+after MLP,k4,s,position,v2,4,L1H1,0.273658,0.499475,12.4366
+after MLP,k4,s,position,v3,1,L1H1,0.257931,0.473708,12.4366
+after MLP,k4,s,token,k1,a,L1H1,0.0517685,0.124685,12.4366
+after MLP,k4,s,token,v1,5,L2H1,0.0220892,0.10624,12.4366
+after MLP,k4,s,token,k2,r,L1H1,0.0274201,0.0678303,12.4366
+after MLP,k4,s,position,k1,a,L1H1,0.0517685,0.0483205,12.4366
+after MLP,k4,s,token,k1,a,L1H1→L2H1,0.0477727,0.0457037,12.4366
+after MLP,k4,s,position,k1,a,L1H1→L2H1,0.0477727,0.0301712,12.4366
+after MLP,k4,s,position,k2,r,L1H1,0.0274201,0.0252776,12.4366
+after MLP,k4,s,position,v1,5,L2H1,0.0220892,0.022919,12.4366
+after MLP,k4,s,token,k1,a,L1H1→L2H1,0.0220212,0.0210675,12.4366
+after MLP,k4,s,position,k1,a,L1H1→L2H1,0.0220212,0.0139076,12.4366
+after MLP,v4,6,MLP,v4,6,MLP,1,21.252,18.3933
+after MLP,v4,6,token,v4,6,L2H1,0.997443,4.53289,18.3933
+after MLP,v4,6,token,v4,6,direct,1,2.3487,18.3933
+after MLP,v4,6,token,k4,s,L1H1,0.852578,2.219,18.3933
+after MLP,v4,6,position,v4,6,direct,1,1.24876,18.3933
+after MLP,v4,6,position,v4,6,L2H1,0.997443,1.14392,18.3933
+after MLP,v4,6,token,k4,s,L1H1→L2H1,0.850398,1.09454,18.3933
+after MLP,v4,6,position,k4,s,L1H1,0.852578,1.06222,18.3933
+after MLP,v4,6,position,k4,s,L1H1→L2H1,0.850398,0.744883,18.3933
+after MLP,v4,6,token,k3,g,L1H1,0.110844,0.28975,18.3933
+after MLP,v4,6,token,k3,g,L1H1→L2H1,0.110561,0.150737,18.3933
+after MLP,v4,6,position,k3,g,L1H1,0.110844,0.0991166,18.3933
+after MLP,v4,6,position,k3,g,L1H1→L2H1,0.110561,0.0821075,18.3933
+after MLP,v4,6,token,k2,r,L1H1,0.0285763,0.0706903,18.3933
+after MLP,v4,6,token,k2,r,L1H1→L2H1,0.0285032,0.0316341,18.3933
+after MLP,v4,6,position,k2,r,L1H1,0.0285763,0.0263434,18.3933
+after MLP,v4,6,position,k2,r,L1H1→L2H1,0.0285032,0.0225637,18.3933
+after MLP,q1,g,MLP,q1,g,MLP,1,7.09106,8.90925
+after MLP,q1,g,position,q1,g,direct,1,4.38535,8.90925
+after MLP,q1,g,token,v3,1,L2H1,0.774118,3.89081,8.90925
+after MLP,q1,g,token,v1,5,L1H1,0.442413,3.50392,8.90925
+after MLP,q1,g,token,v2,4,L1H1,0.223743,1.75007,8.90925
+after MLP,q1,g,token,v3,1,L1H1,0.19,1.68818,8.90925
+after MLP,q1,g,token,q1,g,direct,1,1.3713,8.90925
+after MLP,q1,g,token,v1,5,L2H1,0.22588,1.08639,8.90925
+after MLP,q1,g,token,v4,6,L1H1,0.143604,1.02134,8.90925
+after MLP,q1,g,token,k3,g,L1H1→L2H1,0.730886,0.996483,8.90925
+after MLP,q1,g,position,v3,1,L2H1,0.774118,0.806939,8.90925
+after MLP,q1,g,position,v1,5,L1H1,0.442413,0.755264,8.90925
+after MLP,q1,g,position,k3,g,L1H1→L2H1,0.730886,0.54279,8.90925
+after MLP,q1,g,position,v2,4,L1H1,0.223743,0.408371,8.90925
+after MLP,q1,g,position,v3,1,L1H1,0.19,0.348948,8.90925
+after MLP,q1,g,position,v4,6,L1H1,0.143604,0.253596,8.90925
+after MLP,q1,g,position,v1,5,L2H1,0.22588,0.234365,8.90925
+after MLP,q1,g,token,k1,a,L1H1→L2H1,0.225185,0.215432,8.90925
+after MLP,q1,g,position,k1,a,L1H1→L2H1,0.225185,0.142217,8.90925
+after MLP,q1,g,token,k2,r,L1H1→L2H1,0.0403356,0.0447662,8.90925
+after MLP,q1,g,position,k2,r,L1H1→L2H1,0.0403356,0.0319304,8.90925
+after MLP,q2,r,MLP,q2,r,MLP,1,10.4367,8.40348
+after MLP,q2,r,token,v2,4,L2H1,0.999306,4.48519,8.40348
+after MLP,q2,r,token,v1,5,L1H1,0.256244,2.02946,8.40348
+after MLP,q2,r,token,v2,4,L1H1,0.233897,1.8295,8.40348
+after MLP,q2,r,token,v4,6,L1H1,0.250164,1.77921,8.40348
+after MLP,q2,r,token,v3,1,L1H1,0.194138,1.72494,8.40348
+after MLP,q2,r,token,q2,r,direct,1,1.30774,8.40348
+after MLP,q2,r,position,q2,r,direct,1,1.29839,8.40348
+after MLP,q2,r,position,v2,4,L2H1,0.999306,1.21328,8.40348
+after MLP,q2,r,token,k2,r,L1H1→L2H1,0.946987,1.05101,8.40348
+after MLP,q2,r,position,k2,r,L1H1→L2H1,0.946987,0.749653,8.40348
+after MLP,q2,r,position,v4,6,L1H1,0.250164,0.441775,8.40348
+after MLP,q2,r,position,v1,5,L1H1,0.256244,0.437447,8.40348
+after MLP,q2,r,position,v2,4,L1H1,0.233897,0.426904,8.40348
+after MLP,q2,r,position,v3,1,L1H1,0.194138,0.356548,8.40348
+after MLP,q2,r,token,k1,a,L1H1→L2H1,0.0490441,0.04692,8.40348
+after MLP,q2,r,token,k1,a,L1H1,0.0187639,0.045193,8.40348
+after MLP,q2,r,token,k2,r,L1H1,0.0153977,0.0380899,8.40348
+after MLP,q2,r,token,q2,r,L1H1,0.01339,0.0331233,8.40348
+after MLP,q2,r,position,k1,a,L1H1→L2H1,0.0490441,0.0309741,8.40348
+after MLP,q2,r,position,q2,r,L1H1,0.01339,0.0267722,8.40348
+after MLP,q2,r,position,k1,a,L1H1,0.0187639,0.0175142,8.40348
+after MLP,q2,r,position,k2,r,L1H1,0.0153977,0.0141945,8.40348

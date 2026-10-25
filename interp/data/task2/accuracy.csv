@@ -1,0 +1,6 @@
+model,test_accuracy,is_final_model
+"1 layer, 1 head",39.1,False
+"1 layer, 2 heads",38,False
+"2 layers, 1 head each",100,True
+"2 layers, no position embedding",47,False
+"2 layers, no position embedding, no mask",37.3,False

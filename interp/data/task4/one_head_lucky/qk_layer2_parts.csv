@@ -1,0 +1,19 @@
+head,target,query_part,key_part,score_advantage
+L2H1,value at q1,token,token,-0.000282315
+L2H1,value at q1,token,position,0.0291232
+L2H1,value at q1,token,L1H1,-2.79895
+L2H1,value at q1,position,token,0.000164835
+L2H1,value at q1,position,position,-0.00900428
+L2H1,value at q1,position,L1H1,-0.00370594
+L2H1,value at q1,L1H1,token,-0.00123803
+L2H1,value at q1,L1H1,position,0.0157758
+L2H1,value at q1,L1H1,L1H1,7.69188
+L2H1,value at q2,token,token,0.000438215
+L2H1,value at q2,token,position,0.000309156
+L2H1,value at q2,token,L1H1,8.5568
+L2H1,value at q2,position,token,0.00126486
+L2H1,value at q2,position,position,0.0154858
+L2H1,value at q2,position,L1H1,-0.02612
+L2H1,value at q2,L1H1,token,0.00151571
+L2H1,value at q2,L1H1,position,-0.0163437
+L2H1,value at q2,L1H1,L1H1,-2.53361

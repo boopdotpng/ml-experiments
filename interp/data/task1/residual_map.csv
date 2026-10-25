@@ -1,0 +1,38 @@
+stage,position,token,source_kind,source_position,source_token,via,weight,length,stream_length
+embedding,p1,v,token,p1,v,direct,1,1.39552,1.39552
+embedding,p2,s,token,p2,s,direct,1,1.24137,1.24137
+embedding,p3,r,token,p3,r,direct,1,1.40158,1.40158
+embedding,p4,i,token,p4,i,direct,1,1.38,1.38
+embedding,p5,2,token,p5,2,direct,1,2.44077,2.44077
+embedding,p6,b,token,p6,b,direct,1,1.47836,1.47836
+embedding,p7,p,token,p7,p,direct,1,1.29175,1.29175
+embedding,p8,g,token,p8,g,direct,1,1.47575,1.47575
+embedding,last,d,token,last,d,direct,1,1.22094,1.22094
+after layer 1,p1,v,token,p1,v,L1H1,1,4.21037,5.19371
+after layer 1,p1,v,token,p1,v,direct,1,1.39552,5.19371
+after layer 1,p2,s,token,p1,v,L1H1,0.698476,2.94084,4.90483
+after layer 1,p2,s,token,p2,s,direct,1,1.24137,4.90483
+after layer 1,p2,s,token,p2,s,L1H1,0.301524,1.07185,4.90483
+after layer 1,p3,r,token,p3,r,L1H1,0.429036,2.06483,5.32809
+after layer 1,p3,r,token,p1,v,L1H1,0.413022,1.73897,5.32809
+after layer 1,p3,r,token,p3,r,direct,1,1.40158,5.32809
+after layer 1,p3,r,token,p2,s,L1H1,0.157942,0.56145,5.32809
+after layer 1,p4,i,token,p3,r,L1H1,0.357749,1.72175,5.06602
+after layer 1,p4,i,token,p1,v,L1H1,0.349331,1.47081,5.06602
+after layer 1,p4,i,token,p4,i,direct,1,1.38,5.06602
+after layer 1,p4,i,token,p4,i,L1H1,0.138271,0.553446,5.06602
+after layer 1,p4,i,token,p2,s,L1H1,0.15465,0.549746,5.06602
+after layer 1,p5,2,token,p5,2,L1H1,0.83433,5.43602,6.54269
+after layer 1,p5,2,token,p5,2,direct,1,2.44077,6.54269
+after layer 1,p5,2,token,p3,r,L1H1,0.0466263,0.2244,6.54269
+after layer 1,p5,2,token,p1,v,L1H1,0.0484824,0.204129,6.54269
+after layer 1,p5,2,token,p4,i,L1H1,0.0349978,0.140083,6.54269
+after layer 1,p5,2,token,p2,s,L1H1,0.0355636,0.126421,6.54269
+after layer 1,p6,b,token,p5,2,L1H1,0.999687,6.5134,6.93799
+after layer 1,p6,b,token,p6,b,direct,1,1.47836,6.93799
+after layer 1,p7,p,token,p5,2,L1H1,0.997267,6.49763,6.71548
+after layer 1,p7,p,token,p7,p,direct,1,1.29175,6.71548
+after layer 1,p8,g,token,p5,2,L1H1,0.99988,6.51466,7.26986
+after layer 1,p8,g,token,p8,g,direct,1,1.47575,7.26986
+after layer 1,last,d,token,p5,2,L1H1,0.997423,6.49864,6.77394
+after layer 1,last,d,token,last,d,direct,1,1.22094,6.77394

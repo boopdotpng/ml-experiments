@@ -1,0 +1,14 @@
+{
+  "lsp": {
+    "basedpyright": {
+      "settings": {
+        "python": {
+          "pythonPath": "../.venv/bin/python"
+        },
+        "basedpyright.analysis": {
+          "extraPaths": ["../tinygrad"]
+        }
+      }
+    }
+  }
+}

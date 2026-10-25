@@ -1,0 +1,6 @@
+model,test_accuracy
+full model,41.7
+layer 1 attention removed,16.3
+layer 2 attention removed,22.5
+MLP removed,10.3
+position embedding removed,11.1

@@ -1,0 +1,10 @@
+stage,target,probe_accuracy
+after layer 1,a (value at q1),29.08
+after layer 1,b (value at q2),26.5
+after layer 1,answer (a − b),9.98
+after layer 2,a (value at q1),11.8
+after layer 2,b (value at q2),98.52
+after layer 2,answer (a − b),10.12
+after MLP,a (value at q1),45.88
+after MLP,b (value at q2),96.9
+after MLP,answer (a − b),96.98
