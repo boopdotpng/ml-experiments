@@ -59,8 +59,8 @@ Heads do lookups side by side, and layers do them one after another.
 ## Running
 
 ```
-python task0.py   # ... task4.py; each writes plots/task<N>/ and data/task<N>/ (the CSVs behind every plot)
-python infer.py checkpoints/task2.safetensors a2f5c9d3f
+python task0.py   # ... task4.py: trains, writes plots/task<N>/ and data/task<N>/ (the CSVs behind every plot)
+python infer.py checkpoints/task2.safetensors a2f5c9d3f   # tasks 2-4 also save a checkpoint
 ```
 
-Side experiments that aren't part of the tutorial: `task0_tied.py` (task 0 with tied embeddings), `frozen_mlp.py` (task 2 with an untrained MLP), and `task4_gdn.py` / `task4_gdn_torch.py` (task 4 with gated DeltaNet in place of attention).
+Shared code (model, datasets, training loop, analysis helpers) is in `lib/`. Runs are seeded and reproducible.

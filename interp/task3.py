@@ -5,9 +5,9 @@
 import os
 import numpy as np
 from tinygrad import Tensor, nn
-from dataset import two_key_dataset
-from model import Model
-from analysis import *
+from lib.dataset import two_key_dataset
+from lib.model import Model
+from lib.analysis import *
 Tensor.manual_seed(0) # reproducible training runs
 
 STEPS, LR = 6000, 3e-3

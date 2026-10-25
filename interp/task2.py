@@ -5,9 +5,9 @@
 import os
 import numpy as np
 from tinygrad import Tensor, nn
-from dataset import lookup_dataset, VOCAB, N_LETTERS, decode
-from model import Model, head_dim
-from analysis import *
+from lib.dataset import lookup_dataset, VOCAB, N_LETTERS, decode
+from lib.model import Model, head_dim
+from lib.analysis import *
 Tensor.manual_seed(0) # reproducible training runs
 
 STEPS, LR = 4000, 1e-3

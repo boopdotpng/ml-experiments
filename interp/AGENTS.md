@@ -17,17 +17,14 @@ Each task needs one more piece of the transformer than the one before (details a
 
 ## Files
 
-- `model.py`: `Model(mlp, seq_len, pos, causal, n_layers, n_heads)`. No layernorm and no biases. The MLP sits only after the last layer. There's no output projection: each head's V writes `emb_dim` numbers straight into the residual stream, and the heads' outputs are summed.
-- `dataset.py`: `hidden_digit_dataset()` (tasks 0 and 1), `lookup_dataset()` (task 2) and `two_key_dataset(op="sum"|"diff")` (tasks 3 and 4). Vocabulary: letters a–z are tokens 0–25, digits 0–9 are tokens 26–35.
-- `task2.py`, `task3.py`, `task4.py`: train the model for each task plus the shapes that fail (for comparison), save `checkpoints/task<N>.safetensors` (gitignored), and write the plots and data. Each takes 1–4 minutes.
-- `analysis.py`: shared by tasks 1–4. Training loop, plot styling, CSV output, the forward pass in numpy with every component's write to the residual stream kept separate (`forward`), the exact path expansion of the stream (`residual_paths`), the Q/K part split (`qk_parts`), and the full two-key analysis (`two_key_analysis`). `task0.py` and `task1.py` keep their own inline helpers; `task1.py` imports only the residual-stream pieces.
-- `infer.py <checkpoint> <input>...`: works out the model shape from the checkpoint and prints the answers.
-- `frozen_mlp.py`: task 2 with an MLP that is never trained; removing it afterwards changes nothing. Not part of the tutorial outline.
-- `task4_gdn.py <full|noconv|bare|full_nopos> <seed> <steps>`: the task 4 model with every attention swapped for a gated DeltaNet (from `../qwen3.8-27b`). Trains only, no plots or data. Not part of the tutorial outline.
-- `task4_gdn_torch.py`: PyTorch port of `task4_gdn.py` (same args) for running on a CUDA GPU; doesn't need tinygrad.
-- `task0_tied.py`: task 0 with tied embeddings (one table for embed and unembed). Writes `plots/task0_tied/` and `data/task0_tied/`. Not part of the tutorial outline.
-- `task0.py`: trains the zero-layer model (`Model(n_layers=0, pos=False)`) on the hidden digit task and writes the plots and data for task 0.
-- `task1.py`: trains the one-layer, one-head model (`Model(n_layers=1, pos=False)`) on the hidden digit task and writes the plots and data for task 1.
+Each `task<N>.py` trains its model (plus the shapes that fail, for comparison) and runs its own analysis, writing `plots/task<N>/` and `data/task<N>/`. Tasks 2–4 also save `checkpoints/task<N>.safetensors` (gitignored). Run them from this directory. Shared code lives in `lib/`:
+
+- `lib/model.py`: `Model(mlp, seq_len, pos, causal, n_layers, n_heads)`. No layernorm and no biases. The MLP sits only after the last layer. There's no output projection: each head's V writes `emb_dim` numbers straight into the residual stream, and the heads' outputs are summed.
+- `lib/dataset.py`: `hidden_digit_dataset()` (tasks 0 and 1), `lookup_dataset()` (task 2) and `two_key_dataset(op="sum"|"diff")` (tasks 3 and 4). Vocabulary: letters a–z are tokens 0–25, digits 0–9 are tokens 26–35.
+- `lib/analysis.py`: shared by every task. Training loop (`train`), plot styling, CSV/PNG output (`Out`), the forward pass in numpy with every component's write to the residual stream kept separate (`forward`), the exact path expansion of the stream (`residual_paths`), the Q/K part split (`qk_parts`), and the full two-key analysis (`two_key_analysis`, used by tasks 3 and 4).
+- `infer.py <checkpoint> <input>...`: works out the model shape from a task 2–4 checkpoint and prints the answers.
+
+Tasks 0–4 are reproducible: rerunning a script regenerates byte-identical CSVs and PNGs. Keep it that way (seed before building each model, fixed numpy seeds in analysis).
 
 ## Plots and data
 

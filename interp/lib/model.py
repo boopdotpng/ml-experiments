@@ -1,5 +1,5 @@
 from tinygrad import Tensor, nn
-from dataset import VOCAB
+from .dataset import VOCAB
 
 vocab_size = len(VOCAB)
 emb_dim, n_layers, n_heads, head_dim, mlp_size = 32, 2, 1, 32, 64

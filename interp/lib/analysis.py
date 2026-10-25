@@ -1,4 +1,4 @@
-# shared pieces for task2.py, task3.py, task4.py: training loop, plot styling, csv output,
+# shared pieces for task0.py-task4.py: training loop, plot styling, csv output,
 # and the model's forward pass in numpy so every intermediate (attention, residual stream, mlp neurons) can be read off
 import os, csv
 import numpy as np
@@ -7,8 +7,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 from tinygrad import Tensor, nn, TinyJit, Context
-from dataset import VOCAB, N_LETTERS
-from model import head_dim
+from .dataset import VOCAB, N_LETTERS
+from .model import head_dim
 
 # train with Adam on random batches of 512, return the loss per step and the final test accuracy
 def train(model, xtrain:Tensor, ytrain:Tensor, xtest:Tensor, ytest:Tensor, steps:int, lr:float, name:str="") -> tuple[list[float], float]:
@@ -184,7 +184,7 @@ def heatmap(ax, M:np.ndarray, xt:list, yt:list, cmap=sequential, vmin=0, vmax=1,
 #  write_size:        how big each component's write is at each position, averaged over the test set
 #  head_copies:       for one example, which position and token each head copies at every position, and how cleanly
 def residual_plots(out:Out, model, r:dict, X:np.ndarray, Y:np.ndarray, positions:list[str], title:str, example:int=0) -> None:
-  from dataset import decode
+  from .dataset import decode
   names = list(r["parts"])
   dla = logit_attribution(model, r, Y)
   fig, ax = plt.subplots(figsize=(6.5, 0.5*len(names) + 1))
@@ -282,7 +282,7 @@ def path_label(kind:str, src:int, chain:tuple, X:np.ndarray, example:int, positi
 # one picture of the whole forward pass: rows are stages (embedding, after each layer), columns are positions, and each cell lists
 # the biggest paths in the stream there. the csv has every path with weight >= 0.01
 def residual_map(out:Out, model, r:dict, X:np.ndarray, positions:list[str], title:str, example:int=0, top:int=4) -> None:
-  from dataset import decode
+  from .dataset import decode
   stages = residual_paths(model, r, X, example)
   names = ["embedding"] + [f"after layer {l+1}" for l in range(len(model.layers))]
   if "MLP" in r["parts"]: names.append("after MLP")
@@ -340,7 +340,7 @@ def qk_parts_plot(out:Out, names:list[str], M:np.ndarray, name:str, title:str) -
 # everything for the two-key tasks (3: sum, 4: difference), on a trained model with an mlp after the last layer
 TWO_KEY_POSITIONS = ["k1", "v1", "k2", "v2", "k3", "v3", "k4", "v4", "q1", "q2"]
 def two_key_analysis(out:Out, model, op:str, X:np.ndarray, Y:np.ndarray, title:str) -> dict:
-  from dataset import decode
+  from .dataset import decode
   P, T = TWO_KEY_POSITIONS, X.shape[1]
   combine = (lambda a, b: (a + b) % 10) if op == "sum" else (lambda a, b: (a - b) % 10)
   sym = "+" if op == "sum" else "−"

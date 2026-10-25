@@ -2,8 +2,8 @@
 #        python infer.py checkpoints/task3.safetensors a2f5c9d3fc [...]   (also task4, task4_one_head)
 import sys
 from tinygrad import Tensor, nn
-from dataset import encode, decode
-from model import Model, emb_dim
+from lib.dataset import encode, decode
+from lib.model import Model, emb_dim
 
 path, queries = sys.argv[1], sys.argv[2:]
 state = nn.state.safe_load(path)

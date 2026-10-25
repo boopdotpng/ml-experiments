@@ -1,61 +1,21 @@
 # task 1: one layer, one head, no MLP, no position embedding, on the hidden digit task (qwdk7mzpa -> 7).
 # the head finds the digit by its content (QK) and copies it to the last position (OV).
 # no position embedding: "which token is the digit" doesn't depend on where it is
-import os, math, csv
+import math
 import numpy as np
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from matplotlib.colors import LinearSegmentedColormap
-from tinygrad import Tensor, nn, TinyJit, Context
-from dataset import hidden_digit_dataset, VOCAB, N_LETTERS, decode
-from model import Model, head_dim
-from analysis import Out, forward, residual_plots, residual_map, SERIES
+from tinygrad import Tensor
+from lib.dataset import hidden_digit_dataset, VOCAB, N_LETTERS, decode
+from lib.model import Model, head_dim
+from lib.analysis import *
 Tensor.manual_seed(0) # reproducible training runs
 
 STEPS = 1000
 xtrain, xtest, ytrain, ytest = hidden_digit_dataset()
 model = Model(n_layers=1, n_heads=1, pos=False)
-opt = nn.optim.Adam(nn.state.get_parameters(model), lr=1e-3)
-
-@TinyJit
-def test_acc() -> Tensor: return (model(xtest).argmax(axis=-1) == ytest).mean() * 100
-
-@TinyJit
-@Context(TRAINING=1)
-def train_step() -> Tensor:
-  opt.zero_grad()
-  samples = Tensor.randint(512, high=xtrain.shape[0])
-  loss = model(xtrain[samples]).sparse_categorical_crossentropy(ytrain[samples]).backward()
-  return loss.realize(*opt.schedule_step())
-
-# plot styling
-SURFACE, INK, MUTED, GRID, BLUE = "#fcfcfb", "#0b0b0b", "#898781", "#e1e0d9", "#2a78d6"
-plt.rcParams.update({"figure.facecolor": SURFACE, "axes.facecolor": SURFACE, "savefig.facecolor": SURFACE,
-                     "text.color": INK, "axes.labelcolor": INK, "xtick.color": MUTED, "ytick.color": MUTED,
-                     "axes.edgecolor": GRID, "axes.spines.top": False, "axes.spines.right": False,
-                     "axes.axisbelow": True, "axes.titlesize": 12, "axes.titleweight": "bold", "font.size": 10})
-sequential = LinearSegmentedColormap.from_list("blue", ["#f0f6fd", "#9ec5f4", "#3987e5", "#1c5cab", "#0d366b"])
-
-# raw numbers behind every plot go to data/task1/*.csv, so slides can draw their own charts
-def write_csv(name:str, header:list[str], rows) -> None:
-  with open(f"data/task1/{name}.csv", "w", newline="") as f:
-    w = csv.writer(f)
-    w.writerow(header)
-    w.writerows([[f"{v:.6g}" if isinstance(v, float) else v for v in row] for row in rows])
-
-def kind(t:int) -> str: return "letter" if t < N_LETTERS else "digit"
-def softmax(x:np.ndarray) -> np.ndarray:
-  e = np.exp(x - x.max(-1, keepdims=True))
-  return e / e.sum(-1, keepdims=True)
 
 if __name__ == "__main__":
-  losses = []
-  for i in range(STEPS):
-    losses.append(train_step().item())
-    if i % 500 == 499: print(f"loss and val acc at step {i+1}: {losses[-1]:.2f}, {test_acc().item():.2f}%")
-  os.makedirs("plots/task1", exist_ok=True)
-  os.makedirs("data/task1", exist_ok=True)
+  out = Out("task1")
+  losses, acc = train(model, xtrain, ytrain, xtest, ytest, STEPS, 1e-3)
 
   # the whole model in numpy. with no position embedding, every quantity depends only on tokens
   attn = model.layers[0].attn
@@ -72,9 +32,9 @@ if __name__ == "__main__":
     ax.text(STEPS, y, "  " + label, color=MUTED, va="center", ha="left")
   ax.set(title="1 layer, 1 head: training loss on the hidden digit task", xlabel="step", ylabel="loss")
   ax.grid(axis="y", color=GRID, linewidth=0.5)
-  fig.savefig("plots/task1/loss.png", dpi=150, bbox_inches="tight")
-  write_csv("loss", ["step", "loss"], [(i+1, l) for i, l in enumerate(losses)])
-  write_csv("loss_reference", ["label", "loss"], [("even over all 36 tokens (ln 36)", math.log(36)), ("even over the 10 digits (ln 10)", math.log(10))])
+  out.png(fig, "loss")
+  out.csv("loss", ["step", "loss"], [(i+1, l) for i, l in enumerate(losses)])
+  out.csv("loss_reference", ["label", "loss"], [("even over all 36 tokens (ln 36)", math.log(36)), ("even over the 10 digits (ln 10)", math.log(10))])
 
   # 2. where the last position looks, on a few test sequences: all of it on the digit
   X = xtest.numpy()
@@ -89,8 +49,8 @@ if __name__ == "__main__":
   ax.set_yticks(range(n_show), [decode(x) for x in X[:n_show]], fontfamily="monospace")
   ax.set(title="attention from the last position", xlabel="position attended to")
   ax.spines[:].set_visible(False)
-  fig.savefig("plots/task1/attention.png", dpi=150, bbox_inches="tight")
-  write_csv("attention", ["example", "sequence", "position", "token", "kind", "attention"],
+  out.png(fig, "attention")
+  out.csv("attention", ["example", "sequence", "position", "token", "kind", "attention"],
             [(r, decode(X[r]), c, VOCAB[X[r, c]], kind(X[r, c]), float(pattern[r, c])) for r in range(n_show) for c in range(X.shape[1])])
   on_digit = pattern[X >= N_LETTERS].mean()
 
@@ -103,10 +63,10 @@ if __name__ == "__main__":
   ax.axhline(0, color=MUTED, linewidth=1)
   ax.grid(axis="y", color=GRID, linewidth=0.5)
   ax.set(title="QK: attention score for each key token (average over query letters)", xlabel="key token", ylabel="score before softmax")
-  fig.savefig("plots/task1/qk.png", dpi=150, bbox_inches="tight")
-  write_csv("qk", ["key_token", "kind", "score_mean", "score_min", "score_max"],
+  out.png(fig, "qk")
+  out.csv("qk", ["key_token", "kind", "score_mean", "score_min", "score_max"],
             [(t, kind(i), float(scores[:, i].mean()), float(scores[:, i].min()), float(scores[:, i].max())) for i, t in enumerate(VOCAB)])
-  write_csv("qk_table", ["query_letter"] + [f"key_{t}" for t in VOCAB], [[VOCAB[q]] + [float(s) for s in scores[q]] for q in range(N_LETTERS)])
+  out.csv("qk_table", ["query_letter"] + [f"key_{t}" for t in VOCAB], [[VOCAB[q]] + [float(s) for s in scores[q]] for q in range(N_LETTERS)])
 
   # 4. OV: what does a digit write when the head copies it? its own identity. P(output | source digit) is the identity matrix
   copy = softmax(ov[N_LETTERS:])[:, N_LETTERS:]       # (10 source digits, 10 output digits), softmax over all 36 outputs
@@ -117,16 +77,16 @@ if __name__ == "__main__":
   ax.set(title="OV: P(output digit | head copies digit)", xlabel="output digit", ylabel="digit attended to")
   ax.spines[:].set_visible(False)
   fig.colorbar(im, ax=ax, shrink=0.8, label="probability")
-  fig.savefig("plots/task1/ov.png", dpi=150, bbox_inches="tight")
-  write_csv("ov", ["source_digit"] + [f"p_digit_{d}" for d in VOCAB[N_LETTERS:]],
+  out.png(fig, "ov")
+  out.csv("ov", ["source_digit"] + [f"p_digit_{d}" for d in VOCAB[N_LETTERS:]],
             [[VOCAB[N_LETTERS+i]] + [float(p) for p in row] for i, row in enumerate(copy)])
 
   # 5. the trained weights themselves, for anyone who wants to redo the QK and OV products
   for name, W in (("embedding", E), ("unembedding", U)):
-    write_csv(name, ["token", "kind"] + [f"d{k}" for k in range(W.shape[1])],
+    out.csv(name, ["token", "kind"] + [f"d{k}" for k in range(W.shape[1])],
               [[t, kind(i)] + [float(v) for v in W[i]] for i, t in enumerate(VOCAB)])
   for name, W in (("w_q", Wq), ("w_k", Wk), ("w_v", Wv)):
-    write_csv(name, ["row"] + [f"d{k}" for k in range(W.shape[1])], [[r] + [float(v) for v in W[r]] for r in range(W.shape[0])])
+    out.csv(name, ["row"] + [f"d{k}" for k in range(W.shape[1])], [[r] + [float(v) for v in W[r]] for r in range(W.shape[0])])
 
   # 6. Q: what is the last position looking for? Q·K is a dot product in a 32-number head space, so put every query and key in one picture.
   # the x axis is the direction of the average query, so a key's score is (its x) times (the query's length) / √32.
@@ -145,8 +105,8 @@ if __name__ == "__main__":
   ax.annotate("", xy=(np.linalg.norm(Q[:N_LETTERS].mean(0)), 0), xytext=(0, 0), arrowprops=dict(arrowstyle="->", color=SERIES[1], lw=2))
   ax.set(title="Q and K in the head's space", xlabel="along the average query  (score ∝ how far right a key sits)", ylabel="biggest other direction of the keys")
   ax.legend(frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.15), ncol=3, fontsize=8)
-  fig.savefig("plots/task1/qk_space.png", dpi=150, bbox_inches="tight")
-  write_csv("qk_space", ["token", "kind", "role", "along_query", "other_direction"],
+  out.png(fig, "qk_space")
+  out.csv("qk_space", ["token", "kind", "role", "along_query", "other_direction"],
             [(VOCAB[t], kind(t), role, float(M[t] @ qdir), float(M[t] @ ydir)) for role, M in (("key", K), ("query", Q)) for t in range(36) if role == "key" or t < N_LETTERS])
   qn = Q[:N_LETTERS] / np.linalg.norm(Q[:N_LETTERS], axis=1, keepdims=True)
   query_cos = (qn @ qn.T)[~np.eye(N_LETTERS, dtype=bool)].mean()
@@ -160,8 +120,8 @@ if __name__ == "__main__":
   ax.set_xticks(range(1, 11))
   ax.set(title="QK table: how much each independent 'question' explains", xlabel="singular direction", ylabel="share of the table", ylim=(0, 1))
   ax.grid(axis="y", color=GRID, linewidth=0.5)
-  fig.savefig("plots/task1/qk_rank.png", dpi=150, bbox_inches="tight")
-  write_csv("qk_rank", ["direction", "singular_value", "share"], [(i+1, float(v), float(sh)) for i, (v, sh) in enumerate(zip(sv, share))])
+  out.png(fig, "qk_rank")
+  out.csv("qk_rank", ["direction", "singular_value", "share"], [(i+1, float(v), float(sh)) for i, (v, sh) in enumerate(zip(sv, share))])
 
   # 8. one forward pass, step by step, at the last position of one test sequence:
   # Q of the last letter meets K of every position -> score -> softmax -> attention; V of every position, weighted by attention, is the write;
@@ -194,20 +154,19 @@ if __name__ == "__main__":
   for ax in axes: ax.grid(axis="y", color=GRID, linewidth=0.5)
   fig.suptitle(f"one forward pass: {decode(x)} → {VOCAB[ytest.numpy()[ex]]}", fontweight="bold")
   fig.tight_layout()
-  fig.savefig("plots/task1/walkthrough.png", dpi=150, bbox_inches="tight")
-  write_csv("walkthrough", ["position", "token", "kind", "score", "attention", "v_length", "weighted_v_length", "v_reads_as"],
+  out.png(fig, "walkthrough")
+  out.csv("walkthrough", ["position", "token", "kind", "score", "attention", "v_length", "weighted_v_length", "v_reads_as"],
             [(pos_names[i], VOCAB[t], kind(t), float(score[i]), float(att[i]), float(np.linalg.norm(V[i])), float(att[i]*np.linalg.norm(V[i])), VOCAB[int((V[i] @ U.T).argmax())])
              for i, t in enumerate(x)])
-  write_csv("walkthrough_logits", ["output_token", "kind", "from_embedding", "from_head", "total"],
+  out.csv("walkthrough_logits", ["output_token", "kind", "from_embedding", "from_head", "total"],
             [(VOCAB[t], kind(t), float(from_emb[t]), float(from_head[t]), float(from_emb[t] + from_head[t])) for t in range(36)])
-  write_csv("ov_full", ["source_token", "kind"] + [f"logit_{t}" for t in VOCAB], [[VOCAB[i], kind(i)] + [float(v) for v in ov[i]] for i in range(36)])
+  out.csv("ov_full", ["source_token", "kind"] + [f"logit_{t}" for t in VOCAB], [[VOCAB[i], kind(i)] + [float(v) for v in ov[i]] for i in range(36)])
 
   # 9. the residual stream: each component's vote, how much each writes per position, what the head copies, and the exact path map
-  out = Out("task1")
   r = forward(model, X)
   residual_plots(out, model, r, X, ytest.numpy(), pos_names, "hidden digit")
   residual_map(out, model, r, X, pos_names, "hidden digit")
 
-  print(f"test accuracy {test_acc().item():.2f}%, average attention on the digit {on_digit:.3f}")
+  print(f"test accuracy {acc:.2f}%, average attention on the digit {on_digit:.3f}")
   print(f"QK score, digits {scores[:, N_LETTERS:].mean():.2f} vs letters {scores[:, :N_LETTERS].mean():.2f}; OV diagonal {np.diag(copy).mean():.3f}")
   print(f"queries of different letters: average cosine {query_cos:.3f}; first QK direction explains {share[0]*100:.1f}% of the table")
