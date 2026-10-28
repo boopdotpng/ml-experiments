@@ -1,0 +1,3 @@
+model,test_accuracy,is_final_model
+softmax,99.9,False
+softmax+1,99.8,True

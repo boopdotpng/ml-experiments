@@ -4,9 +4,16 @@ from .dataset import VOCAB
 vocab_size = len(VOCAB)
 emb_dim, n_layers, n_heads, head_dim, mlp_size = 32, 2, 1, 32, 64
 
+# softmax+1: exp(x_i) / (1 + sum_j exp(x_j)). like an extra key that always scores 0 and has an empty value,
+# so a head can attend to nothing instead of having to spend its attention somewhere
+def softmax1(x:Tensor) -> Tensor:
+  m = x.max(-1, keepdim=True).maximum(0)
+  e = (x - m).exp()
+  return e / (e.sum(-1, keepdim=True) + (-m).exp())
+
 class Attention:
-  def __init__(self, causal=True, n_heads=n_heads):
-    self.causal, self.n_heads = causal, n_heads
+  def __init__(self, causal=True, n_heads=n_heads, softmax1=False):
+    self.causal, self.n_heads, self.softmax1 = causal, n_heads, softmax1
     self.q_proj = nn.Linear(emb_dim, head_dim*n_heads, bias=False)
     self.k_proj = nn.Linear(emb_dim, head_dim*n_heads, bias=False)
     # no output projection: each head's V writes straight to the residual stream and the heads' writes are summed.
@@ -23,7 +30,7 @@ class Attention:
     # causal mask: need to mimic normal model training
     scores = q @ k.transpose(-1, -2) / head_dim ** 0.5              # (B, H, T, T)
     if self.causal: scores = scores + Tensor.full((T,T), float("-inf")).triu(1)
-    scores = scores.softmax(-1)
+    scores = softmax1(scores) if self.softmax1 else scores.softmax(-1)
 
     return (scores @ v).sum(1)                                      # sum over heads -> (B, T, emb_dim)
 
@@ -34,8 +41,8 @@ class Mlp:
   def __call__(self, x: Tensor) -> Tensor: return self.down(self.up(x).relu())
 
 class Block:
-  def __init__(self, mlp=False, causal=True, n_heads=n_heads):
-    self.attn = Attention(causal, n_heads)
+  def __init__(self, mlp=False, causal=True, n_heads=n_heads, softmax1=False):
+    self.attn = Attention(causal, n_heads, softmax1)
     self.mlp = Mlp() if mlp else None # optimizer unhappy
   def __call__(self, x: Tensor) -> Tensor:
     x = x + self.attn(x)
@@ -44,11 +51,12 @@ class Block:
 
 class Model:
   # pos=False / causal=False are for the tutorial: without both, the model can't tell token order at all
-  def __init__(self, mlp=False, seq_len=9, pos=True, causal=True, n_layers=n_layers, n_heads=n_heads):
+  # vocab_size=37 adds the "-" answer of task 2b. softmax1=True swaps every attention softmax for softmax+1
+  def __init__(self, mlp=False, seq_len=9, pos=True, causal=True, n_layers=n_layers, n_heads=n_heads, vocab_size=vocab_size, softmax1=False):
     self.emb = nn.Embedding(vocab_size, emb_dim) # 36, 32
     self.pos_emb = nn.Embedding(seq_len, emb_dim) if pos else None # 4 pairs plus one (task 1) or two (task 2) query keys
     # mlp only after the last layer: it transforms the digit once the lookup is done
-    self.layers = [Block(mlp=mlp and i == n_layers-1, causal=causal, n_heads=n_heads) for i in range(n_layers)]
+    self.layers = [Block(mlp=mlp and i == n_layers-1, causal=causal, n_heads=n_heads, softmax1=softmax1) for i in range(n_layers)]
 
     # dont tie embeddings
     self.unembed = nn.Linear(emb_dim, vocab_size, bias=False)

@@ -8,3 +8,7 @@ matplotlib
 pillow
 safetensors
 transformers
+pyarrow
+tiktoken
+huggingface_hub
+zstandard

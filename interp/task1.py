@@ -81,6 +81,39 @@ if __name__ == "__main__":
   out.csv("ov", ["source_digit"] + [f"p_digit_{d}" for d in VOCAB[N_LETTERS:]],
             [[VOCAB[N_LETTERS+i]] + [float(p) for p in row] for i, row in enumerate(copy)])
 
+  # 4b. the same, found automatically: the copying score. an eigenvector of OV is a mix of tokens the head maps onto itself, its eigenvalue
+  # how strongly; copying = all of them positive. on the digits every eigenvalue is positive (+1.00); over all 36 tokens the letters pull it
+  # down (the head never reads them, so their part never learned to copy); random weights score about 0.
+  # the random weights are fresh models with their own seeds, built after training (reading this model's weights before training changes the run).
+  # one random 36×36 matrix scores anywhere in about ±0.2, so the baseline is the mean over 20; the plot and eigenvalue rows use the first.
+  # the digit block isn't centered: within the digits, "all digits up" is a direction softmax does see (against the letters)
+  def ov_of(m): return (m.emb.weight.numpy() @ m.layers[0].attn.v_proj.weight.numpy().T) @ m.unembed.weight.numpy().T
+  rand = []
+  for seed in range(1, 21):
+    Tensor.manual_seed(seed)
+    rand.append(copying_score(ov_of(Model(n_layers=1, n_heads=1, pos=False))))
+  rand_scores = np.array([sc for sc, _ in rand])
+  cs = {"trained": copying_score(ov), "trained_digits_only": copying_score(ov[N_LETTERS:, N_LETTERS:], center=False), "random_init": rand[0],
+        "trained_uncentered": copying_score(ov, center=False)}
+  out.csv("ov_copying", ["matrix", "copying_score", "eigenvalues", "positive_real_part", "largest_real", "largest_imag"],
+            [(k, sc, len(lam), int((lam.real > 0).sum()), float(lam[0].real), float(lam[0].imag)) for k, (sc, lam) in cs.items()] +
+            [("random_init_mean_of_20", float(rand_scores.mean()), "", "", "", ""), ("random_init_sd_of_20", float(rand_scores.std()), "", "", "", "")])
+  out.csv("ov_eigenvalues", ["matrix", "real", "imag"], [(k, float(z.real), float(z.imag)) for k, (_, lam) in cs.items() for z in lam])
+  fig, axes = plt.subplots(1, 2, figsize=(10, 4.5))
+  for ax, k, title in ((axes[0], "random_init", "random weights"), (axes[1], "trained", "trained")):
+    sc, lam = cs[k]
+    ax.scatter(lam.real, lam.imag, color=MUTED, s=24, label="all 36 tokens")
+    if k == "trained":
+      d = cs["trained_digits_only"][1]
+      ax.scatter(d.real, d.imag, color=BLUE, s=36, label=f"digits only: {cs['trained_digits_only'][0]:+.2f}")
+      ax.legend(frameon=False, fontsize=9)
+    ax.axhline(0, color=GRID, linewidth=0.8); ax.axvline(0, color=GRID, linewidth=0.8)
+    ax.set(title=f"{title}: copying score {sc:+.2f}" + (f"\nmean over 20 seeds {rand_scores.mean():+.2f} ± {rand_scores.std():.2f}" if k == "random_init" else "\n"),
+           xlabel="real part", ylabel="imaginary part")
+    ax.spines[["top", "right"]].set_visible(False)
+  fig.suptitle("OV eigenvalues: right of the line = the head writes what it reads", fontweight="bold", y=1.04)
+  out.png(fig, "ov_eigenvalues")
+
   # 5. the trained weights themselves, for anyone who wants to redo the QK and OV products
   for name, W in (("embedding", E), ("unembedding", U)):
     out.csv(name, ["token", "kind"] + [f"d{k}" for k in range(W.shape[1])],
@@ -169,4 +202,5 @@ if __name__ == "__main__":
 
   print(f"test accuracy {acc:.2f}%, average attention on the digit {on_digit:.3f}")
   print(f"QK score, digits {scores[:, N_LETTERS:].mean():.2f} vs letters {scores[:, :N_LETTERS].mean():.2f}; OV diagonal {np.diag(copy).mean():.3f}")
+  print(f"OV copying score {cs['trained'][0]:+.2f} (digits only {cs['trained_digits_only'][0]:+.2f}, random weights {rand_scores.mean():+.2f} ± {rand_scores.std():.2f} over 20 seeds)")
   print(f"queries of different letters: average cosine {query_cos:.3f}; first QK direction explains {share[0]*100:.1f}% of the table")

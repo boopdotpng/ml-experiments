@@ -1,0 +1,9 @@
+model,component,dash_logit_vs_digits
+softmax,token,0.298946
+softmax,position,0.516591
+softmax,L1H1,2.45172
+softmax,L2H1,20.0133
+softmax+1,token,0.46484
+softmax+1,position,1.16028
+softmax+1,L1H1,3.49928
+softmax+1,L2H1,11.3429

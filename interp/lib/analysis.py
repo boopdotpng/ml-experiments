@@ -54,9 +54,24 @@ class Out:
     plt.close(fig)
 
 def kind(t:int) -> str: return "letter" if t < N_LETTERS else "digit"
-def softmax(x:np.ndarray) -> np.ndarray:
-  e = np.exp(x - x.max(-1, keepdims=True))
-  return e / e.sum(-1, keepdims=True)
+
+# copying score (Elhage et al. 2021, "A Mathematical Framework for Transformer Circuits"): Σλ / Σ|λ| over the eigenvalues of a circuit
+# that maps tokens to tokens, like OV. +1: every eigenvalue positive and real, the head writes what it reads; -1: it suppresses what it reads;
+# about 0: random. M is (source, output); center=True first removes the part of each logit row that's the same for every output token,
+# which softmax can't see but which can carry a big eigenvalue in a small vocabulary. Returns the score and the nonzero eigenvalues
+def copying_score(M:np.ndarray, center:bool=True) -> tuple[float, np.ndarray]:
+  if center: M = M @ (np.eye(M.shape[1]) - 1 / M.shape[1])
+  lam = np.linalg.eigvals(M)
+  lam = lam[np.abs(lam) > 1e-5 * np.abs(lam).max()]   # a rank-32 matrix's other eigenvalues are 0, plus float32 noise (~1e-5 of the biggest)
+  lam = lam[np.lexsort((lam.imag, -np.abs(lam)))]   # biggest first, fixed order for conjugate pairs
+  return float(lam.real.sum() / np.abs(lam).sum()), lam
+
+# plus_one: softmax+1, exp(x_i) / (1 + sum_j exp(x_j)) (see lib/model.py). rows then sum to 1 minus the attention on nothing
+def softmax(x:np.ndarray, plus_one:bool=False) -> np.ndarray:
+  m = x.max(-1, keepdims=True)
+  if plus_one: m = np.maximum(m, 0)
+  e = np.exp(x - m)
+  return e / (e.sum(-1, keepdims=True) + (np.exp(-m) if plus_one else 0))
 
 # the whole forward pass in numpy, keeping every write to the residual stream separate.
 # r["parts"] maps a component name ("token", "position", "L1H1", ..., "MLP") to its write, (B, T, emb_dim); they sum to the final stream.
@@ -77,7 +92,7 @@ def forward(model, X:np.ndarray, drop_attn:tuple=(), pos:bool=True, mlp:bool=Tru
     v = (x @ a.v_proj.weight.numpy().T).reshape(B, T, H, -1).transpose(0, 2, 1, 3)
     scores = q @ k.transpose(0, 1, 3, 2) / head_dim ** 0.5
     if a.causal: scores = scores + np.triu(np.full((T, T), -np.inf), 1)
-    pattern = softmax(scores)
+    pattern = softmax(scores, a.softmax1)
     writes = pattern @ v                                                          # (B, H, T, emb_dim)
     for h in range(H): r["parts"][f"L{i+1}H{h+1}"] = writes[:, h] * (i not in drop_attn and f"L{i+1}H{h+1}" not in drop_attn)
     x = x + sum(r["parts"][f"L{i+1}H{h+1}"] for h in range(H))

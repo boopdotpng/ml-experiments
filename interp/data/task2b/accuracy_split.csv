@@ -1,0 +1,5 @@
+model,case,examples,test_accuracy
+softmax,key present,734,100
+softmax,key missing,266,99.6241
+softmax+1,key present,734,99.8638
+softmax+1,key missing,266,99.6241

@@ -1,0 +1,7 @@
+matrix,copying_score,eigenvalues,positive_real_part,largest_real,largest_imag
+trained,0.855842,32,23,20.4867,0
+trained_digits_only,0.999631,10,10,22.9195,-0.96642
+random_init,-0.157352,32,14,-0.257889,-0.183291
+trained_uncentered,0.315917,31,21,-42.16,0
+random_init_mean_of_20,-0.0149894,,,,
+random_init_sd_of_20,0.101188,,,,

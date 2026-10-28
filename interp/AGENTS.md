@@ -51,6 +51,7 @@ Task 1 outputs (`data/task1/`):
 | `attention.csv` | attention from the last position over each position, for 8 test sequences | almost all of it lands on the digit |
 | `qk.csv`, `qk_table.csv` | attention score before softmax for each key token, given a query letter (mean/min/max; full 26×36 table) | digits score high and letters score low, whatever the query letter |
 | `ov.csv` | P(output digit given the head copies digit d), 10×10 | the identity: the head writes the digit it reads |
+| `ov_copying.csv`, `ov_eigenvalues.csv` | copying score Σλ / Σ\|λ\| of the OV circuit (`copying_score` in lib/analysis.py), centered: trained, digit block only (uncentered), uncentered, and random weights (one seed, plus mean / sd over 20); every eigenvalue | the same finding without picking the digits by hand: +0.86 trained, +1.00 on the digits, −0.01 ± 0.10 random. Uncentered it's only +0.32: one big negative eigenvalue along "every token equally", which softmax ignores |
 | `embedding.csv`, `unembedding.csv`, `w_q.csv`, `w_k.csv`, `w_v.csv` | the trained weights | QK = (E Wqᵀ)(E Wkᵀ)ᵀ / √32, OV = E Wvᵀ Uᵀ |
 | `qk_space.csv` | every query and key vector, projected onto the average query direction and the biggest other key direction | every letter asks the same question (query cosine 0.996); digit keys point along it, letter keys away |
 | `qk_rank.csv` | singular values of the 26×36 QK table | one direction explains 100.0%: the head asks one question, "is this a digit?" |

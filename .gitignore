@@ -35,3 +35,7 @@ cuda-llama3/benchmark-*.txt
 # scratch + private data
 /tmp/
 wiki-llm/data/
+
+# tokenized pretraining data from architectures/data.py
+architectures/data/
+architectures/data-subset/
