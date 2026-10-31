@@ -1,3 +1,0 @@
-gymnasium[atari]>=1.2,<2
-imageio[ffmpeg]>=2.37
-opencv-python-headless>=4.11

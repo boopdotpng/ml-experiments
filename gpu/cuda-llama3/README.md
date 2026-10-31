@@ -41,7 +41,7 @@ You should see `HMMA.16816.F32.BF16`: BF16 inputs and FP32 accumulation.
 The runner reuses the simple `.hllm` export from the HIP project:
 
 ```bash
-../.venv/bin/python ../hip-llama3/scripts/export_llama.py \
+../../.venv/bin/python ../hip-llama3/scripts/export_llama.py \
   --checkpoint ../hip-llama3/checkpoints/unsloth-llama-3.2-1b-instruct \
   --out ../hip-llama3/models/llama3.2-1b-instruct.hllm
 ```
@@ -59,14 +59,14 @@ Run deterministic synthetic input directly:
 Or tokenize and decode text:
 
 ```bash
-../.venv/bin/python scripts/run_prompt.py \
+../../.venv/bin/python scripts/run_prompt.py \
   --prompt "Explain FlashAttention in two sentences." --steps 48
 ```
 
 Reproduce the benchmark table:
 
 ```bash
-../.venv/bin/python scripts/benchmark.py
+../../.venv/bin/python scripts/benchmark.py
 ```
 
 `steps=129` means the prompt produces the first sampled token and the timed

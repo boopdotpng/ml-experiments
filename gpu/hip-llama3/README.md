@@ -48,7 +48,7 @@ checkpoints/unsloth-llama-3.2-1b-instruct
 Export it with:
 
 ```bash
-../.venv/bin/python scripts/export_llama.py \
+../../.venv/bin/python scripts/export_llama.py \
   --checkpoint checkpoints/unsloth-llama-3.2-1b-instruct \
   --out models/llama3.2-1b-instruct.hllm
 ```
@@ -66,7 +66,7 @@ That keeps `src/hip_llama.hip` independent of Python, JSON, and safetensors.
 Use the Python helper when you want text:
 
 ```bash
-../.venv/bin/python scripts/run_prompt.py \
+../../.venv/bin/python scripts/run_prompt.py \
   --prompt "Explain KV cache in one short paragraph." \
   --mode kv \
   --steps 32

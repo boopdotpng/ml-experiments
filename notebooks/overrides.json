@@ -1,0 +1,11 @@
+{
+  "@jupyterlab/apputils-extension:themes": {
+    "theme": "JupyterLab Dark",
+    "adaptive-theme": true,
+    "preferred-dark-theme": "JupyterLab Dark",
+    "preferred-light-theme": "JupyterLab Light"
+  },
+  "@jupyterlab/notebook-extension:tracker": {
+    "codeCellConfig": { "lineNumbers": true }
+  }
+}

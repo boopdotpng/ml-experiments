@@ -1,5 +1,0 @@
-data/
-checkpoints/
-routing_trace.json
-__pycache__/
-*.pyc
